@@ -53,6 +53,5 @@ void loop()
 		robot.hardware.wifiRead(); // read package from serial port if available (wifi)
 		robot.body.setCommand(); // set command from the package
 		robot.go(); //run the algorithm
-		
 	}
 }

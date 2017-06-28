@@ -34,49 +34,34 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef ROBOT_H
-#define ROBOT_H
+#include "Robot.h"
 
-#define LIN_MODE_PERMANENT 0 //set this to 1 if you want your robot to stand still in linearisation pose permanently - all the servos in home position - used for robot assembly
-
-#include "Hardware.h"
-#include "Body.h"
-#include "Data.h"
-
-class Robot
+void setup() 
 {
-public:
-	Robot();
-	void wakeUp();
-	int go();
-	Hardware hardware;
-	Ctrl ctrl;
-	Parameters parameters;
-	Body body;
+	Serial.begin(115200);
+	Serial1.begin(115200);
+}
 
-	void measureTime();
-	void wait();
+void loop()
+{
+	Robot robot; // initalise the robot
+  
+	robot.wakeUp(); //wake up the robot
 
-	/* High level functions that are ment to be called once. They set the parameters and then loop so
-	* the robot will do some action like walk the given distance.
-	*/
-	void loopMove();
-	void loopHome();
-	void goHome();
+	while(1) //repeat following commands forever
+	{
+		robot.goHome();
+		robot.goForward(10);
+		robot.goHome();
+		robot.goBackwards(10);
+		robot.goHome();
+		robot.turnLeft(90);
+		robot.goHome();
+		robot.turnRight(90);
 
-	void goForward(float distance);
-	void goBackwards(float distance);
-	void goLeft(float distance);
-	void goRight(float distance);
-	void turnLeft(float distance);
-	void turnRight(float distance);
-
-	long startTime;
-
-	//high level functions
-	float goSpeed = 5;
-	float turnSpeed = 0.4;
-};
-
-#endif
-
+		while (1)
+		{
+			robot.goHome();
+		}
+	}
+}

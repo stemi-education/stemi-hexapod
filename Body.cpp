@@ -52,9 +52,6 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 	ctrl->nMove = 0;
 	ctrl->nMoveMax = 100;
 
-	goSpeed = 5;
-	turnSpeed = 0.3;
-
 	double ad[2], a[3], dim[3];
 
 	ts = 1.0 / parameters->freq;
@@ -464,77 +461,4 @@ void Body::resetCommands()
 void Body::setLinMode(bool linModeNew)
 {
 	ctrl->linMode = linModeNew;
-}
-
-void Body::loopMove() {
-	//Serial.println("pocetak");
-	while (ctrl->nMove > 0)
-	{
-		//Serial.println("before");
-		run();
-		//Serial.println("after");
-	}
-}
-void Body::loopHome() {
-	while (!checkHomeMark())
-	{
-		ctrl->nMove = 0;
-		run();
-	}
-}
-void Body::goHome()
-{
-	loopHome();
-}
-void Body::goFw(float distance)
-{
-	distance *= 1.08;
-	setMoveParam(goSpeed, PI / 2, 0, abs(distance / goSpeed*parameters->freq));
-	loopMove();
-}
-
-void Body::goBk(float distance)
-{
-	distance *= 1.08;
-	setMoveParam(goSpeed, -PI / 2, 0, abs(distance / goSpeed*parameters->freq));
-	loopMove();
-}
-
-void Body::goL(float distance)
-{
-	distance *= 1.08;
-	setMoveParam(goSpeed, PI, 0, abs(distance / goSpeed*parameters->freq));
-	loopMove();
-}
-
-void Body::goR(float distance)
-{
-	distance *= 1.08;
-	setMoveParam(goSpeed, 0, 0, abs(distance / goSpeed*parameters->freq));
-	loopMove();
-}
-
-void Body::turnL(float distance)
-{
-	distance *= 1.15;
-	setMoveParam(0, 0, turnSpeed, abs((distance*PI / 180) / turnSpeed*parameters->freq));
-	loopMove();
-}
-
-void Body::turnR(float distance)
-{
-	distance *= 1.15;
-	setMoveParam(0, 0, -turnSpeed, abs((distance*PI / 180) / turnSpeed*parameters->freq));
-	loopMove();
-}
-void Body::penUp()
-{
-	tr[0] = 4.5;
-	baseHeight = 4.5;
-}
-
-void Body::penDown()
-{
-	tr[0] = 3;
-	baseHeight = 3;
 }

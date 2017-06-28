@@ -76,25 +76,6 @@ public:
 	void home(float moveDeltaNew);
 	void run();
 
-	//functions that are ment to be called once - contain while loop
-	void loopMove();
-	void loopHome();
-	void goHome();
-
-	/* High level functions that are ment to be called once. They set the parameters and then loop so
-		 * the robot will walk the distance given.
-		 */
-	void goFw(float distance);
-	void goBk(float distance);
-	void goL(float distance);
-	void goR(float distance);
-	void turnL(float distance);
-	void turnR(float distance);
-
-	void penUp();
-
-	void penDown();
-
 	void setCground();
 	void setCommand();
 	void setLinMode(bool linModeNew);
@@ -131,10 +112,6 @@ private:
 	double gaitDownTime;  //phase length gaitstate 1 (on the ground)
 
 	double slowingScale; // factor that slows movement of the robot
-
-//high level functions
-	float goSpeed;
-	float turnSpeed;
 
 };
 #endif

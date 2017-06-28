@@ -104,3 +104,65 @@ void Robot::wait()
 		Serial.println(millis() - startTime);
 	}
 }
+
+void Robot::loopMove() {
+	//Serial.println("pocetak");
+	while (ctrl.nMove > 0)
+	{
+		//Serial.println("before");
+		go();
+		//Serial.println("after");
+	}
+}
+void Robot::loopHome() {
+	while (!body.checkHomeMark())
+	{
+		ctrl.nMove = 0;
+		go();
+	}
+}
+void Robot::goHome()
+{
+	loopHome();
+}
+void Robot::goForward(float distance)
+{
+	distance *= 1.08;
+	body.setMoveParam(goSpeed, PI / 2, 0, abs(distance / goSpeed*parameters.freq));
+	loopMove();
+}
+
+void Robot::goBackwards(float distance)
+{
+	distance *= 1.08;
+	body.setMoveParam(goSpeed, -PI / 2, 0, abs(distance / goSpeed*parameters.freq));
+	loopMove();
+}
+
+void Robot::goLeft(float distance)
+{
+	distance *= 1.08;
+	body.setMoveParam(goSpeed, PI, 0, abs(distance / goSpeed*parameters.freq));
+	loopMove();
+}
+
+void Robot::goRight(float distance)
+{
+	distance *= 1.08;
+	body.setMoveParam(goSpeed, 0, 0, abs(distance / goSpeed*parameters.freq));
+	loopMove();
+}
+
+void Robot::turnLeft(float distance)
+{
+	distance *= 1.15;
+	body.setMoveParam(0, 0, -turnSpeed, abs((distance*PI / 180) / turnSpeed*parameters.freq));
+	loopMove();
+}
+
+void Robot::turnRight(float distance)
+{
+	distance *= 1.15;
+	body.setMoveParam(0, 0, turnSpeed, abs((distance*PI / 180) / turnSpeed*parameters.freq));
+	loopMove();
+}
