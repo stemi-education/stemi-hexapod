@@ -8,7 +8,7 @@ Library that includes everything you need to get your STEMI hexapod walking and 
 2. Open Arduino IDE and go to: Tools>Board>Boards Manager
 3. Type in "due" and install "Arduino SAM Boards(32-bits ARM Cortex-M3)"
 4. Choose the installed board in "Tools>Board>Arduino Due (programming port)"
-5. Connect your STEMI hexapod to the computer using USB cable.
+5. Connect your STEMI hexapod to the computer using USB cable and programming USB port on the robot (the one to the right on the Arduino board).
 6. Select the port your robot is connected to in "Tools>Port>COMX (Arduino Due (programming port))"
 
 ### Use the STEMI hexapod library ###
