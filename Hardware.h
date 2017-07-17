@@ -37,15 +37,16 @@ For additional information please check http://www.stemi.education.
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#include "DueTimer.h"
-#include "NewPing.h"
-#include <Servo.h>
+#include <Preferences.h>
+#include "ServoController.h"
 #include "Data.h"
 
+#include "WiFi.h"
+
 #define BUZZER_PIN 7
-#define SERVO_POWER_PIN 8
+#define SERVO_POWER_PIN 21
 #define WIFI_POWER_PIN 41
-#define BATTERY_STATUS_PIN A0 //voltage is scaled to fit 3V max - see documentation
+#define BATTERY_STATUS_PIN 35 //voltage is scaled to fit 3V max - see documentation
 #define LED_ARRAY_START_PIN 2
 #define LED_ARRAY_END_PIN 6
 #define ULTRASONIC_TRIGGER_PIN 34 // Arduino pin tied to trigger pin on the ultrasonic sensor.
@@ -57,50 +58,37 @@ class Hardware
 public:
 	Hardware(Ctrl & ctrlNew);
 
-	//sound
-	void soundHandler(); //timer handler used for sound
-	static void soundHandlerWrapper(); //just to satisfy c++ static function demands
-	void playSound(float frequency, int duration); //play a sound on a buzzer
-
-	void soundInit();
-	void ultrasonicInit();
-
-	//LED
-	void ledInit();
-
-	void setLED(int nLED, float power);
-
 	//Servo power
 	void servoPower(bool power); //turn the servos on = 1 or off =0
 
-	//wifi
-	void wifiReset(); //after startup wifi needs to be reset in order to work properly (its power supply needs to be smooth)
-
-	float batteryStatus();
-
-	int getDistance();
-
 	int servoInit();
 	int servoWrite(float servosNew[18]);
+	
+	Preferences preferences;
+	
 	void setCalibration(float linData[18]);
 
+	void wifiInit();
 	void wifiRead();
+
+	void storageInit();
+
+	void storeCalibrationData(uint8_t linData[18]);
+
+	void loadCalibrationData(float linData[18]);
 
 	Ctrl * ctrl;
 
-	NewPing ultrasonic;
+	//wifi
+	WiFiServer server;
+	WiFiClient client;
+	const char* ssid = "STEMI-13968472";
+	const char* passphrase = "12345678";
+	//const char httpConfirmPkt[100] = "HTTP/1.1 200 OK\nContent-Length: 66\n\n{  \"stemiID\": \"STEMI-657654\", \"version\": \"1.0\", \"isValid\": true}\n\n";
 
-	//variables
-	bool soundOn;
-	long soundCounter;
-	long soundDuration;
-
-	int lastDistanceMeasuremeTime;//ultrasonic time measurement to limit the measurement frequency
-
-	int batteryVoltage;
 
 	//Servos
-	Servo servos[18];
+	ServoController sc;
 	float calibrationOffsets[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 };
 #endif

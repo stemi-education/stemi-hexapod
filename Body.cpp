@@ -108,7 +108,7 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 
 float Body::saturate(float value, float minimum, float maximum)
 {
-	return min(maximum, max(minimum, value));
+	return minn(maximum, maxx(minimum, value));
 }
 
 void Body::IK() {
@@ -210,7 +210,7 @@ void Body::scaleStepFi() {
 	double maxCurSpeed = -9999.9;
 	for (int i = 0; i < 6; i++)
 		if (legs[i].gaitState)
-			minScale = min(minScale, legs[i].stepScalePlus);
+			minScale = minn(minScale, legs[i].stepScalePlus);
 
 	gaitDeltaFi = absolute(moveDeltaFi / minScale);
 	slowingScale = 1;
@@ -219,7 +219,7 @@ void Body::scaleStepFi() {
 
 	for (int i = 0; i < 6; i++)
 		if (!legs[i].gaitState)
-			maxCurSpeed = max(maxCurSpeed, (legs[i].pathToFoothold + legs[i].c[2] * preFootholdScaler) / (legs[i].gaitNext / gaitDeltaFi*ts));
+			maxCurSpeed = maxx(maxCurSpeed, (legs[i].pathToFoothold + legs[i].c[2] * preFootholdScaler) / (legs[i].gaitNext / gaitDeltaFi*ts));
 
 	if (maxCurSpeed > maxAllowedSpeed) //if leg speed is higher than allowed
 	{
@@ -234,7 +234,7 @@ void Body::scaleHomeStep() {
 
 	for (int i = 0; i < 6; i++)
 		if (!legs[i].gaitState && !legs[i].checkHomeMark())
-			maxScale = max(maxScale, legs[i].stepScalePlus);
+			maxScale = maxx(maxScale, legs[i].stepScalePlus);
 
 	if (legs[0].gaitState && legs[1].gaitState && legs[2].gaitState &&
 		legs[3].gaitState && legs[4].gaitState && legs[5].gaitState)
@@ -254,9 +254,7 @@ void Body::move() {
 	if (gaitDeltaFi < 1.5)
 	{
 		for (int i = 0; i < 6; i++) legs[i].move(gaitDeltaFi, slowingScale);
-		Serial.print(4);
 		incGaitFi(gaitDeltaFi);
-		Serial.println(5);
 	}
 	else
 	{

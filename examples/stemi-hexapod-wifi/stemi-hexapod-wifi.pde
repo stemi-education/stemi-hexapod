@@ -33,25 +33,30 @@ For additional information please check http://www.stemi.education.
 
 */
 
-
+#include <Adafruit_NeoPixel.h>
 #include "Robot.h"
+
+#define PIN 5
+
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() 
 {
 	Serial.begin(115200);
-	Serial1.begin(115200);
 }
 
 void loop()
 {
 	Robot robot; // initalise the robot
-  
+	
 	robot.wakeUp(); //wake up the robot
 
 	while(1) //repeat following commands forever
 	{
 		robot.hardware.wifiRead(); // read package from serial port if available (wifi)
 		robot.body.setCommand(); // set command from the package
+		//robot.body.setMoveParam(5, PI / 2, 0.3, 100);
 		robot.go(); //run the algorithm
+		//Serial.println(analogRead(35));
 	}
 }

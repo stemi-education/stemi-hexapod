@@ -10,11 +10,11 @@
 #include <cstdlib>
 #include <cmath>
 
-#ifndef max
-#define max(a,b) (((a) > (b)) ? (a) : (b))
+#ifndef maxx
+#define maxx(a,b) (((a) > (b)) ? (a) : (b))
 #endif
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
+#ifndef minn
+#define minn(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
  /*
@@ -93,7 +93,7 @@ public:
 			return 0;
 		}
 		// one circle contains the other 
-		else if (d + min(r, C2.r) < max(r, C2.r))
+		else if (d + minn(r, C2.r) < maxx(r, C2.r))
 		{
 			//Serial.println("One circle contains the other!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			return 0;

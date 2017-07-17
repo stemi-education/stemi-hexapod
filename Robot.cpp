@@ -43,16 +43,11 @@ Robot::Robot() : hardware(ctrl), body(ctrl, parameters)
 
 void Robot::wakeUp()
 {
-
-	Serial.begin(115200); //start serial for communication with PC (serial monitor)
-	Serial1.begin(115200); //start serial for commands (wifi)
-
-	hardware.ledInit(); //turn on LEDs
+	hardware.wifiInit();
 	body.setLinMode(LIN_MODE_PERMANENT);
 	go(); //make a first run(), put the legs in the air
 
 	hardware.servoPower(1);
-	hardware.wifiReset(); //reset the wifi
 
 	unsigned long startTime = millis(); //start measuring time
 	Serial.println("Waiting for 3 sec ...");
@@ -97,10 +92,10 @@ void Robot::wait()
 	{
 
 	}
-	Serial.println(millis() - startTime);
+	//Serial.println(millis() - startTime);
 	if (millis() - startTime > body.ts * 1000)
 	{
-		//Serial.print("---KASNNNNNNIIIIIIMMMMMMMM!!!!!!!!!!!!--- ");
+		Serial.print("This cycle took more than expected: ");
 		Serial.println(millis() - startTime);
 	}
 }

@@ -75,7 +75,7 @@ struct Parameters
 	const double a[3] = { 1.11,4.82,6.04 }; //dimensions of one leg
 	const double dim[3] = { 3, 5.4, 7.2 }; //coordinates of the robots hips
 	const double tr[6] = { 4, 0, 0, 0, 0, 0 }; //initial translation and rotation vector
-	const double freq = 50; //frequency of the algorithm
+	const double freq = 100; //frequency of the algorithm
 	const double ts = 1.0 / freq;
 };
 
