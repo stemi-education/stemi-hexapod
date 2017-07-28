@@ -96,6 +96,7 @@ public:
 	long soundDuration;
 
 	int lastDistanceMeasuremeTime;//ultrasonic time measurement to limit the measurement frequency
+	int distanceMeasured = 99;
 
 	int batteryVoltage;
 

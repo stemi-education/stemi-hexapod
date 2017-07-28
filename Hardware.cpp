@@ -135,18 +135,18 @@ int Hardware::getDistance()
 	{
 		//Serial.print("udaljenost: ");
 		int startTime = millis();
-		int distance = ultrasonic.ping_cm();
+		distanceMeasured = ultrasonic.ping_cm();
 		/*Serial.print(millis() - lastDistanceMeasuremeTime);
 		Serial.print(" ");
 		Serial.print(millis() - startTime);
 		Serial.print(" ");*/
 		//Serial.println(ultrasonic.ping_cm());
 		lastDistanceMeasuremeTime = millis();
-		return distance;
+		return distanceMeasured;
 	}
 	else
 	{
-		return -1;
+		return distanceMeasured;
 	}
 }
 
