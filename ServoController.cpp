@@ -5,7 +5,7 @@ ServoController::ServoController() : servo(125, 330, 551)
   Wire.begin(23,22);
   
 	pwmPCA9685.resetDevices();
-	pwmPCA9685.init(B000001);
+	pwmPCA9685.init(B000000);
 	pwmPCA9685.setPWMFrequency(50);
 
 	ledcSetup(1, 50, 16);
