@@ -39,6 +39,7 @@ For additional information please check http://www.stemi.education.
 
 #include <Preferences.h>
 #include "ServoController.h"
+#include <Adafruit_NeoPixel.h>
 #include "Data.h"
 
 #include "WiFi.h"
@@ -47,11 +48,10 @@ For additional information please check http://www.stemi.education.
 #define SERVO_POWER_PIN 21
 #define WIFI_POWER_PIN 41
 #define BATTERY_STATUS_PIN 35 //voltage is scaled to fit 3V max - see documentation
-#define LED_ARRAY_START_PIN 2
-#define LED_ARRAY_END_PIN 6
 #define ULTRASONIC_TRIGGER_PIN 34 // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ULTRASONIC_ECHO_PIN 35  // Arduino pin tied to echo pin on the ultrasonic sensor.
+//#define ULTRASONIC_ECHO_PIN 35  // Arduino pin tied to echo pin on the ultrasonic sensor.
 #define ULTRASONIC_MAX_DISTANCE 100 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+#define LED_PIN 5 //Neopixel RGB LED strip pin
 
 class Hardware
 {
@@ -64,8 +64,14 @@ public:
 	int servoInit();
 	int servoWrite(float servosNew[18]);
 	
+	//Permanent storage
 	Preferences preferences;
+
+	//RGB LEDs
+	Adafruit_NeoPixel strip;
 	
+	float batteryStatus();
+
 	void setCalibration(float linData[18]);
 
 	void wifiInit();
@@ -76,6 +82,10 @@ public:
 	void storeCalibrationData(uint8_t linData[18]);
 
 	void loadCalibrationData(float linData[18]);
+
+	void LEDinit();
+
+	void setAllLEDs(int bright, int r, int g, int b);
 
 	Ctrl * ctrl;
 
@@ -89,6 +99,11 @@ public:
 
 	//Servos
 	ServoController sc;
-	float calibrationOffsets[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	float calibrationOffsets[18] = {  0.1, -0.1, 0, 
+																		0, 0, 0.1, 
+																		0, -0.05, 0, 
+																		-0.2, 0.05, 0.1, 
+																		0.1, -0.2, -0.1, 
+																		0.2, -0.1, 0 };
 };
 #endif

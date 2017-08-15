@@ -36,18 +36,17 @@ For additional information please check http://www.stemi.education.
 
 #include "Hardware.h"
 
-Hardware* global_hardware;
 
 float mapf(float x, float in_min, float in_max, float out_min, float out_max) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-Hardware::Hardware(Ctrl &ctrlNew) : server(80)
+Hardware::Hardware(Ctrl &ctrlNew) : server(80), strip(6, LED_PIN, NEO_GRB + NEO_KHZ800)
 {
 	ctrl = &ctrlNew;
 
 	servoInit();
-	global_hardware = this; //just a pointer to this class. Used in static functions
+	LEDinit();
 
 }
 
@@ -78,6 +77,11 @@ int Hardware::servoWrite(float servosNew[18])
 	//Serial1.println();
 	sc.moveAllServos(calibratedServos);
 	return 0;
+}
+
+float Hardware::batteryStatus()
+{
+	return (float)(analogRead(BATTERY_STATUS_PIN) + 200) * 3.3 * 2 / 4096;
 }
 
 void Hardware::setCalibration(float linData[18])
@@ -396,4 +400,29 @@ void Hardware::loadCalibrationData(float linData[18])
 		Serial.print(" ");
 	}
 	Serial.println();
+}
+
+void Hardware::LEDinit()
+{
+	strip.begin();
+	strip.setBrightness(50);
+	strip.setPixelColor(0, 255, 0, 100);
+	strip.setPixelColor(1, 255, 0, 100);
+	strip.setPixelColor(2, 255, 0, 100);
+	strip.setPixelColor(3, 255, 0, 100);
+	strip.setPixelColor(4, 255, 0, 100);
+	strip.setPixelColor(5, 255, 0, 100);
+	strip.show();
+}
+
+void Hardware::setAllLEDs(int bright, int r, int g, int b)
+{
+	strip.setBrightness(bright);
+	strip.setPixelColor(0, r, g, b);
+	strip.setPixelColor(1, r, g, b);
+	strip.setPixelColor(2, r, g, b);
+	strip.setPixelColor(3, r, g, b);
+	strip.setPixelColor(4, r, g, b);
+	strip.setPixelColor(5, r, g, b);
+	strip.show();
 }

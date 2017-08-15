@@ -52,7 +52,7 @@ public:
 
 	double sequence[12];
 	double startPosition;
-	char label[4];
+	char label[20];
 };
 
 class Gait

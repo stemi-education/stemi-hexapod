@@ -36,7 +36,7 @@ For additional information please check http://www.stemi.education.
 
 #include "Robot.h"
 
-Robot::Robot() : hardware(ctrl), body(ctrl, parameters)
+Robot::Robot() : body(ctrl, parameters), hardware(ctrl)
 {
 	go();
 }
