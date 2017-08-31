@@ -39,7 +39,7 @@ For additional information please check http://www.stemi.education.
 
 #include <Preferences.h>
 #include "ServoController.h"
-#include <Adafruit_NeoPixel.h>
+#include <NeoPixelBrightnessBus.h>
 #include "Data.h"
 
 #include "WiFi.h"
@@ -51,6 +51,7 @@ For additional information please check http://www.stemi.education.
 #define ULTRASONIC_TRIGGER_PIN 34 // Arduino pin tied to trigger pin on the ultrasonic sensor.
 //#define ULTRASONIC_ECHO_PIN 35  // Arduino pin tied to echo pin on the ultrasonic sensor.
 #define ULTRASONIC_MAX_DISTANCE 100 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+#define LED_COUNT 6
 #define LED_PIN 5 //Neopixel RGB LED strip pin
 
 class Hardware
@@ -68,8 +69,14 @@ public:
 	Preferences preferences;
 
 	//RGB LEDs
-	Adafruit_NeoPixel strip;
-	
+    NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
+    //Colors
+    RgbColor red = RgbColor(128, 0, 0);
+    RgbColor green = RgbColor(0, 128, 0);
+    RgbColor blue = RgbColor(0, 0, 128);
+    RgbColor white = RgbColor(128);
+    RgbColor black = RgbColor(0);
+
 	float batteryStatus();
 
 	void setCalibration(float linData[18]);
@@ -85,7 +92,7 @@ public:
 
 	void LEDinit();
 
-	void setAllLEDs(int bright, int r, int g, int b);
+	void setAllLEDs(int bright, RgbColor color);
 
 	Ctrl * ctrl;
 

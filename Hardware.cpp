@@ -41,7 +41,7 @@ float mapf(float x, float in_min, float in_max, float out_min, float out_max) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-Hardware::Hardware(Ctrl &ctrlNew) : server(80), strip(6, LED_PIN, NEO_GRB + NEO_KHZ800)
+Hardware::Hardware(Ctrl &ctrlNew) : server(80), strip(LED_COUNT, LED_PIN)
 {
 	ctrl = &ctrlNew;
 
@@ -419,25 +419,25 @@ void Hardware::loadCalibrationData(float linData[18])
 
 void Hardware::LEDinit()
 {
-	strip.begin();
-	strip.setBrightness(50);
-	strip.setPixelColor(0, 255, 0, 100);
-	strip.setPixelColor(1, 255, 0, 100);
-	strip.setPixelColor(2, 255, 0, 100);
-	strip.setPixelColor(3, 255, 0, 100);
-	strip.setPixelColor(4, 255, 0, 100);
-	strip.setPixelColor(5, 255, 0, 100);
-	strip.show();
+	strip.Begin();
+	strip.SetBrightness(50);
+	strip.SetPixelColor(0, green);
+	strip.SetPixelColor(1, green);
+	strip.SetPixelColor(2, green);
+	strip.SetPixelColor(3, green);
+	strip.SetPixelColor(4, green);
+	strip.SetPixelColor(5, green);
+	strip.Show();
 }
 
-void Hardware::setAllLEDs(int bright, int r, int g, int b)
+void Hardware::setAllLEDs(int bright, RgbColor color)
 {
-	strip.setBrightness(bright);
-	strip.setPixelColor(0, r, g, b);
-	strip.setPixelColor(1, r, g, b);
-	strip.setPixelColor(2, r, g, b);
-	strip.setPixelColor(3, r, g, b);
-	strip.setPixelColor(4, r, g, b);
-	strip.setPixelColor(5, r, g, b);
-	strip.show();
+	strip.SetBrightness(bright);
+	strip.SetPixelColor(0, color);
+	strip.SetPixelColor(1, color);
+	strip.SetPixelColor(2, color);
+	strip.SetPixelColor(3, color);
+	strip.SetPixelColor(4, color);
+	strip.SetPixelColor(5, color);
+	strip.Show();
 }

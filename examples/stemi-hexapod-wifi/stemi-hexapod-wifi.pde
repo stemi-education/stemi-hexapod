@@ -34,6 +34,7 @@ For additional information please check http://www.stemi.education.
 */
 
 #include "Robot.h"
+#include <NeoPixelBus.h>
 
 void setup()
 {
@@ -53,7 +54,8 @@ void loop()
 		robot.body.setCommand(); // set command from the package
 		//robot.body.setMoveParam(5, PI / 2, 0.3, 100);
 		robot.go(); //run the algorithm
-		robot.hardware.setAllLEDs(10, 100, 100, 100);
+		//delay(1000);
+		robot.hardware.setAllLEDs(100, RgbColor(255, 0, 0));
 		
 		//Serial.println("banana");
 		//robot.hardware.batteryStatus();
