@@ -200,6 +200,20 @@ void Hardware::wifiRead()
 								Serial.println(httpConfirmPkt);
 								client.write(httpConfirmPkt);
 							}
+                            else if (strstr(http_head_buff, "lin"))
+							{
+								while (client.available())
+								{
+									char c = client.read();
+									Serial.print(c);
+								}
+								const char httpConfirmPkt[] = "HTTP/1.1 200 OK\n\n";
+								const char linearizationPkt[] = {'L', 'I', 'N', 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0};
+								Serial.print(httpConfirmPkt);
+								Serial.println(linearizationPkt);
+								client.write(httpConfirmPkt);
+								client.write(linearizationPkt);
+							}
 							delay(1);
 							client.stop();
 						}
