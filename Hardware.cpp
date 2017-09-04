@@ -81,7 +81,8 @@ int Hardware::servoWrite(float servosNew[18])
 
 float Hardware::batteryStatus()
 {
-	return (float)(analogRead(BATTERY_STATUS_PIN) + 200) * 3.3 * 2 / 4096;
+	float senVal = (float)(analogRead(BATTERY_STATUS_PIN));
+	return(-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
 }
 
 void Hardware::setCalibration(float linData[18])
