@@ -53,7 +53,7 @@ Hardware::Hardware(Ctrl &ctrlNew) : server(80), strip(LED_COUNT, LED_PIN)
 void Hardware::servoPower(bool power)
 {
 	pinMode(SERVO_POWER_PIN, OUTPUT); //Servo power enable
-	digitalWrite(SERVO_POWER_PIN, !power); //LOW for enable, HIGH for disable
+	digitalWrite(SERVO_POWER_PIN, power); //LOW for disable, HIGH for enable
 }
 
 
@@ -421,12 +421,12 @@ void Hardware::LEDinit()
 {
 	strip.Begin();
 	strip.SetBrightness(50);
-	strip.SetPixelColor(0, green);
-	strip.SetPixelColor(1, green);
-	strip.SetPixelColor(2, green);
-	strip.SetPixelColor(3, green);
-	strip.SetPixelColor(4, green);
-	strip.SetPixelColor(5, green);
+	strip.SetPixelColor(0, red);
+	strip.SetPixelColor(1, red);
+	strip.SetPixelColor(2, red);
+	strip.SetPixelColor(3, red);
+	strip.SetPixelColor(4, red);
+	strip.SetPixelColor(5, red);
 	strip.Show();
 }
 

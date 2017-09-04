@@ -54,8 +54,7 @@ void loop()
 		robot.body.setCommand(); // set command from the package
 		//robot.body.setMoveParam(5, PI / 2, 0.3, 100);
 		robot.go(); //run the algorithm
-		//delay(1000);
-		robot.hardware.setAllLEDs(100, RgbColor(255, 0, 0));
+		robot.hardware.setAllLEDs(30, RgbColor(0, 255, 255));
 		
 		//Serial.println("banana");
 		//robot.hardware.batteryStatus();

@@ -38,6 +38,7 @@ For additional information please check http://www.stemi.education.
 
 Robot::Robot() : body(ctrl, parameters), hardware(ctrl)
 {
+	hardware.servoPower(0);
 	go();
 }
 

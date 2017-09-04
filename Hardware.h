@@ -45,7 +45,7 @@ For additional information please check http://www.stemi.education.
 #include "WiFi.h"
 
 #define BUZZER_PIN 7
-#define SERVO_POWER_PIN 21
+#define SERVO_POWER_PIN 33
 #define WIFI_POWER_PIN 41
 #define BATTERY_STATUS_PIN 35 //voltage is scaled to fit 3V max - see documentation
 #define ULTRASONIC_TRIGGER_PIN 34 // Arduino pin tied to trigger pin on the ultrasonic sensor.
