@@ -53,9 +53,7 @@ void loop()
 		robot.hardware.wifiRead(); // read package from serial port if available (wifi)
 		robot.body.setCommand(); // set command from the package
 		//robot.body.setMoveParam(5, PI / 2, 0.3, 100);
-		robot.go(); //run the algorithm
-		robot.hardware.setAllLEDs(30, RgbColor(0, 255, 255));
-		
+		robot.go(); //run the algorithm		
 		//Serial.println("banana");
 		//robot.hardware.batteryStatus();
 		//Serial.println(robot.hardware.batteryStatus());

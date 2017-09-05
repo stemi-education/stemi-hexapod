@@ -69,6 +69,7 @@ void Robot::wakeUp()
 		body.resetCommands(); //but ignore movement commands
 		go(); //run the algorithm, just to stand up
 	}
+	hardware.setAllLEDs(30, RgbColor(0, 255, 255));
 	Serial.println("STEMI has waken up!");
 }
 
