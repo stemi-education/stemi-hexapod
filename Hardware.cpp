@@ -104,9 +104,15 @@ boolean ByteArrayCompare(char a[], const char b[], int array_size)
 
 void Hardware::wifiInit()
 {
-	bool ret = WiFi.softAP(ssid, passphrase, 2, 0);
+	uint64_t mac = ESP.getEfuseMac();
+	String ssidString = "stemi";
+	ssidString = "STEMI-" + String((int)mac);
+	ssidString.toCharArray(ssid, 20);
+	WiFi.softAP(ssid, passphrase, 2, 0);
 	Serial.println("");
 	Serial.println("WiFi AP online ...");
+	Serial.print("MAC address: ");
+	Serial.println(ssidString);
 	server.begin();
 }
 
@@ -121,7 +127,7 @@ void Hardware::wifiRead()
 		if (client) Serial.println("new client");           // print a message out the serial port
 	}
 	//check if there is a client
-	if (client) 
+	if (client)
 	{
 		if (client.connected()) 
 		{

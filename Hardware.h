@@ -107,7 +107,7 @@ public:
 	//wifi
 	WiFiServer server;
 	WiFiClient client;
-	const char* ssid = "STEMI-13968472";
+	char ssid[20]; // determined in wifiInit()
 	const char* passphrase = "12345678";
 	//const char httpConfirmPkt[100] = "HTTP/1.1 200 OK\nContent-Length: 66\n\n{  \"stemiID\": \"STEMI-657654\", \"version\": \"1.0\", \"isValid\": true}\n\n";
 
