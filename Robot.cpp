@@ -44,6 +44,7 @@ Robot::Robot() : body(ctrl, parameters), hardware(ctrl)
 
 void Robot::wakeUp()
 {
+	
 	hardware.wifiInit();
 	body.setLinMode(LIN_MODE_PERMANENT);
 	go(); //make a first run(), put the legs in the air

@@ -316,13 +316,13 @@ void Body::run() {
 
 			if (speed || moveDeltaFi)
 			{
-				Serial.println("M");
+				//Serial.println("M");
 				move();
 				//printc();
 			}
 			else
 			{
-				Serial.println("H");
+				//Serial.println("H");
 				home(0.001);
 				//printc();
 			}
@@ -330,7 +330,7 @@ void Body::run() {
 		}
 		else
 		{
-			Serial.println("LinMod");
+			//Serial.println("L");
 			setLinMode();
 		}
 	}

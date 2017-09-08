@@ -84,11 +84,19 @@ public:
 	void wifiInit();
 	void wifiRead();
 
+	void PKTread();
+	
+	void LINread();
+
+	void GETread();
+
+	
+
 	void storageInit();
 
 	void storeCalibrationData(uint8_t linData[18]);
 
-	void loadCalibrationData(float linData[18]);
+	void loadCalibrationData();
 
 	void LEDinit();
 
@@ -106,11 +114,17 @@ public:
 
 	//Servos
 	ServoController sc;
-	float calibrationOffsets[18] = {  0.1, -0.1, 0, 
-																		0, 0, 0.1, 
-																		0, -0.05, 0, 
-																		-0.2, 0.05, 0.1, 
-																		0.1, -0.2, -0.1, 
-																		0.2, -0.1, 0 };
+	float calibrationOffsets[18] = {  0, 0, 0, 
+																		0, 0, 0, 
+																		0, 0, 0, 
+																		0, 0, 0, 
+																		0, 0, 0, 
+																		0, 0, 0 };
+	uint8_t calibrationOffsetBytes[18]{ 50, 50, 50,
+																			50, 50, 50,
+																			50, 50, 50,
+																			50, 50, 50,
+																			50, 50, 50,
+																			50, 50, 50 };
 };
 #endif

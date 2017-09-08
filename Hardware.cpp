@@ -44,9 +44,10 @@ float mapf(float x, float in_min, float in_max, float out_min, float out_max) {
 Hardware::Hardware(Ctrl &ctrlNew) : server(80), strip(LED_COUNT, LED_PIN)
 {
 	ctrl = &ctrlNew;
-
+	storageInit();
 	servoInit();
 	LEDinit();
+	loadCalibrationData();
 
 }
 
@@ -67,14 +68,14 @@ int Hardware::servoWrite(float servosNew[18])
 {
 	float calibratedServos[18];
 	//add calibration data:
-	float servoOffset = 12 * PI / 180; //dictated by servo nature - should be removed in the future - gets calibrated
+	float servoOffset = 0;// 12 * PI / 180; //dictated by servo nature - should be removed in the future - gets calibrated
 	for (int i = 0; i < 18; i++)
 	{
 		calibratedServos[i] = servosNew[i] + calibrationOffsets[i] + servoOffset;
-		//Serial1.print(calibratedServos[i]);
-		//Serial1.print(" ");
+		//Serial.print(calibratedServos[i]);
+		//Serial.print(" ");
 	}
-	//Serial1.println();
+	//Serial.println();
 	sc.moveAllServos(calibratedServos);
 	return 0;
 }
@@ -122,10 +123,12 @@ void Hardware::wifiRead()
 	//check if there is a client
 	if (client) 
 	{
-		if (client.connected() || client.available()) 
+		if (client.connected()) 
 		{
-			if (client.available() >= 22) 
+			while (client.available()) 
 			{
+				//int timeMeasured = millis();
+
 				char small_buff[30];
 				char bytes[30];
 				char http_head_buff[30];
@@ -137,235 +140,255 @@ void Hardware::wifiRead()
 
 				if (bytes[0] == 'P') 
 				{
-					Serial.println("P");
+					//Serial.print("P");
 					bytes[1] = client.peek();
 					if (bytes[1] == 'K') 
 					{
-						Serial.println("K");
+						//Serial.print("K");
 						client.read();
 						bytes[2] = client.peek();
 						if (bytes[2] == 'T') 
 						{
-							Serial.println("T");
+							Serial.println("P");
 							client.read();
-							//client.read((uint8_t*)bytes, 19);
-							//Serial.print("PKT: ");
-							//for (int i = 0; i < 19; i++) { Serial.print((uint8_t)bytes[i]); Serial.print(" "); }
-							//Serial.println();
+							PKTread();
 						}
 					}
 				}
 
 				else if (bytes[0] == 'L')
 				{
-					Serial.println("L");
+					//Serial.print("L");
 					bytes[1] = client.peek();
 					if (bytes[1] == 'I')
 					{
-						Serial.println("I");
+						//Serial.print("I");
 						bytes[1] = client.read();
 						bytes[2] = client.peek();
 						if (bytes[2] == 'N')
 						{
-							Serial.println("N");
+							Serial.println("L");
 							bytes[2] = client.read();
-							//Serial.println("LIN: ");
-							//for (int i = 0; i < 18; i++) { Serial.print((uint8_t)bytes[i]); Serial.print(" "); }
-							//Serial.println();
+							LINread();
 						}
 					}
 				}
 
 				else if (bytes[0] == 'G') 
 				{
+					Serial.println("GGG");
 					bytes[1] = client.peek();
 					if (bytes[1] == 'E') 
 					{
+						Serial.println("EEE");
 						client.read();
 						bytes[2] = client.peek();
 						if (bytes[2] == 'T') 
 						{
-							Serial.println("Sending confirm packet... ");
-							client.read(); // 'T'
-							client.read(); // ' '
-							client.read((uint8_t*)http_head_buff, 16);
-							Serial.print(http_head_buff);
-							if (strstr(http_head_buff, "json")) 
-							{
-								while (client.available()) 
-								{
-									char c = client.read();
-									Serial.print(c);
-								}
-								const char httpConfirmPkt[] = "HTTP/1.1 200 OK\nContent-Length: 66\n\n{  \"stemiID\": \"STEMI-657654\", \"version\": \"1.0\", \"isValid\": true}\n\n";
-								Serial.println(httpConfirmPkt);
-								client.write(httpConfirmPkt);
-							}
-                            else if (strstr(http_head_buff, "lin"))
-							{
-								while (client.available())
-								{
-									char c = client.read();
-									Serial.print(c);
-								}
-								const char httpConfirmPkt[] = "HTTP/1.1 200 OK\n\n";
-								const char linearizationPkt[] = {'L', 'I', 'N', 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0};
-								Serial.print(httpConfirmPkt);
-								Serial.println(linearizationPkt);
-								client.write(httpConfirmPkt);
-								client.write(linearizationPkt);
-							}
-							delay(1);
-							client.stop();
+							Serial.println("TTT");
+							GETread();
 						}
 					}
 				}
-				if (ByteArrayCompare(bytes, "PKT", 3))
+				else
 				{
-					client.readBytes(bytes, 19);
-					int i = 0;
-					/*
-					for(; i < 18; i++) {
-					Serial.print((signed char)bytes[i]);
-					Serial.print(" ");
-					}
-					Serial.println("    ");
-					*/
-
-					ctrl->joy1u[0] = (signed char)bytes[0] / 100.0; //r
-					ctrl->joy1u[1] = -(signed char)bytes[1] * 2 * PI / 180 + PI / 2; //fi
-
-					ctrl->ax1u[0] = ctrl->joy1u[0] * cos(ctrl->joy1u[1]);
-					ctrl->ax1u[1] = ctrl->joy1u[0] * sin(ctrl->joy1u[1]);
-
-					ctrl->joy2u[0] = (signed char)bytes[2] / 100.0; //r
-					ctrl->joy2u[1] = 0; //fi
-
-					ctrl->ax2u[0] = (signed char)bytes[2] / 100.0;
-					ctrl->ax2u[1] = 0;
-
-
-					ctrl->buttons[0] = bytes[3]; //static tilt
-					ctrl->buttons[1] = bytes[4]; //moving tilt
-					ctrl->buttons[2] = bytes[5]; //sleep
-
-					ctrl->trXYu[0] = ((signed char)bytes[6]) / 40.0*PI / 12;
-					ctrl->trXYu[1] = ((signed char)bytes[7]) / 40.0*PI / 12;
-
-					ctrl->roboHightu = (signed char)bytes[8] / 25.0 + 2; //body hight
-
-					ctrl->gaitID = (signed char)bytes[9] / 25;
-
-					ctrl->stepHight = (signed char)bytes[13] / 50.0 + 1;
-
-					if (bytes[18] > 0) ctrl->nMove = bytes[18] + 256 * bytes[17];
-					else ctrl->nMove = ctrl->nMoveMax;
-
-					ctrl->running = bytes[5];
-
-					ctrl->linMode = 0;
-					//PROVJERA
-					if (
-						ctrl->ax1u[0] < -1 || ctrl->ax1u[0]>1 ||
-						ctrl->ax1u[1] < -1 || ctrl->ax1u[1]>1 ||
-						ctrl->ax2u[0] < -1 || ctrl->ax2u[0]>1 ||
-						ctrl->ax2u[1] < -1 || ctrl->ax2u[1]>1 ||
-
-						ctrl->roboHightu < 1 || ctrl->roboHightu>6 ||
-						ctrl->stepHight < 1 || ctrl->stepHight>3 ||
-						ctrl->gaitID < 0 || ctrl->gaitID>4 ||
-
-						!(ctrl->buttons[0] == 0 || ctrl->buttons[0] == 1) ||
-						!(ctrl->buttons[1] == 0 || ctrl->buttons[1] == 1) ||
-						!(ctrl->buttons[2] == 0 || ctrl->buttons[2] == 1) ||
-
-
-
-						//trXY
-						((signed char)bytes[6]) < -40 || ((signed char)bytes[6]) > 40 ||
-						((signed char)bytes[7]) < -40 || ((signed char)bytes[7]) > 40)
-					{
-						i;
-						/*Serial.println("==========================BLOCKADE===========================");
-						ctrl->joy1u[0]=0;
-						ctrl->joy1u[1]=0;
-						ctrl->ax1u[0]=0;
-						ctrl->ax1u[1]=0;
-						ctrl->joy2u[0]=0;
-						ctrl->joy2u[1]=0;
-						ctrl->ax2u[0]=0;
-						ctrl->ax2u[1]=0;
-						ctrl->roboHightu=4;
-						ctrl->gaitID=1;
-						ctrl->buttons[0]=0;
-						ctrl->buttons[1]=0;
-						ctrl->trXYu[0]=0;
-						ctrl->trXYu[1]=0;*/
-					}
-					Serial.print("j ");
-					Serial.print(ctrl->joy1u[0]);
-					Serial.print(" ");
-					Serial.print(ctrl->joy1u[1]);
-					Serial.print("  ");
-					Serial.print(ctrl->joy2u[0]);
-					Serial.print(" ");
-					Serial.print(ctrl->joy2u[1]);
-					Serial.print("  ax ");
-					Serial.print(ctrl->ax1u[0]);
-					Serial.print(" ");
-					Serial.print(ctrl->ax1u[1]);
-					Serial.print("  ");
-					Serial.print(ctrl->ax2u[0]);
-					Serial.print(" ");
-					Serial.print(ctrl->ax2u[1]);
-					Serial.print(" H ");
-					Serial.print(ctrl->roboHightu);
-					Serial.print(" SH ");
-					Serial.print(ctrl->stepHight);
-					Serial.print(" G ");
-					Serial.print(ctrl->gaitID);
-					Serial.print(" tr ");
-					Serial.print(ctrl->trXYu[0]);
-					Serial.print(" ");
-					Serial.print(ctrl->trXYu[1]);
-					Serial.print(" b ");
-					Serial.print(ctrl->buttons[0]);
-					Serial.print(" ");
-					Serial.print(ctrl->buttons[1]);
-					Serial.print(" ");
-					Serial.print(ctrl->buttons[2]);
-					Serial.print(" n ");
-					Serial.print(ctrl->nMove);
-					Serial.print(" p ");
-					Serial.println(ctrl->running);
+					Serial.print("Erased from buffer: ");
+					Serial.println(bytes[0]);
 				}
-				else if (ByteArrayCompare(bytes, "LIN", 3))
-				{
-					ctrl->linMode = 1;
-					client.readBytes(bytes, 18);
-					float linData[18] = { 100 - bytes[0], bytes[1],  100 - bytes[2],  100 - bytes[3],  bytes[4],  100 - bytes[5],  100 - bytes[6],  bytes[7],  100 - bytes[8],
-						bytes[9], 100 - bytes[10], bytes[11], bytes[12], 100 - bytes[13], bytes[14], bytes[15], 100 - bytes[16], bytes[17] };
-					for (int i; i < 18; i++)
-					{
-						linData[i] = (linData[i] - 50.) / 50 * 20;
-						Serial.print((float)linData[i]);
-						Serial.print(" ");
-					}
-					Serial.println();
-					Serial.println("Spremio 18 brojeva lin");
-					Serial.println(linData[0]);
-					setCalibration(linData);
-				}
+				//Serial.println(millis() - timeMeasured);
 			}
 		}
 		else 
 		{// give the web browser time to receive the data
 			delay(1);
 			// close the connection:
+			Serial.println("client disonnected from wifiRead");
 			client.stop();
-			Serial.println("client disonnected");
 		}
 	}
+}
+
+void Hardware::PKTread()
+{
+	char bytes[19];
+	memset(bytes, 0, 19);
+	client.readBytes(bytes, 19);
+	int i = 0;
+	/*
+	for(; i < 18; i++) {
+	Serial.print((signed char)bytes[i]);
+	Serial.print(" ");
+	}
+	Serial.println("    ");
+	*/
+
+	ctrl->joy1u[0] = (signed char)bytes[0] / 100.0; //r
+	ctrl->joy1u[1] = -(signed char)bytes[1] * 2 * PI / 180 + PI / 2; //fi
+	ctrl->ax1u[0] = ctrl->joy1u[0] * cos(ctrl->joy1u[1]);
+	ctrl->ax1u[1] = ctrl->joy1u[0] * sin(ctrl->joy1u[1]);
+	ctrl->joy2u[0] = (signed char)bytes[2] / 100.0; //r
+	ctrl->joy2u[1] = 0; //fi
+	ctrl->ax2u[0] = (signed char)bytes[2] / 100.0;
+	ctrl->ax2u[1] = 0;
+	ctrl->buttons[0] = bytes[3]; //static tilt
+	ctrl->buttons[1] = bytes[4]; //moving tilt
+	ctrl->buttons[2] = bytes[5]; //sleep
+	ctrl->trXYu[0] = ((signed char)bytes[6]) / 40.0*PI / 12;
+	ctrl->trXYu[1] = ((signed char)bytes[7]) / 40.0*PI / 12;
+	ctrl->roboHightu = (signed char)bytes[8] / 25.0 + 2; //body hight
+	ctrl->gaitID = (signed char)bytes[9] / 25;
+	ctrl->stepHight = (signed char)bytes[13] / 50.0 + 1;
+	if (bytes[18] > 0) ctrl->nMove = bytes[18] + 256 * bytes[17];
+	else ctrl->nMove = ctrl->nMoveMax;
+	ctrl->running = bytes[5];
+	ctrl->linMode = 0;
+	//Data validation
+	if (
+		ctrl->ax1u[0] < -1 || ctrl->ax1u[0]>1 ||
+		ctrl->ax1u[1] < -1 || ctrl->ax1u[1]>1 ||
+		ctrl->ax2u[0] < -1 || ctrl->ax2u[0]>1 ||
+		ctrl->ax2u[1] < -1 || ctrl->ax2u[1]>1 ||
+		ctrl->roboHightu < 1 || ctrl->roboHightu>6 ||
+		ctrl->stepHight < 1 || ctrl->stepHight>3 ||
+		ctrl->gaitID < 0 || ctrl->gaitID>4 ||
+		!(ctrl->buttons[0] == 0 || ctrl->buttons[0] == 1) ||
+		!(ctrl->buttons[1] == 0 || ctrl->buttons[1] == 1) ||
+		!(ctrl->buttons[2] == 0 || ctrl->buttons[2] == 1) ||
+		//trXY
+		((signed char)bytes[6]) < -40 || ((signed char)bytes[6]) > 40 ||
+		((signed char)bytes[7]) < -40 || ((signed char)bytes[7]) > 40)
+	{
+		/*Serial.println("==========================BLOCKADE===========================");
+		ctrl->joy1u[0]=0;
+		ctrl->joy1u[1]=0;
+		ctrl->ax1u[0]=0;
+		ctrl->ax1u[1]=0;
+		ctrl->joy2u[0]=0;
+		ctrl->joy2u[1]=0;
+		ctrl->ax2u[0]=0;
+		ctrl->ax2u[1]=0;
+		ctrl->roboHightu=4;
+		ctrl->gaitID=1;
+		ctrl->buttons[0]=0;
+		ctrl->buttons[1]=0;
+		ctrl->trXYu[0]=0;
+		ctrl->trXYu[1]=0;*/
+	}
+	/*Serial.print("j ");
+	Serial.print(ctrl->joy1u[0]);
+	Serial.print(" ");
+	Serial.print(ctrl->joy1u[1]);
+	Serial.print("  ");
+	Serial.print(ctrl->joy2u[0]);
+	Serial.print(" ");
+	Serial.print(ctrl->joy2u[1]);
+	Serial.print("  ax ");
+	Serial.print(ctrl->ax1u[0]);
+	Serial.print(" ");
+	Serial.print(ctrl->ax1u[1]);
+	Serial.print("  ");
+	Serial.print(ctrl->ax2u[0]);
+	Serial.print(" ");
+	Serial.print(ctrl->ax2u[1]);
+	Serial.print(" H ");
+	Serial.print(ctrl->roboHightu);
+	Serial.print(" SH ");
+	Serial.print(ctrl->stepHight);
+	Serial.print(" G ");
+	Serial.print(ctrl->gaitID);
+	Serial.print(" tr ");
+	Serial.print(ctrl->trXYu[0]);
+	Serial.print(" ");
+	Serial.print(ctrl->trXYu[1]);
+	Serial.print(" b ");
+	Serial.print(ctrl->buttons[0]);
+	Serial.print(" ");
+	Serial.print(ctrl->buttons[1]);
+	Serial.print(" ");
+	Serial.print(ctrl->buttons[2]);
+	Serial.print(" n ");
+	Serial.print(ctrl->nMove);
+	Serial.print(" p ");
+	Serial.println(ctrl->running);*/
+}
+
+void Hardware::LINread()
+{
+	uint8_t bytes[19];
+	memset(bytes, 0, 19);
+	ctrl->linMode = 1;
+	client.readBytes(bytes, 19);
+	//last byte in LIN packet has the info if the linDdata needs to be stored permanently
+	if (bytes[18] == 1)
+	{
+		//store permanently calib data
+		storeCalibrationData(bytes);
+	}
+	float linData[18] = { 100 - bytes[0], bytes[1],  100 - bytes[2],  100 - bytes[3],  bytes[4],  100 - bytes[5],  100 - bytes[6],  bytes[7],  100 - bytes[8],
+		bytes[9], 100 - bytes[10], bytes[11], bytes[12], 100 - bytes[13], bytes[14], bytes[15], 100 - bytes[16], bytes[17] };
+	for (int i; i < 18; i++)
+	{
+		linData[i] = (linData[i] - 50.) / 50 * 20;
+		Serial.print((float)linData[i]);
+		Serial.print(" ");
+	}
+	Serial.println();
+	//Serial.print("store: ");
+	//Serial.println((int)bytes[18]);
+	//Serial.println("Spremio 18 brojeva lin");
+	
+	//Serial.println(linData[0]);
+	setCalibration(linData);
+}
+
+void Hardware::GETread()
+{
+	char http_head_buff[30];
+	memset(http_head_buff, 0, 30);
+	Serial.println("Sending confirm packet... ");
+	client.read(); // 'T'
+	client.read(); // ' '
+	client.read((uint8_t*)http_head_buff, 16);
+	Serial.print(http_head_buff);
+	if (strstr(http_head_buff, "json"))
+	{
+		while (client.available())
+		{
+			char c = client.read();
+			Serial.print(c);
+		}
+		const char httpConfirmPkt[] = "HTTP/1.1 200 OK\nContent-Length: 66\n\n{  \"stemiID\": \"STEMI-657654\", \"version\": \"1.0\", \"isValid\": true}\n\n";
+		Serial.println(httpConfirmPkt);
+		client.write(httpConfirmPkt);
+	}
+	else if (strstr(http_head_buff, "lin"))
+	{
+		while (client.available())
+		{
+			char c = client.read();
+			Serial.print(c);
+		}
+		const char httpConfirmPkt[] = "HTTP/1.1 200 OK\n\n";
+		const char linearizationPkt[] = { 'L', 'I', 'N', calibrationOffsetBytes[0], calibrationOffsetBytes[1], 
+			calibrationOffsetBytes[2], calibrationOffsetBytes[3], calibrationOffsetBytes[4], calibrationOffsetBytes[5], 
+			calibrationOffsetBytes[6], calibrationOffsetBytes[7], calibrationOffsetBytes[8], calibrationOffsetBytes[9], 
+			calibrationOffsetBytes[10], calibrationOffsetBytes[11], calibrationOffsetBytes[12], calibrationOffsetBytes[13], 
+			calibrationOffsetBytes[14], calibrationOffsetBytes[15], calibrationOffsetBytes[16], calibrationOffsetBytes[17], 0 };
+		Serial.print(httpConfirmPkt);
+		Serial.println(linearizationPkt);
+		Serial.println("LIN poslano: ");
+		for (int i = 0; i < 18; i++)
+		{
+			Serial.print(calibrationOffsetBytes[i]);
+			Serial.print(" ");
+		}
+		Serial.println();
+		client.write(httpConfirmPkt);
+		client.write(linearizationPkt);
+	}
+	delay(1);
+	Serial.println("Client stop from GET read");
+	client.stop();
 }
 
 void Hardware::storageInit()
@@ -375,29 +398,28 @@ void Hardware::storageInit()
 
 void Hardware::storeCalibrationData(uint8_t linData[18])
 {
-	Serial.println("writing data: ");
+	Serial.println("writing byte data: ");
 	for (int i = 0; i < 18; i++)
 	{
-		Serial.print((float)linData[i]);
+		calibrationOffsetBytes[i] = linData[i];
+		Serial.print(linData[i]);
 		Serial.print(" ");
 	}
 	Serial.println();
 	preferences.putBytes("calibData", linData, 18);
 }
 
-void Hardware::loadCalibrationData(float linData[18])
+void Hardware::loadCalibrationData()
 {
-	uint8_t bytes[18];
-	
-	Serial.println("array before reading: ");
+	/*Serial.println("array before reading: ");
 	for (int i = 0; i < 18; i++)
 	{
 		Serial.print((float)linData[i]);
 		Serial.print(" ");
 	}
-	Serial.println();
+	Serial.println();*/
 
-	size_t len = preferences.getBytes("calibData", bytes, 18);
+	size_t len = preferences.getBytes("calibData", calibrationOffsetBytes, 18);
 	
 	if (!len)
 		Serial.println("Data not stored...");
@@ -406,12 +428,28 @@ void Hardware::loadCalibrationData(float linData[18])
 		Serial.print("number of bytes read: ");
 		Serial.println(len);
 	}
-	
-	Serial.println("array after reading: ");
+	Serial.println("float array loaded: ");
+
+	//inverting intervals of some servos - adjusting rotational direction of every servo
+	float AdjustedCalibrationOffsetBytes[18] = { 100 - calibrationOffsetBytes[0], calibrationOffsetBytes[1],  100 - calibrationOffsetBytes[2],
+											100 - calibrationOffsetBytes[3],  calibrationOffsetBytes[4],  100 - calibrationOffsetBytes[5],  
+											100 - calibrationOffsetBytes[6],  calibrationOffsetBytes[7],  100 - calibrationOffsetBytes[8],
+											calibrationOffsetBytes[9], 100 - calibrationOffsetBytes[10], calibrationOffsetBytes[11], 
+											calibrationOffsetBytes[12], 100 - calibrationOffsetBytes[13], calibrationOffsetBytes[14], 
+											calibrationOffsetBytes[15], 100 - calibrationOffsetBytes[16], calibrationOffsetBytes[17] };
+
+	//converting form bytes [0-100] to radians
 	for (int i = 0; i < 18; i++)
 	{
-		linData[i] = ((float)bytes[i] - 50.) / 50 * 20;
-		Serial.print((float)bytes[i]);
+		calibrationOffsets[i] = (AdjustedCalibrationOffsetBytes[i] - 50.) / 50 * 20;
+		Serial.print(calibrationOffsets[i]);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.println("byte array loaded: ");
+	for (int i = 0; i < 18; i++)
+	{
+		Serial.print(calibrationOffsetBytes[i]);
 		Serial.print(" ");
 	}
 	Serial.println();
