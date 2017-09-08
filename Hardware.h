@@ -77,6 +77,9 @@ public:
     RgbColor white = RgbColor(128);
     RgbColor black = RgbColor(0);
 
+		int colorCounter = 0;
+		float phaseColor = 0;
+
 	float batteryStatus();
 
 	void setCalibration(float linData[18]);
@@ -102,6 +105,10 @@ public:
 
 	void setAllLEDs(int bright, RgbColor color);
 
+	void setAllLEDsRainbow(int bright);
+
+	int ledPhaseColor(float phase);
+
 	Ctrl * ctrl;
 
 	//wifi
@@ -110,7 +117,6 @@ public:
 	char ssid[20]; // determined in wifiInit()
 	const char* passphrase = "12345678";
 	//const char httpConfirmPkt[100] = "HTTP/1.1 200 OK\nContent-Length: 66\n\n{  \"stemiID\": \"STEMI-657654\", \"version\": \"1.0\", \"isValid\": true}\n\n";
-
 
 	//Servos
 	ServoController sc;
