@@ -107,7 +107,7 @@ public:
 
 	void setAllLEDsRainbow(int bright);
 
-	int ledPhaseColor(float phase);
+	RgbColor ledPhaseColor(float phase);
 
 	Ctrl * ctrl;
 

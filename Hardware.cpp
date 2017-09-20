@@ -503,16 +503,16 @@ void Hardware::setAllLEDsRainbow(int bright)
 		colorCounter = 0;
 	phaseColor = colorCounter / 100.0 * 2 * PI;
 	strip.SetBrightness(bright);
-	strip.SetPixelColor(0, RgbColor(ledPhaseColor(0), ledPhaseColor(PI / 3), ledPhaseColor(PI * 2 / 3)));
-	strip.SetPixelColor(1, RgbColor(ledPhaseColor(0 + PI * 1 / 6), ledPhaseColor(PI / 3 + PI * 1 / 6), ledPhaseColor(PI * 2 / 3 + PI * 1 / 6)));
-	strip.SetPixelColor(2, RgbColor(ledPhaseColor(0 + PI * 2 / 6), ledPhaseColor(PI / 3 + PI * 2 / 6), ledPhaseColor(PI * 2 / 3 + PI * 2 / 6)));
-	strip.SetPixelColor(3, RgbColor(ledPhaseColor(0 + PI * 3 / 6), ledPhaseColor(PI / 3 + PI * 3 / 6), ledPhaseColor(PI * 2 / 3 + PI * 3 / 6)));
-	strip.SetPixelColor(4, RgbColor(ledPhaseColor(0 + PI * 4 / 6), ledPhaseColor(PI / 3 + PI * 4 / 6), ledPhaseColor(PI * 2 / 3 + PI * 4 / 6)));
-	strip.SetPixelColor(5, RgbColor(ledPhaseColor(0 + PI * 5 / 6), ledPhaseColor(PI / 3 + PI * 5 / 6), ledPhaseColor(PI * 2 / 3 + PI * 5 / 6)));
+	strip.SetPixelColor(0, ledPhaseColor(0));
+	strip.SetPixelColor(1, ledPhaseColor(2 * PI / 6));
+	strip.SetPixelColor(2, ledPhaseColor(2 * 2 * PI / 6));
+	strip.SetPixelColor(3, ledPhaseColor(2 * 3 * PI / 6));
+	strip.SetPixelColor(4, ledPhaseColor(2 * 4 * PI / 6));
+	strip.SetPixelColor(5, ledPhaseColor(2 * 5 * PI / 6));
 	strip.Show();
 }
 
-int Hardware::ledPhaseColor(float phase)
+RgbColor Hardware::ledPhaseColor(float phase)
 {
-	return (int)((sin(phaseColor + phase) / 2.0 + 0.5) * 255);
+	return RgbColor((int)((sin(phaseColor + phase) / 2.0 + 0.5) * 255), (int)((sin(phaseColor + phase + 2 / 3 * PI) / 2.0 + 0.5) * 255), (int)((sin(phaseColor + phase + 4 / 3 * PI) / 2.0 + 0.5) * 255));
 }
