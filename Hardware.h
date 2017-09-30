@@ -48,11 +48,11 @@ For additional information please check http://www.stemi.education.
 #define SERVO_POWER_PIN 33
 #define WIFI_POWER_PIN 41
 #define BATTERY_STATUS_PIN 35 //voltage is scaled to fit 3V max - see documentation
-#define ULTRASONIC_TRIGGER_PIN 34 // Arduino pin tied to trigger pin on the ultrasonic sensor.
+//#define ULTRASONIC_TRIGGER_PIN 34 // Arduino pin tied to trigger pin on the ultrasonic sensor.
 //#define ULTRASONIC_ECHO_PIN 35  // Arduino pin tied to echo pin on the ultrasonic sensor.
 #define ULTRASONIC_MAX_DISTANCE 100 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 #define LED_COUNT 6
-#define LED_PIN 5 //Neopixel RGB LED strip pin
+#define LED_PIN 19 //Neopixel RGB LED strip pin
 
 class Hardware
 {
