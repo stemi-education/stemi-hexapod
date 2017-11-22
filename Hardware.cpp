@@ -457,7 +457,7 @@ void Hardware::loadCalibrationData()
 	//converting form bytes [0-100] to radians
 	for (int i = 0; i < 18; i++)
 	{
-		calibrationOffsets[i] = (AdjustedCalibrationOffsetBytes[i] - 50.) / 50 * 20;
+		calibrationOffsets[i] = -(AdjustedCalibrationOffsetBytes[i] - 50.) / 50 * 20 * PI / 180;
 		Serial.print(calibrationOffsets[i]);
 		Serial.print(" ");
 	}
@@ -481,6 +481,7 @@ void Hardware::LEDinit()
 	strip.SetPixelColor(3, RgbColor(0, 100, 100));
 	strip.SetPixelColor(4, RgbColor(0, 0, 255));
 	strip.SetPixelColor(5, RgbColor(100, 0, 100));
+	delay(1);
 	strip.Show();
 }
 
@@ -493,6 +494,7 @@ void Hardware::setAllLEDs(int bright, RgbColor color)
 	strip.SetPixelColor(3, color);
 	strip.SetPixelColor(4, color);
 	strip.SetPixelColor(5, color);
+	delay(1);
 	strip.Show();
 }
 
@@ -509,6 +511,7 @@ void Hardware::setAllLEDsRainbow(int bright)
 	strip.SetPixelColor(3, ledPhaseColor(2 * 3 * PI / 6));
 	strip.SetPixelColor(4, ledPhaseColor(2 * 4 * PI / 6));
 	strip.SetPixelColor(5, ledPhaseColor(2 * 5 * PI / 6));
+	delay(1);
 	strip.Show();
 }
 
