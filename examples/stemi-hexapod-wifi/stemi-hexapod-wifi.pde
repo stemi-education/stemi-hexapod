@@ -57,7 +57,7 @@ void loop()
 		robot.hardware.setAllLEDsRainbow(50);
 		//Serial.println("banana");
 		//robot.hardware.batteryStatus();
-		Serial.println(robot.hardware.batteryStatus());
+		//Serial.println(robot.hardware.batteryStatus());
 
 	}
 }

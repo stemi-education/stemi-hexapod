@@ -98,11 +98,11 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 
 	setStepHight(ctrl->stepHight);
 
-	alpha_tr = 0.95;
+	alpha_tr = 0.94;
 
 	setMoveParam(0, PI / 2, 0, 0);
 
-	maxAllowedSpeed = 20;
+	maxAllowedSpeed = 30;
 
 }
 
@@ -419,9 +419,9 @@ void Body::setCommand() {
 
 	if (!ctrl->buttons[0]) //walking available
 	{
-		setMoveParam(speedMultiplyer * 10 * saturate(ctrl->joy1u[0], -1, 1),
+		setMoveParam(speedMultiplyer * 16 * saturate(ctrl->joy1u[0], -1, 1),
 			ctrl->joy1u[1],
-			speedMultiplyer*0.7*saturate(ctrl->ax2u[0], -1, 1),
+			speedMultiplyer*1.1*saturate(ctrl->ax2u[0], -1, 1),
 			ctrl->nMoveMax);
 		if (ctrl->buttons[1]) //aditional translation and rotation available while walking
 		{
