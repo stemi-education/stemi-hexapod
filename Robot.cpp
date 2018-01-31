@@ -36,6 +36,12 @@ For additional information please check http://www.stemi.education.
 
 #include "Robot.h"
 
+
+float saturate(float value, float minimum, float maximum)
+{
+	return _min(maximum, _max(minimum, value));
+}
+
 Robot::Robot() : body(ctrl, parameters), hardware(ctrl)
 {
 	hardware.servoPower(0);
@@ -50,6 +56,8 @@ void Robot::wakeUp()
 	go(); //make a first run(), put the legs in the air
 
 	hardware.servoPower(1);
+
+	hardware.setAllLEDs(100, RgbColor(0, 255, 255));
 
 	unsigned long startTime = millis(); //start measuring time
 	Serial.println("Waiting for 3 sec ...");
@@ -70,7 +78,7 @@ void Robot::wakeUp()
 		body.resetCommands(); //but ignore movement commands
 		go(); //run the algorithm, just to stand up
 	}
-	hardware.setAllLEDs(30, RgbColor(0, 255, 255));
+	//hardware.setAllLEDs(30, RgbColor(0, 255, 255));
 	Serial.println("STEMI has waken up!");
 }
 
@@ -112,16 +120,22 @@ void Robot::loopMove() {
 		//Serial.println("after");
 	}
 }
-void Robot::loopHome() {
-	while (!body.checkHomeMark())
+void Robot::loopHome(float timeWaiting = 0) {
+	Serial.println(timeWaiting);
+	Serial.print(" tr: ");
+	Serial.print(body.tr[1]);
+	Serial.println(" ");
+	long startTime2 = millis();
+
+	while (!body.checkHomeMark() || (millis() - startTime2 < timeWaiting * 1000))
 	{
 		ctrl.nMove = 0;
 		go();
 	}
 }
-void Robot::goHome()
+void Robot::goHome(float time = 0)
 {
-	loopHome();
+	loopHome(time);
 }
 void Robot::goForward(float distance)
 {
@@ -164,3 +178,32 @@ void Robot::turnRight(float distance)
 	body.setMoveParam(0, 0, turnSpeed, abs((distance*PI / 180) / turnSpeed*parameters.freq));
 	loopMove();
 }
+
+void Robot::setRotation(float xTilt, float yTilt, float zTilt)
+{
+	body.tr[3] = saturate(zTilt, -0.15, 0.15);
+	body.tr[4] = saturate(xTilt, -0.15, 0.15);
+	body.tr[5] = saturate(yTilt, -0.15, 0.15);
+}
+
+void Robot::setTranslation(float xRotation, float yRotation, float zRotation)
+{
+	body.tr[0] = saturate(zRotation, 1, 7);
+	body.tr[1] = saturate(xRotation, -2, 2);
+	body.tr[2] = saturate(yRotation, -2, 2);
+}
+
+void Robot::danceHip(float angle, float translation, float time)
+{
+	body.tr[3] = angle;
+	body.tr[1] = translation;
+	goHome(time * 2 / 3);
+}
+
+void Robot::resetPose()
+{
+	setRotation(0, 0, 0);
+	setTranslation(0, 0, body.baseHeight);
+}
+
+

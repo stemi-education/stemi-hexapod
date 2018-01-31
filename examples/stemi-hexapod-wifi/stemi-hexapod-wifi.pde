@@ -36,6 +36,8 @@ For additional information please check http://www.stemi.education.
 #include "Robot.h"
 #include <NeoPixelBus.h>
 
+#include "touchDriver.h"
+
 void setup()
 {
 	Serial.begin(115200);
@@ -44,20 +46,95 @@ void setup()
 void loop()
 {
 	Serial.println("Krenuo!");
+
+	Touch touch(50, 40, 5);
+
 	Robot robot; // initalise the robot
 	
 	robot.wakeUp(); //wake up the robot
 
+	int robotMode = 0; //0=walk, 1=dance
+	int nModes = 4; //number of different modes
+	int moveSpeed = 0; //moving speed
 	while(1) //repeat following commands forever
 	{
+		touch.checkTouch();
+		if (touch.isTouchDetected())
+		{
+			int touchState = touch.getTouchPattern(true);
+			if (touchState == 2)
+				robotMode = (robotMode + 1) % nModes;
+			if (robotMode == 0)
+			{
+				if (touchState == 1)
+					robot.body.tr[2] = robot.body.saturate((robot.body.tr[2] - 3), -3, 3);
+				if (touchState == 4)
+					robot.body.tr[2] = robot.body.saturate((robot.body.tr[2] + 3), -3, 3);
+			}
+			if (robotMode == 2)
+			{
+				robot.body.tr[2] = 0;
+				robot.ctrl.gaitID = 3;
+				robot.body.setGaitUpDown(robot.body.gait.selectSequence(robot.ctrl.gaitID));
+				if (touchState == 1)
+					moveSpeed = robot.body.saturate(moveSpeed - 5, -5, 5);
+				if (touchState == 4)
+					moveSpeed = robot.body.saturate(moveSpeed + 5, -5, 5);
+			}
+		}
+		//Serial.print("mode: ");
+		//Serial.println(robotMode);
 		robot.hardware.wifiRead(); // read package from serial port if available (wifi)
-		robot.body.setCommand(); // set command from the package
-		//robot.body.setMoveParam(5, PI / 2, 0.3, 100);
-		robot.go(); //run the algorithm		
-		robot.hardware.setAllLEDsRainbow(50);
-		//Serial.println("banana");
-		//robot.hardware.batteryStatus();
-		//Serial.println(robot.hardware.batteryStatus());
+		
+		if (robotMode == 0)
+		{
+			//walk
+			robot.body.setCommand(); // set command from the package
+			//robot.body.setMoveParam(5, PI / 2, 0.3, 100);
+			robot.go(); //run the algorithm		
+			robot.hardware.setAllLEDsRainbow(100);
+			//Serial.println("banana");
+			//robot.hardware.batteryStatus();
+			//Serial.println(robot.hardware.batteryStatus());
+		}
+		else if (robotMode == 1)
+		{
+			//dance
+			robot.hardware.setAllLEDs(100,RgbColor(0, 0, 255));
+			float pitch;
+			float hipRotation = 0.15, hipTranslation = 0, rithm = 1;
+			
+			
+			for (int i = 0; i < random(4, 8); i++)
+			{
+				pitch = random(-5, 5);
+				pitch /= (float)10;
+				//second
+				robot.setRotation(pitch, 0, 0);
+				robot.danceHip(hipRotation, hipTranslation, 0.5);
+				robot.danceHip(-hipRotation, hipTranslation, 0.5);
+				robot.danceHip(hipRotation, hipTranslation, 0.5);
+				robot.danceHip(-hipRotation, hipTranslation, 0.5);
+			}
+			robot.resetPose();
+		}
+		else if (robotMode == 2)
+		{
+			robot.hardware.setAllLEDs(100, RgbColor(0, 255, 0));
+			//walk offline
+			robot.body.setMoveParam(moveSpeed, PI / 2, 0, 100);
+
+			//robot.body.setCommand(); // set command from the package
+			//robot.body.setMoveParam(5, PI / 2, 0.3, 100);
+			Serial.println(robot.ctrl.gaitID);
+			robot.go(); //run the algorithm		
+			//robot.hardware.setAllLEDsRainbow(100);
+		}
+		else if (robotMode == 3)
+		{
+			//move
+			robot.hardware.setAllLEDs(100, RgbColor(255, 0, 0));
+		}
 
 	}
 }

@@ -300,8 +300,8 @@ void Body::run() {
 			{
 				setMoveParam(0, PI / 2, 0, ctrl->nMoveMax); //if nMove == 0 go to home ... no command present
 				tr[0] = baseHeight;
-				tr[1] = 0;
-				tr[2] = 0;
+				//tr[1] = 0;
+				//tr[2] = 0;
 				tr[3] = 0;
 				tr[4] = 0;
 				tr[5] = 0;
@@ -388,7 +388,7 @@ void Body::setCommand() {
 	Serial.print(" ");
 	Serial.print(ctrl_ax2u[1]);
 	Serial.print(" Hight: ");
-	Serial.print(" ");
+	Serial.print(" ");nMove
 	Serial.print(ctrl_stepHight);
 	Serial.print("  ");
 	Serial.print(ctrl_roboHightu);
@@ -433,8 +433,8 @@ void Body::setCommand() {
 		}
 		else
 		{
-			tr[1] = 0;
-			tr[2] = 0;
+			//tr[1] = 0;
+			//tr[2] = 0;
 			tr[3] = 0;
 			tr[4] = 0;
 			tr[5] = 0;
@@ -460,3 +460,5 @@ void Body::setLinMode(bool linModeNew)
 {
 	ctrl->linMode = linModeNew;
 }
+
+

@@ -94,7 +94,7 @@ public:
 
 	//limb angles:
 	float qAll[18];
-private:
+//private:
 
 	// parameters
 	double tr[6]; //temporary saves the commands for further procesing. Exists because of timing problems.

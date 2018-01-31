@@ -48,7 +48,6 @@ Hardware::Hardware(Ctrl &ctrlNew) : server(80), strip(LED_COUNT, LED_PIN)
 	servoInit();
 	LEDinit();
 	loadCalibrationData();
-
 }
 
 void Hardware::servoPower(bool power)
