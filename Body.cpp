@@ -302,9 +302,9 @@ void Body::run() {
 				tr[0] = baseHeight;
 				//tr[1] = 0;
 				//tr[2] = 0;
-				tr[3] = 0;
-				tr[4] = 0;
-				tr[5] = 0;
+				//tr[3] = 0;
+				//tr[4] = 0;
+				//tr[5] = 0;
 			}
 
 			setWs(0.85);
@@ -433,7 +433,7 @@ void Body::setCommand() {
 		}
 		else
 		{
-			//tr[1] = 0;
+			tr[1] = 0;
 			//tr[2] = 0;
 			tr[3] = 0;
 			tr[4] = 0;

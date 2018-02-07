@@ -56,13 +56,14 @@ void loop()
 	int robotMode = 0; //0=walk, 1=dance
 	int nModes = 4; //number of different modes
 	int moveSpeed = 0; //moving speed
+	int hipMode = 0; //blue mode moving parameter
 	while(1) //repeat following commands forever
 	{
 		touch.checkTouch();
 		if (touch.isTouchDetected())
 		{
 			int touchState = touch.getTouchPattern(true);
-			if (touchState == 2)
+			if (touchState == 2) //increase robotMode state
 				robotMode = (robotMode + 1) % nModes;
 			if (robotMode == 0)
 			{
@@ -71,6 +72,14 @@ void loop()
 				if (touchState == 4)
 					robot.body.tr[2] = robot.body.saturate((robot.body.tr[2] + 3), -3, 3);
 			}
+			if (robotMode == 1 || robotMode == 3)
+			{
+				if (touchState == 1)
+					hipMode = -1;
+				if (touchState == 4)
+					hipMode = 1;
+			}
+
 			if (robotMode == 2)
 			{
 				robot.body.tr[2] = 0;
@@ -80,7 +89,7 @@ void loop()
 					moveSpeed = robot.body.saturate(moveSpeed - 5, -5, 5);
 				if (touchState == 4)
 					moveSpeed = robot.body.saturate(moveSpeed + 5, -5, 5);
-			}
+			} 
 		}
 		//Serial.print("mode: ");
 		//Serial.println(robotMode);
@@ -100,23 +109,42 @@ void loop()
 		else if (robotMode == 1)
 		{
 			//dance
-			robot.hardware.setAllLEDs(100,RgbColor(0, 0, 255));
+
 			float pitch;
 			float hipRotation = 0.15, hipTranslation = 0, rithm = 1;
-			
-			
-			for (int i = 0; i < random(4, 8); i++)
+
+			robot.hardware.setAllLEDs(100,RgbColor(0, 0, 255));
+			if (hipMode == -1)
 			{
-				pitch = random(-5, 5);
-				pitch /= (float)10;
-				//second
-				robot.setRotation(pitch, 0, 0);
-				robot.danceHip(hipRotation, hipTranslation, 0.5);
-				robot.danceHip(-hipRotation, hipTranslation, 0.5);
-				robot.danceHip(hipRotation, hipTranslation, 0.5);
-				robot.danceHip(-hipRotation, hipTranslation, 0.5);
+				int randomNumber = random(4, 8);
+				for (int i = 0; i < randomNumber; i++)
+				{
+					pitch = random(-5, 5);
+					pitch /= (float)10;
+					Serial.println(pitch);
+					Serial.print(" ran: ");
+					Serial.println(randomNumber);
+					//second
+					robot.setRotation(pitch, 0, 0);
+					robot.danceHip(hipRotation, hipTranslation, 0.5);
+					robot.danceHip(-hipRotation, hipTranslation, 0.5);
+					robot.danceHip(hipRotation, hipTranslation, 0.5);
+					robot.danceHip(-hipRotation, hipTranslation, 0.5);
+				}
+				robot.resetPose();
+				robot.goHome(3);
+				hipMode = 0;
 			}
-			robot.resetPose();
+			else if (hipMode == 1)
+			{
+				robot.goForward(5);
+				robot.goHome(3);
+				hipMode = 0;
+			}
+			else 
+			{
+				robot.goHome();
+			}
 		}
 		else if (robotMode == 2)
 		{
@@ -134,6 +162,25 @@ void loop()
 		{
 			//move
 			robot.hardware.setAllLEDs(100, RgbColor(255, 0, 0));
+
+			if (hipMode == -1)
+			{
+				robot.goBackwards(5);
+				robot.goHome();
+				hipMode = 0;
+			}
+			else if (hipMode == 1)
+			{
+				robot.goForward(5);
+				robot.goHome();
+				hipMode = 0;
+			}
+			else
+			{
+				robot.resetPose();
+				robot.goHome();
+			}
+
 		}
 
 	}

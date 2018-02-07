@@ -120,11 +120,7 @@ void Robot::loopMove() {
 		//Serial.println("after");
 	}
 }
-void Robot::loopHome(float timeWaiting = 0) {
-	Serial.println(timeWaiting);
-	Serial.print(" tr: ");
-	Serial.print(body.tr[1]);
-	Serial.println(" ");
+void Robot::loopHome(float timeWaiting) {
 	long startTime2 = millis();
 
 	while (!body.checkHomeMark() || (millis() - startTime2 < timeWaiting * 1000))
@@ -133,7 +129,7 @@ void Robot::loopHome(float timeWaiting = 0) {
 		go();
 	}
 }
-void Robot::goHome(float time = 0)
+void Robot::goHome(float time)
 {
 	loopHome(time);
 }
@@ -198,6 +194,9 @@ void Robot::danceHip(float angle, float translation, float time)
 	body.tr[3] = angle;
 	body.tr[1] = translation;
 	goHome(time * 2 / 3);
+	Serial.print(" time: ");
+	Serial.println(time * 2 / 3);
+	
 }
 
 void Robot::resetPose()

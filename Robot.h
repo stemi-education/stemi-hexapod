@@ -61,8 +61,8 @@ public:
 	* the robot will do some action like walk the given distance.
 	*/
 	void loopMove();
-	void loopHome(float timeWaiting);
-	void goHome(float time);
+	void loopHome(float timeWaiting = 0);
+	void goHome(float time = 0);
 
 	void goForward(float distance);
 	void goBackwards(float distance);
