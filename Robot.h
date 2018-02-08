@@ -42,6 +42,7 @@ For additional information please check http://www.stemi.education.
 #include "Hardware.h"
 #include "Body.h"
 #include "Data.h"
+#include "RobotModes.h"
 
 class Robot
 {

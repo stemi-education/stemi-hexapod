@@ -128,6 +128,7 @@ void Robot::loopHome(float timeWaiting) {
 		ctrl.nMove = 0;
 		go();
 	}
+	go();
 }
 void Robot::goHome(float time)
 {
