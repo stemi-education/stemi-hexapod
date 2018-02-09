@@ -50,9 +50,12 @@ void setup()
 
 	robot.wakeUp(); //wake up the robot
 
-	int robotMode = WALKING_MODE;
+	int robotMode = WALKING_MODE; //start with basic wlking mode that listens to wifi
 	int moveSpeed = 0; //moving speed
 	int hipMode = 0; //blue mode moving parameter
+
+	int calibrationLegSelected = 0, calibrationServoLayerSelected = 0, calibrationValue = 125;
+	bool nudgeServos = 0;
 	while (1) //repeat following commands forever
 	{
 		////check all inputs and change state and variables accordingly////
@@ -61,14 +64,48 @@ void setup()
 		touch.checkTouch();
 		if (touch.isTouchDetected())
 		{
-			int touchState = touch.getTouchPattern(true);
-			if (touchState == 2) //increase robotMode state
-				robotMode = (robotMode + 1) % NUMBER_OF_MODES;
-			
-			
+			int touchState = touch.getTouchPattern(true);			
+
+			//make changes based on input and current robotMode
 			switch (robotMode)
 			{
+			case PRE_CALIBRATION_MODE:
+				switch (touchState)
+				{
+				case 5:
+					robotMode = CALIBRATION_MODE;
+					calibrationLegSelected = 0;
+					calibrationServoLayerSelected = 0;
+					break;
+				default:
+					robotMode = WALKING_MODE;
+					break;
+				}
+				break;
 			case CALIBRATION_MODE:
+				switch (touchState)
+				{
+					//changing calibration value
+				case 1:
+					calibrationValue = robot.body.saturate((calibrationValue - 25), 0, 250);
+					break;
+				case 4:
+					calibrationValue = robot.body.saturate((calibrationValue + 25), 0, 250);
+					break;
+					//changing selected servo
+				case 3:
+					calibrationServoLayerSelected = (calibrationServoLayerSelected + 1) % 3;
+					nudgeServos = 1;
+					break;
+				case 2:
+					calibrationLegSelected = (calibrationLegSelected + 1) % 6;
+					break;
+					//state change
+				case 5:
+					robotMode = WALKING_MODE;
+					robot.body.setLinMode(0);
+					break;
+				}
 				break;
 			case WALKING_MODE:
 				switch (touchState)
@@ -79,6 +116,13 @@ void setup()
 				case 4:
 					robot.body.tr[2] = robot.body.saturate((robot.body.tr[2] + 3), -3, 3);
 					break;
+					//state change
+				case 2:
+					robotMode = (robotMode + 1) % NUMBER_OF_MODES;
+					break;
+				case 5:
+					robotMode = PRE_CALIBRATION_MODE;
+					break;
 				}
 				break;
 			case OFFLINE_MODE:
@@ -88,12 +132,17 @@ void setup()
 				switch (touchState)
 				{
 				case 1:
-					//moveSpeed = robot.body.saturate(moveSpeed - 5, -5, 5);
 					hipMode = -1;
 					break;
 				case 4:
-					//moveSpeed = robot.body.saturate(moveSpeed + 5, -5, 5);
 					hipMode = 1;
+					break;
+					//state change
+				case 2:
+					robotMode = (robotMode + 1) % NUMBER_OF_MODES;
+					break;
+				case 5:
+					robotMode = PRE_CALIBRATION_MODE;
 					break;
 				}
 				break;
@@ -106,12 +155,32 @@ void setup()
 				case 4:
 					hipMode = 1;
 					break;
+				//state change
+				case 2:
+					robotMode = (robotMode + 1) % NUMBER_OF_MODES;
+					break;
+				case 5:
+					robotMode = PRE_CALIBRATION_MODE;
+					break;
+				}
+				break;
+			case RANDOM_MODE:
+				switch (touchState)
+				{
+				//state change
+				case 2:
+					robotMode = (robotMode + 1) % NUMBER_OF_MODES;
+					break;
+				case 5:
+					robotMode = PRE_CALIBRATION_MODE;
+					break;
 				}
 				break;
 			}
+			Serial.print("mode: ");
+			Serial.println(robotMode);
 		}
-		//Serial.print("mode: ");
-		//Serial.println(robotMode);
+
 
 		//wifi input
 		robot.hardware.wifiRead(); // read package from serial port if available (wifi)
@@ -120,9 +189,47 @@ void setup()
 
 		switch (robotMode)
 		{
+		case PRE_CALIBRATION_MODE:
+			robot.hardware.setAllLEDs(50, RgbColor(255, 0, 0));
+			break;
 		case CALIBRATION_MODE:
 		{
-			robot.hardware.setAllLEDs(100, RgbColor(255, 0, 0));
+			robot.hardware.strip.SetBrightness(255);
+			for (int i = 0; i < 6; i++)
+			{
+				if (i == calibrationLegSelected)
+				{
+					int LEDbrightness = calibrationServoLayerSelected * 115 + 25;
+					robot.hardware.strip.SetPixelColor(i, RgbColor(LEDbrightness, LEDbrightness, LEDbrightness));
+				}
+				else
+					robot.hardware.strip.SetPixelColor(i, RgbColor(calibrationValue, 0, 0));
+			}
+			delay(1);
+			robot.hardware.strip.Show();
+
+			robot.body.setLinMode(1);
+			if (nudgeServos)
+			{
+				for (int i = 0; i < 18; i++)
+				{
+					if (i % 3 == calibrationServoLayerSelected) robot.body.qAll[i] += 0.2;
+					Serial.printf("%f ",robot.body.qAll[i]);
+				}
+				Serial.println();
+				robot.hardware.servoWrite(robot.body.qAll);
+				delay(300);
+				for (int i = 0; i < 18; i++)
+				{
+					if (i % 3 == calibrationServoLayerSelected) robot.body.qAll[i] -= 0.2;
+				}
+				robot.hardware.servoWrite(robot.body.qAll);
+				delay(300);
+				nudgeServos = 0;
+			}
+			else
+				robot.go();
+
 			break;
 		}
 		case WALKING_MODE:

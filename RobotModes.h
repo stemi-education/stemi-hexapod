@@ -44,7 +44,8 @@ For additional information please check http://www.stemi.education.
 #endif
 
 #define NUMBER_OF_MODES 4
-#define CALIBRATION_MODE -1
+#define PRE_CALIBRATION_MODE -1
+#define CALIBRATION_MODE -2
 #define WALKING_MODE 0
 #define OFFLINE_MODE 1
 #define DANCING_MODE 2
