@@ -41,6 +41,7 @@ For additional information please check http://www.stemi.education.
 #include "ServoController.h"
 #include <NeoPixelBrightnessBus.h>
 #include "Data.h"
+#include "touchDriver.h"
 
 #include "WiFi.h"
 
@@ -58,6 +59,11 @@ class Hardware
 {
 public:
 	Hardware(Ctrl & ctrlNew);
+
+	Touch touch; // initialize touch sensors
+
+
+
 
 	//Servo power
 	void servoPower(bool power); //turn the servos on = 1 or off =0

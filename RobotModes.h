@@ -51,6 +51,4 @@ For additional information please check http://www.stemi.education.
 #define DANCING_MODE 2
 #define RANDOM_MODE 3
 
-
-
 #endif

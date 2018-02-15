@@ -41,7 +41,7 @@ float mapf(float x, float in_min, float in_max, float out_min, float out_max) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-Hardware::Hardware(Ctrl &ctrlNew) : server(80), strip(LED_COUNT, LED_PIN)
+Hardware::Hardware(Ctrl &ctrlNew) : server(80), strip(LED_COUNT, LED_PIN), touch(50, 40, 5)
 {
 	ctrl = &ctrlNew;
 	storageInit();
