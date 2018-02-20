@@ -85,7 +85,7 @@ float Hardware::batteryStatus()
 	return(-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
 }
 
-void Hardware::setCalibration(float linData[18])
+void Hardware::setCalibration(int8_t linData[18])
 {
 	for (int i = 0; i < 18; i++)
 	{
@@ -327,7 +327,7 @@ void Hardware::LINread()
 	if (bytes[18] == 1)
 	{
 		//store permanently calib data
-		storeCalibrationData(bytes);
+		//storeCalibrationData(bytes);
 	}
 	float linData[18] = { 100 - bytes[0], bytes[1],  100 - bytes[2],  100 - bytes[3],  bytes[4],  100 - bytes[5],  100 - bytes[6],  bytes[7],  100 - bytes[8],
 		bytes[9], 100 - bytes[10], bytes[11], bytes[12], 100 - bytes[13], bytes[14], bytes[15], 100 - bytes[16], bytes[17] };
@@ -343,7 +343,7 @@ void Hardware::LINread()
 	//Serial.println("Spremio 18 brojeva lin");
 	
 	//Serial.println(linData[0]);
-	setCalibration(linData);
+	//setCalibration(linData);
 }
 
 void Hardware::GETread()
@@ -401,7 +401,7 @@ void Hardware::storageInit()
 	preferences.begin("my-app", false);
 }
 
-void Hardware::storeCalibrationData(uint8_t linData[18])
+void Hardware::storeCalibrationData(int8_t linData[18])
 {
 	Serial.println("writing byte data: ");
 	for (int i = 0; i < 18; i++)
@@ -432,7 +432,7 @@ void Hardware::loadCalibrationData()
 		Serial.println("Loading default numbers");
 		for (int i = 0; i < 18; i++)
 		{
-			calibrationOffsetBytes[i] = 50;
+			calibrationOffsetBytes[i] = 0;
 			Serial.print(calibrationOffsetBytes[i]);
 			Serial.print(" ");
 		}
@@ -445,18 +445,10 @@ void Hardware::loadCalibrationData()
 	}
 	Serial.println("float array loaded: ");
 
-	//inverting intervals of some servos - adjusting rotational direction of every servo
-	float AdjustedCalibrationOffsetBytes[18] = { 100 - calibrationOffsetBytes[0], calibrationOffsetBytes[1],  100 - calibrationOffsetBytes[2],
-											100 - calibrationOffsetBytes[3],  calibrationOffsetBytes[4],  100 - calibrationOffsetBytes[5],  
-											100 - calibrationOffsetBytes[6],  calibrationOffsetBytes[7],  100 - calibrationOffsetBytes[8],
-											calibrationOffsetBytes[9], 100 - calibrationOffsetBytes[10], calibrationOffsetBytes[11], 
-											calibrationOffsetBytes[12], 100 - calibrationOffsetBytes[13], calibrationOffsetBytes[14], 
-											calibrationOffsetBytes[15], 100 - calibrationOffsetBytes[16], calibrationOffsetBytes[17] };
-
-	//converting form bytes [0-100] to radians
+	//converting form bytes [from -100 to 100] to radians
 	for (int i = 0; i < 18; i++)
 	{
-		calibrationOffsets[i] = -(AdjustedCalibrationOffsetBytes[i] - 50.) / 50 * 20 * PI / 180;
+		calibrationOffsets[i] = ((int8_t)calibrationOffsetBytes[i]) / 100.0 * 0.2;
 		Serial.print(calibrationOffsets[i]);
 		Serial.print(" ");
 	}

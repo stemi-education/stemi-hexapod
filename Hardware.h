@@ -88,7 +88,7 @@ public:
 
 	float batteryStatus();
 
-	void setCalibration(float linData[18]);
+	void setCalibration(int8_t linData[18]);
 
 	void wifiInit();
 	void wifiRead();
@@ -103,7 +103,7 @@ public:
 
 	void storageInit();
 
-	void storeCalibrationData(uint8_t linData[18]);
+	void storeCalibrationData(int8_t linData[18]);
 
 	void loadCalibrationData();
 
@@ -132,11 +132,11 @@ public:
 																		0, 0, 0, 
 																		0, 0, 0, 
 																		0, 0, 0 };
-	uint8_t calibrationOffsetBytes[18]{ 50, 50, 50,
-																			50, 50, 50,
-																			50, 50, 50,
-																			50, 50, 50,
-																			50, 50, 50,
-																			50, 50, 50 };
+	int8_t calibrationOffsetBytes[18]{	0, 0, 0,
+																			0, 0, 0,
+																			0, 0, 0,
+																			0, 0, 0,
+																			0, 0, 0,
+																			0, 0, 0 };
 };
 #endif

@@ -222,8 +222,8 @@ void Robot::checkTouch()
 			{
 			case 5:
 				robotMode = CALIBRATION_MODE;
-				calibrationLegSelected = 0;
-				calibrationServoLayerSelected = 0;
+				//calibrationLegSelected = 0; 
+				//calibrationServoLayerSelected = 0;
 				break;
 			default:
 				robotMode = WALKING_MODE;
@@ -235,10 +235,26 @@ void Robot::checkTouch()
 			{
 				//changing calibration value
 			case 1:
-				calibrationValue = body.saturate((calibrationValue - 25), 0, 250);
+				hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] =
+					body.saturate((hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] - 10), -100, 100);
+				for (int i = 0; i < 18; i++)
+				{
+					Serial.print(hardware.calibrationOffsetBytes[i]);
+					Serial.print(" ");
+				}
+				Serial.println();
+				Serial.println((hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] + 100.0) / 200 * 255);
 				break;
 			case 4:
-				calibrationValue = body.saturate((calibrationValue + 25), 0, 250);
+				hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] =
+					body.saturate((hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] + 10), -100, 100);
+				for (int i = 0; i < 18; i++)
+				{
+					Serial.print(hardware.calibrationOffsetBytes[i]);
+					Serial.print(" ");
+				}
+				Serial.println();
+				Serial.println((hardware.calibrationOffsetBytes[calibrationLegSelected*3+ calibrationServoLayerSelected] + 100.0) / 200 * 255);
 				break;
 				//changing selected servo
 			case 3:
@@ -251,9 +267,24 @@ void Robot::checkTouch()
 				//state change
 			case 5:
 				robotMode = WALKING_MODE;
+				//pack and store calibrationd data
+				//int8_t linDataByte[18];
+				//for (int i = 0; i<18; i++)
+					//linDataByte[i] = hardware.calibrationOffsets[]
+				//hardware.storeCalibrationData(linDataByte);
+				hardware.storeCalibrationData(hardware.calibrationOffsetBytes);
 				body.setLinMode(0);
 				break;
+			//reset values
+			case 7:
+				for (int i = 0; i < 18; i++)
+					hardware.calibrationOffsetBytes[i] = 0;
+				hardware.storeCalibrationData(hardware.calibrationOffsetBytes);
+				break;
 			}
+			//store in radians also - for walking algorithm
+			for (int i = 0; i < 18; i++)
+				hardware.calibrationOffsets[i] = hardware.calibrationOffsetBytes[i] / 100.0 * 0.2;
 			break;
 		case WALKING_MODE:
 			switch (touchState)
@@ -340,35 +371,36 @@ void Robot::modeGo()
 	case CALIBRATION_MODE:
 	{
 		hardware.strip.SetBrightness(255);
+		int selectedLED;
+		//mapping from selected leg to LED number
+		uint8_t calibrationLegSelectedmapLED[6] = { 3, 4, 5, 2, 1, 0 };
+			
 		for (int i = 0; i < 6; i++)
 		{
-			if (i == calibrationLegSelected)
+			if (i == calibrationLegSelectedmapLED[calibrationLegSelected])
 			{
 				int LEDbrightness = calibrationServoLayerSelected * 115 + 25;
 				hardware.strip.SetPixelColor(i, RgbColor(LEDbrightness, LEDbrightness, LEDbrightness));
 			}
 			else
-				hardware.strip.SetPixelColor(i, RgbColor(calibrationValue, 0, 0));
+				hardware.strip.SetPixelColor(i, RgbColor((hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] + 100)/200.0*255, 0, 0));
 		}
 		delay(1);
 		hardware.strip.Show();
 
+		//dunge servos
 		body.setLinMode(1);
 		if (nudgeServos)
 		{
-			for (int i = 16; i < 18; i++)
+			for (int i = 0; i < 18; i++)
 			{
-				//if (i % 3 == calibrationServoLayerSelected) 
-					body.qAll[i] += 0.2;
-				Serial.printf("%f ", body.qAll[i]);
+				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += 0.2;
 			}
-			Serial.println();
 			hardware.servoWrite(body.qAll);
 			delay(300);
-			for (int i = 16; i < 18; i++)
+			for (int i = 0; i < 18; i++)
 			{
-				//if (i % 3 == calibrationServoLayerSelected) 
-					body.qAll[i] -= 0.2;
+				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] -= 0.2;
 			}
 			hardware.servoWrite(body.qAll);
 			delay(300);
