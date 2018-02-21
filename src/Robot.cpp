@@ -379,11 +379,21 @@ void Robot::modeGo()
 		{
 			if (i == calibrationLegSelectedmapLED[calibrationLegSelected])
 			{
-				int LEDbrightness = calibrationServoLayerSelected * 115 + 25;
-				hardware.strip.SetPixelColor(i, RgbColor(LEDbrightness, LEDbrightness, LEDbrightness));
+				switch (calibrationServoLayerSelected % 3)
+				{
+				case 0:
+					hardware.strip.SetPixelColor(i, hardware.red);
+					break;
+				case 1:
+					hardware.strip.SetPixelColor(i, hardware.blue);
+					break;
+				case 2:
+					hardware.strip.SetPixelColor(i, hardware.yellow);
+					break;
+				}
 			}
 			else
-				hardware.strip.SetPixelColor(i, RgbColor((hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] + 100)/200.0*255, 0, 0));
+				hardware.strip.SetPixelColor(i, RgbColor(	20, 20, 20));
 		}
 		delay(1);
 		hardware.strip.Show();
@@ -392,18 +402,26 @@ void Robot::modeGo()
 		body.setLinMode(1);
 		if (nudgeServos)
 		{
+			Serial.println(calibrationServoLayerSelected);
+			float nudgeAmmount = 0.15; //radians
 			for (int i = 0; i < 18; i++)
 			{
-				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += 0.2;
+				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += nudgeAmmount;
 			}
 			hardware.servoWrite(body.qAll);
-			delay(300);
+			delay(500);
 			for (int i = 0; i < 18; i++)
 			{
-				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] -= 0.2;
+				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] -= nudgeAmmount*2;
 			}
 			hardware.servoWrite(body.qAll);
-			delay(300);
+			delay(500);
+			for (int i = 0; i < 18; i++)
+			{
+				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += nudgeAmmount;
+			}
+			hardware.servoWrite(body.qAll);
+			delay(500);
 			nudgeServos = 0;
 		}
 		else

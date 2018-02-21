@@ -39,7 +39,6 @@ For additional information please check http://www.stemi.education.
 
 #include "Gait.h"
 #include "Leg.h"
-#include "Hardware.h"
 #include "Data.h"
 
 class Body {

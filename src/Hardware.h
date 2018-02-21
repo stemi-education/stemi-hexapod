@@ -77,10 +77,12 @@ public:
 	//RGB LEDs
     NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
     //Colors
-    RgbColor red = RgbColor(128, 0, 0);
-    RgbColor green = RgbColor(0, 128, 0);
-    RgbColor blue = RgbColor(0, 0, 128);
-    RgbColor white = RgbColor(128);
+    RgbColor red = RgbColor(255, 0, 0);
+    RgbColor green = RgbColor(0, 255, 0);
+    RgbColor blue = RgbColor(0, 0, 255);
+		RgbColor yellow = RgbColor(255, 242, 0);
+		RgbColor purple = RgbColor(255, 0, 255);
+    RgbColor white = RgbColor(255);
     RgbColor black = RgbColor(0);
 
 		int colorCounter = 0;
