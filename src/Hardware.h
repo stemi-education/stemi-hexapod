@@ -94,25 +94,18 @@ public:
 
 	void wifiInit();
 	void wifiRead();
-
 	void PKTread();
-	
 	void LINread();
-
 	void GETread();
 
 	
 
 	void storageInit();
-
 	void storeCalibrationData(int8_t linData[18]);
-
 	void loadCalibrationData();
 
 	void LEDinit();
-
 	void setAllLEDs(int bright, RgbColor color);
-
 	void setAllLEDsRainbow(int bright);
 
 	RgbColor ledPhaseColor(float phase);

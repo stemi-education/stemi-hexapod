@@ -262,7 +262,9 @@ void Robot::checkTouch()
 				nudgeServos = 1;
 				break;
 			case 2:
-				calibrationLegSelected = (calibrationLegSelected + 1) % 6;
+				calibrationLegSelectedCounter = (calibrationLegSelectedCounter + 1) % 6;
+				calibrationLegSelected = calibrationLegSelectedMap[calibrationLegSelectedCounter];
+				Serial.println(calibrationLegSelected);
 				break;
 				//state change
 			case 5:
@@ -373,11 +375,10 @@ void Robot::modeGo()
 		hardware.strip.SetBrightness(255);
 		int selectedLED;
 		//mapping from selected leg to LED number
-		uint8_t calibrationLegSelectedmapLED[6] = { 3, 4, 5, 2, 1, 0 };
 			
 		for (int i = 0; i < 6; i++)
 		{
-			if (i == calibrationLegSelectedmapLED[calibrationLegSelected])
+			if (i == calibrationLegSelectedMapLED[calibrationLegSelected])
 			{
 				switch (calibrationServoLayerSelected % 3)
 				{
@@ -385,43 +386,53 @@ void Robot::modeGo()
 					hardware.strip.SetPixelColor(i, hardware.red);
 					break;
 				case 1:
-					hardware.strip.SetPixelColor(i, hardware.blue);
+					hardware.strip.SetPixelColor(i, hardware.green);
 					break;
 				case 2:
-					hardware.strip.SetPixelColor(i, hardware.yellow);
+					hardware.strip.SetPixelColor(i, hardware.blue);
 					break;
 				}
 			}
 			else
-				hardware.strip.SetPixelColor(i, RgbColor(	20, 20, 20));
+				hardware.strip.SetPixelColor(i, 0);
 		}
 		delay(1);
 		hardware.strip.Show();
 
-		//dunge servos
+		//nudge servos
 		body.setLinMode(1);
 		if (nudgeServos)
 		{
+			int delayTime = 7;
 			Serial.println(calibrationServoLayerSelected);
-			float nudgeAmmount = 0.15; //radians
-			for (int i = 0; i < 18; i++)
+			float nudgeAmmount = 0.08; //radians
+			for (int j = 0; j < 20; j++)
 			{
-				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += nudgeAmmount;
+				for (int i = 0; i < 18; i++)
+				{
+					if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += nudgeAmmount/delayTime;
+				}
+				hardware.servoWrite(body.qAll);
+				delay(delayTime);
 			}
-			hardware.servoWrite(body.qAll);
-			delay(500);
-			for (int i = 0; i < 18; i++)
+			for (int j = 0; j < 40; j++)
 			{
-				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] -= nudgeAmmount*2;
+				for (int i = 0; i < 18; i++)
+				{
+					if (i % 3 == calibrationServoLayerSelected) body.qAll[i] -= nudgeAmmount / delayTime;
+				}
+				hardware.servoWrite(body.qAll);
+				delay(delayTime);
 			}
-			hardware.servoWrite(body.qAll);
-			delay(500);
-			for (int i = 0; i < 18; i++)
+			for (int j = 0; j < 20; j++)
 			{
-				if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += nudgeAmmount;
+				for (int i = 0; i < 18; i++)
+				{
+					if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += nudgeAmmount / delayTime;
+				}
+				hardware.servoWrite(body.qAll);
+				delay(delayTime);
 			}
-			hardware.servoWrite(body.qAll);
-			delay(500);
 			nudgeServos = 0;
 		}
 		else

@@ -89,12 +89,16 @@ public:
 	float turnSpeed = 0.4;
 
 	//calibrationMode variables
-	int calibrationLegSelected = 0, calibrationServoLayerSelected = 0;// , calibrationValue = 0;
+	int calibrationLegSelected = 0, calibrationLegSelectedCounter = 0, calibrationServoLayerSelected = 0;// , calibrationValue = 0;
 	bool nudgeServos = 0;
+	uint8_t calibrationLegSelectedMap[6] = { 0, 1, 2, 5, 4, 3 };
+	uint8_t calibrationLegSelectedMapLED[6] = { 3, 4, 5, 2, 1, 0 };
 
 	int robotMode = WALKING_MODE; //start with basic wlking mode that listens to wifi
 	int moveSpeed = 0; //moving speed
 	int hipMode = 0; //blue mode moving parameter
+
+
 };
 
 #endif
