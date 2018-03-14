@@ -104,11 +104,18 @@ public:
 	void storeCalibrationData(int8_t linData[18]);
 	void loadCalibrationData();
 
+	hw_timer_t * timer = NULL;
+
+
 	void LEDinit();
 	void setAllLEDs(int bright, RgbColor color);
 	void setAllLEDsRainbow(int bright);
 
 	RgbColor ledPhaseColor(float phase);
+
+	void IRAM_ATTR onTimer();
+	void blinkLED(uint8_t LEDno, uint8_t blinkTimes, uint8_t blinkSpeed, uint16_t blinkPause);
+	void stopBlinkLED();
 
 	Ctrl * ctrl;
 

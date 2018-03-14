@@ -43,6 +43,7 @@ For additional information please check http://www.stemi.education.
 #include "Body.h"
 #include "Data.h"
 #include "RobotModes.h"
+#include "Grip.h"
 
 class Robot
 {
@@ -54,6 +55,7 @@ public:
 	Ctrl ctrl;
 	Parameters parameters;
 	Body body;
+	Grip grip;
 
 	void measureTime();
 	void wait();

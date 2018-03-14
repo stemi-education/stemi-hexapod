@@ -79,6 +79,8 @@ public:
 	void setCommand();
 	void setLinMode(bool linModeNew);
 
+	void moveOneLegGlobal(uint8_t legNo, float pointNew[3]);
+
 	void resetCommands();
 
 	Leg legs[6] = { Leg() };

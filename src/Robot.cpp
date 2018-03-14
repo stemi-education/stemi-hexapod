@@ -42,7 +42,7 @@ float saturate(float value, float minimum, float maximum)
 	return _min(maximum, _max(minimum, value));
 }
 
-Robot::Robot() : body(ctrl, parameters), hardware(ctrl)
+Robot::Robot() : body(ctrl, parameters), hardware(ctrl), grip(ctrl, parameters)
 {
 	hardware.servoPower(0);
 	go();
@@ -85,6 +85,23 @@ void Robot::wakeUp()
 int Robot::go()
 {
 	body.run();
+	float gripPoint[3] = {0, 15, 3};
+	grip.setGripParam(gripPoint, 6, 0);
+
+	body.legs[1].setCustomWs(-1, 3, 0.5);
+	body.legs[4].setCustomWs(1, 3, 0.5);
+
+	grip.calcPoints();
+	Serial.print(grip.point1[0]);
+	Serial.print(" ");
+	Serial.print(grip.point1[1]);
+	Serial.print(" ");
+	Serial.print(grip.point1[2]);
+	Serial.println();
+	body.moveOneLegGlobal(0, grip.point1);
+	body.moveOneLegGlobal(3, grip.point0);
+	//TODO isprobaj globalno pomicanje jedne noge;
+	//i onda testiraj ono iz klase za racun tocaka
 	wait(); //wait until enough time has passed
 	hardware.servoWrite(body.qAll);
 	measureTime(); //start measuring time

@@ -307,7 +307,7 @@ void Body::run() {
 				//tr[5] = 0;
 			}
 
-			setWs(0.85);
+			//setWs(0.85);
 			trPT1(); //smooth the tr tranistion
 			setTr(trCurrent); //set the smoothed tr 
 
@@ -344,7 +344,7 @@ void Body::run() {
 		tr[4] = 0;
 		tr[5] = 0;
 
-		setWs(0.85);
+		//setWs(0.85);
 		trPT1(); //smooth the tr tranistion
 		setTr(trCurrent); //set the smoothed tr 
 
@@ -461,4 +461,9 @@ void Body::setLinMode(bool linModeNew)
 	ctrl->linMode = linModeNew;
 }
 
-
+void Body::moveOneLegGlobal(uint8_t legNo, float pointNew[3])
+{
+	double point[3] = {pointNew[0], pointNew[1], pointNew[2]};
+	legs[legNo].setC(point);
+	legs[legNo].IK();
+}

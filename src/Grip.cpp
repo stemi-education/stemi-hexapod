@@ -33,30 +33,37 @@ For additional information please check http://www.stemi.education.
 
 */
 
-#include "Robot.h"
 
-void setup()
+#include "Grip.h"
+
+Grip::Grip(Ctrl & ctrlNew, Parameters & parametersNew)
 {
-	Serial.begin(115200);
-	Serial.println("Krenuo!");
-	Robot robot; // initalise the robot
-	robot.wakeUp(); //wake up the robot
-
-	//robot.hardware.blinkLED(3, 3, 50, 100);
-
-	while (1) //repeat following commands forever
-	{
-		////check all inputs and change state and variables accordingly////
-		robot.checkTouch();
-		//wifi input
-		robot.hardware.wifiRead(); // read wifi package if available
-		////execute actions based on state and variables////
-		robot.modeGo();
-		
-	}
+	parameters = &parametersNew;
+	ctrl = &ctrlNew;
 }
 
-void loop()
+void Grip::setGripParam(float pointCenterNew[3], float interspaceNew, float angleNew)
 {
+	pointCenter[0] = pointCenterNew[0];
+	pointCenter[1] = pointCenterNew[1];
+	pointCenter[2] = pointCenterNew[2];
+	interspace = interspaceNew;
+	angle= angleNew;
+}
 
+void Grip::calcPoints(){
+	//x,y,z point 0
+	point0[0] = pointCenter[0] + interspace / 2 * cos(angle + PI);
+	point0[1] = pointCenter[1] + interspace / 2 * sin(angle + PI);
+	point0[2] = pointCenter[2];
+
+	//x,y,z point 1
+	point1[0] = pointCenter[0] + interspace / 2 * cos(angle);
+	point1[1] = pointCenter[1] + interspace / 2 * sin(angle);
+	point1[2] = pointCenter[2];
+}
+
+void Grip::setPose()
+{
+	//ctrl->trXYu[0];
 }

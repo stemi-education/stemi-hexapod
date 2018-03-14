@@ -510,3 +510,23 @@ RgbColor Hardware::ledPhaseColor(float phase)
 {
 	return RgbColor((int)((sin(phaseColor + phase) / 2.0 + 0.5) * 255), (int)((sin(phaseColor + phase + 2 / 3 * PI) / 2.0 + 0.5) * 255), (int)((sin(phaseColor + phase + 4 / 3 * PI) / 2.0 + 0.5) * 255));
 }
+
+/*void IRAM_ATTR onTimer()
+{
+	Serial.println("a");
+}
+
+void Hardware::blinkLED(uint8_t LEDno, uint8_t blinkTimes, uint8_t blinkSpeed, uint16_t blinkPause)
+{
+	timer = timerBegin(0, 80, true);
+	timerAttachInterrupt(timer, &onTimer, true);
+	timerAlarmWrite(timer, 1000000, true);
+	timerAlarmEnable(timer);
+	Serial.println("timer started");
+}
+
+void Hardware::stopBlinkLED()
+{
+
+}
+*/
