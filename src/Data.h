@@ -57,16 +57,17 @@ struct Ctrl
 	float joy2u[2] = { 0, 0 }; //r, fi
 	float ax2u[2] = { 0, 0 };
 	float roboHightu = 4;
-	int gaitID = 1;
+	int gaitID = 5;
 	boolean buttons[2] = { 0, 0 }; // up, down, full rotation, part rotation (moving) 
 	float trXYu[2] = { 0, 0 }; //robot tilt
-	float stepHight = 1.9;
+	float stepHight = 3;
 
 	bool linMode = 0; //state, if robot is in calibration mode
 	bool running = 1; //state, if the robot is ready for control (power on-off)
 
 	int nMove = 0; //how many times will current command execute (0 = home)
 	int nMoveMax = 100; //max number nMove (watchdog timer)
+	double tr[6] = { 6, 0, 0, 0, 0, 0 }; //initial translation and rotation vector
 };
 
 //parameters TODO: try both initialisations
@@ -74,7 +75,6 @@ struct Parameters
 {
 	const double a[3] = { 1.11,4.82,6.04 }; //dimensions of one leg
 	const double dim[3] = { 3, 5.4, 7.2 }; //coordinates of the robots hips
-	const double tr[6] = { 4, 0, 0, 0, 0, 0 }; //initial translation and rotation vector
 	const double freq = 100; //frequency of the algorithm
 	const double ts = 1.0 / freq;
 };

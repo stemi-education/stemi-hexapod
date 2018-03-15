@@ -63,7 +63,7 @@ public:
 	double * selectSequence(int index);
 	double selectStart(int index);
 
-	GaitSequence gaitSequence[5];
+	GaitSequence gaitSequence[6];
 };
 
 #endif

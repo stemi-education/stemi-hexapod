@@ -61,14 +61,12 @@ void Robot::wakeUp()
 
 	unsigned long startTime = millis(); //start measuring time
 	Serial.println("Waiting for 3 sec ...");
-	while (millis() - startTime < 3000) //read serial for 3 seconds
+	/*while (millis() - startTime < 3000) //read wifi for 3 seconds
 	{
 		hardware.wifiRead();
 	}
 
 	body.setLinMode(LIN_MODE_PERMANENT);
-
-	//hardware.playSound(10000, 500); //beep a sound f=5KHz, t=500ms
 
 	startTime = millis();
 	while (millis() - startTime < 2000) //wait for 2 seconds until the robot becomes responsive (safety reasons)
@@ -79,29 +77,23 @@ void Robot::wakeUp()
 		go(); //run the algorithm, just to stand up
 	}
 	//hardware.setAllLEDs(30, RgbColor(0, 255, 255));
-	Serial.println("STEMI has waken up!");
+	Serial.println("STEMI has waken up!");*/
 }
 
 int Robot::go()
 {
+	body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+
 	body.run();
-	float gripPoint[3] = {0, 15, 3};
+	float gripPoint[3] = {0, 11, 4};
 	grip.setGripParam(gripPoint, 6, 0);
 
-	body.legs[1].setCustomWs(-1, 3, 0.5);
-	body.legs[4].setCustomWs(1, 3, 0.5);
-
 	grip.calcPoints();
-	Serial.print(grip.point1[0]);
-	Serial.print(" ");
-	Serial.print(grip.point1[1]);
-	Serial.print(" ");
-	Serial.print(grip.point1[2]);
-	Serial.println();
 	body.moveOneLegGlobal(0, grip.point1);
 	body.moveOneLegGlobal(3, grip.point0);
-	//TODO isprobaj globalno pomicanje jedne noge;
-	//i onda testiraj ono iz klase za racun tocaka
+
+	//Serial.println()
+	body.packQArray();
 	wait(); //wait until enough time has passed
 	hardware.servoWrite(body.qAll);
 	measureTime(); //start measuring time
@@ -220,7 +212,7 @@ void Robot::danceHip(float angle, float translation, float time)
 void Robot::resetPose()
 {
 	setRotation(0, 0, 0);
-	setTranslation(0, 0, body.baseHeight);
+	setTranslation(0, 0, ctrl.tr[0]);
 }
 
 //check all touch inputs and change state and variables accordingly

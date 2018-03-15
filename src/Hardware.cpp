@@ -241,8 +241,9 @@ void Hardware::PKTread()
 	ctrl->trXYu[0] = ((signed char)bytes[6]) / 40.0*PI / 12;
 	ctrl->trXYu[1] = ((signed char)bytes[7]) / 40.0*PI / 12;
 	ctrl->roboHightu = (signed char)bytes[8] / 25.0 + 2; //body hight
-	ctrl->gaitID = (signed char)bytes[9] / 25;
-	ctrl->stepHight = (signed char)bytes[13] / 50.0 + 1;
+	//ctrl->gaitID = (signed char)bytes[9] / 25;
+	//current mobile app alyways send fixed value = 50
+	//ctrl->stepHight = (signed char)bytes[13] / 50.0 + 1;
 	if (bytes[18] > 0) ctrl->nMove = bytes[18] + 256 * bytes[17];
 	else ctrl->nMove = ctrl->nMoveMax;
 	ctrl->running = bytes[5];

@@ -55,21 +55,20 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 	double ad[2], a[3], dim[3];
 
 	ts = 1.0 / parameters->freq;
-	baseHeight = parameters->tr[0];
 
 	trCurrent[0] = 0;//Start with legs rised up - simple standup routine
-	trCurrent[1] = parameters->tr[1];
-	trCurrent[2] = parameters->tr[2];
-	trCurrent[3] = parameters->tr[3];
-	trCurrent[4] = parameters->tr[4];
-	trCurrent[5] = parameters->tr[5];
+	trCurrent[1] = ctrl->tr[1];
+	trCurrent[2] = ctrl->tr[2];
+	trCurrent[3] = ctrl->tr[3];
+	trCurrent[4] = ctrl->tr[4];
+	trCurrent[5] = ctrl->tr[5];
 
-	tr[0] = parameters->tr[0];
-	tr[1] = parameters->tr[1];
-	tr[2] = parameters->tr[2];
-	tr[3] = parameters->tr[3];
-	tr[4] = parameters->tr[4];
-	tr[5] = parameters->tr[5];
+	tr[0] = ctrl->tr[0];
+	tr[1] = ctrl->tr[1];
+	tr[2] = ctrl->tr[2];
+	tr[3] = ctrl->tr[3];
+	tr[4] = ctrl->tr[4];
+	tr[5] = ctrl->tr[5];
 
 	dim[0] = parameters->dim[0]; dim[1] = parameters->dim[1]; dim[2] = parameters->dim[2]; // body: [x1, x2, y]
 	a[0] = parameters->a[0]; a[1] = parameters->a[1]; a[2] = parameters->a[2];
@@ -93,6 +92,12 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 	ad[0] = -dim[0]; ad[1] = -dim[2];
 	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, parameters->freq);
 
+	legs[1].setCustomWs(-1.5, 6, 1, 0.4);
+	legs[4].setCustomWs(1.5, 6, 1, 0.4);
+
+	legs[2].setCustomWs(3, 3, 1, 0.4);
+	legs[5].setCustomWs(-3, 3, 1, 0.4);
+
 	setGaitUpDown(gait.selectSequence(ctrl->gaitID));
 	setGaitCurFi(gait.selectStart(ctrl->gaitID));
 
@@ -112,32 +117,30 @@ float Body::saturate(float value, float minimum, float maximum)
 }
 
 void Body::IK() {
-	for (int i = 0; i < 6; i++) legs[i].IK();
-
-	packQArray();
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].IK();
 }
 
 void Body::packQArray() //pack all the q's into one array
 {
-	for (int i = 0; i < 18; i++) qAll[i] = legs[i / 3].q[i % 3];
+	for (int i = 0; i < nLegs*3; i++) qAll[i] = legs[i / 3].q[i % 3];
 }
 
 void Body::setLinMode()
 {
-	for (int i = 0; i < 6; i++) legs[i].setLinMode();
+	for (int i = 0; i < nLegs; i++) legs[i].setLinMode();
 	packQArray();
 }
 
 void Body::setTr(double trNew[6]) {
-	for (int i = 0; i < 6; i++) legs[i].setTr(trNew);
+	for (int i = 0; i < nLegs; i++) legs[i].setTr(trNew);
 }
 
 void Body::printq() {
-	for (int i = 0; i < 6; i++) legs[i].printq();
+	for (int i = 0; i < nLegs; i++) legs[i].printq();
 }
 
 void Body::printc() {
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < nLegs; i++)
 	{
 		legs[i].printq();
 	}
@@ -147,33 +150,40 @@ void Body::printc() {
 
 void Body::setWs(double wsScalar)
 {
-	for (int i = 0; i < 6; i++) legs[i].setWs(wsScalar);
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setWs(wsScalar);
 }
 
 void Body::calcAll()
 {
-	for (int i = 0; i < 6; i++) legs[i].calcAll();
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].calcAll();
 }
 
 void Body::calcHomeAll()
 {
-	for (int i = 0; i < 6; i++) legs[i].calcHomeAll();
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].calcHomeAll();
 }
 
 void Body::incGaitFi(double gaitStep)
 {
-	for (int i = 0; i < 6; i++) legs[i].incGaitCurFi(gaitStep);
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].incGaitCurFi(gaitStep);
 }
 
 void Body::setGaitUpDown(double gaitArray[12])
 {
-	for (int i = 0; i < 6; i++)
-		legs[i].setGaitUpDown(gaitArray[i * 2] * PI / 3.0, gaitArray[i * 2 + 1] * PI / 3.0);
+	for (int i = 0; i < nWalkingLegs; i++)
+	{
+		legs[walkingLegsMap[i]].setGaitUpDown(gaitArray[walkingLegsMap[i] * 2] * PI / 3.0, gaitArray[walkingLegsMap[i] * 2 + 1] * PI / 3.0);
+		Serial.print("g: ");
+		Serial.print(gaitArray[i * 2] * PI / 3.0);
+		Serial.print(" ");
+		Serial.println(gaitArray[i * 2 + 1] * PI / 3.0);
+		//TODO zasto se upisuju krivi FIjevi? ispiši i quadWaveBase pa provjeri
+	}
 }
 
 void Body::setGaitCurFi(double gaitCurFiNew)
 {
-	for (int i = 0; i < 6; i++) legs[i].setGaitCurFi(gaitCurFiNew*PI / 3.0);
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setGaitCurFi(gaitCurFiNew*PI / 3.0);
 }
 
 void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew) {
@@ -185,7 +195,7 @@ void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nM
 	moveCenterNew[0] = r*cos(fiNew - PI / 2);
 	moveCenterNew[1] = r*sin(fiNew - PI / 2);
 
-	for (int i = 0; i < 6; i++) legs[i].setMoveParam(moveCenterNew, moveDeltaFi); //TODO wrapper
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setMoveParam(moveCenterNew, moveDeltaFi); //TODO wrapper
 
 	ctrl->nMove = nMoveNew;
 }
@@ -194,32 +204,32 @@ void Body::setRotateParam(double  moveDeltaFiNew) {
 	moveDeltaFi = moveDeltaFiNew;
 	double moveCenterNew[2] = { 0, 0 };
 
-	for (int i = 0; i < 6; i++) legs[i].setMoveParam(moveCenterNew, moveDeltaFi);
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setMoveParam(moveCenterNew, moveDeltaFi);
 }
 
 void Body::setHomeParam(double moveDeltaNew) {
-	for (int i = 0; i < 6; i++) legs[i].setHomeParam(moveDeltaNew);
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setHomeParam(moveDeltaNew);
 }
 
 void Body::setStepHight(double stepHightNew) {
-	for (int i = 0; i < 6; i++) legs[i].setStepHight(stepHightNew);
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setStepHight(stepHightNew);
 }
 
 void Body::scaleStepFi() {
 	double minScale = 9999.9;
 	double maxCurSpeed = -9999.9;
-	for (int i = 0; i < 6; i++)
-		if (legs[i].gaitState)
-			minScale = minn(minScale, legs[i].stepScalePlus);
+	for (int i = 0; i < nWalkingLegs; i++)
+		if (legs[walkingLegsMap[i]].gaitState)
+			minScale = minn(minScale, legs[walkingLegsMap[i]].stepScalePlus);
 
 	gaitDeltaFi = absolute(moveDeltaFi / minScale);
 	slowingScale = 1;
 
 	double preFootholdHight = ctrl->stepHight, preFootholdScaler = 1.3;
 
-	for (int i = 0; i < 6; i++)
-		if (!legs[i].gaitState)
-			maxCurSpeed = maxx(maxCurSpeed, (legs[i].pathToFoothold + legs[i].c[2] * preFootholdScaler) / (legs[i].gaitNext / gaitDeltaFi*ts));
+	for (int i = 0; i < nWalkingLegs; i++)
+		if (!legs[walkingLegsMap[i]].gaitState)
+			maxCurSpeed = maxx(maxCurSpeed, (legs[walkingLegsMap[i]].pathToFoothold + legs[walkingLegsMap[i]].c[2] * preFootholdScaler) / (legs[walkingLegsMap[i]].gaitNext / gaitDeltaFi*ts));
 
 	if (maxCurSpeed > maxAllowedSpeed) //if leg speed is higher than allowed
 	{
@@ -232,12 +242,15 @@ void Body::scaleStepFi() {
 void Body::scaleHomeStep() {
 	double maxScale = -9999.9;
 
-	for (int i = 0; i < 6; i++)
-		if (!legs[i].gaitState && !legs[i].checkHomeMark())
-			maxScale = maxx(maxScale, legs[i].stepScalePlus);
+	for (int i = 0; i < nWalkingLegs; i++)
+		if (!legs[walkingLegsMap[i]].gaitState && !legs[walkingLegsMap[i]].checkHomeMark())
+			maxScale = maxx(maxScale, legs[walkingLegsMap[i]].stepScalePlus);
 
-	if (legs[0].gaitState && legs[1].gaitState && legs[2].gaitState &&
-		legs[3].gaitState && legs[4].gaitState && legs[5].gaitState)
+	bool gateStateAll = 1;
+	for (int i = 0; i < nWalkingLegs; i++)
+		gateStateAll = gateStateAll && legs[walkingLegsMap[i]].gaitState;
+
+	if (gateStateAll)
 		gaitDeltaFi = 4 * ts; // scalar speeds up the period when all legs are grounded
 	else
 
@@ -253,7 +266,7 @@ void Body::move() {
 
 	if (gaitDeltaFi < 1.5)
 	{
-		for (int i = 0; i < 6; i++) legs[i].move(gaitDeltaFi, slowingScale);
+		for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].move(gaitDeltaFi, slowingScale);
 		incGaitFi(gaitDeltaFi);
 	}
 	else
@@ -263,12 +276,11 @@ void Body::move() {
 }
 
 bool Body::checkHomeMark() {
-	return legs[0].checkHomeMark() &&
-		legs[1].checkHomeMark() &&
-		legs[2].checkHomeMark() &&
-		legs[3].checkHomeMark() &&
-		legs[4].checkHomeMark() &&
-		legs[5].checkHomeMark();
+
+	bool homeMarkAll = 1;
+	for (int i = 0; i < nWalkingLegs; i++)
+		homeMarkAll = homeMarkAll && legs[walkingLegsMap[i]].checkHomeMark();
+	return homeMarkAll;
 }
 
 void Body::home(float moveDeltaNew) {
@@ -278,14 +290,14 @@ void Body::home(float moveDeltaNew) {
 		calcHomeAll();
 		scaleHomeStep();
 
-		for (int i = 0; i < 6; i++) legs[i].home(gaitDeltaFi);
+		for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].home(gaitDeltaFi);
 
 		incGaitFi(gaitDeltaFi);
 	}
 	else {
 		//All legs are at home position
 		setCground();
-		for (int i = 0; i < 6; i++) legs[i].gaitState = 1;
+		for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].gaitState = 1;
 		setGaitCurFi(gait.selectStart(ctrl->gaitID));
 	}
 }
@@ -299,7 +311,7 @@ void Body::run() {
 			else
 			{
 				setMoveParam(0, PI / 2, 0, ctrl->nMoveMax); //if nMove == 0 go to home ... no command present
-				tr[0] = baseHeight;
+				tr[0] = ctrl->tr[0];
 				//tr[1] = 0;
 				//tr[2] = 0;
 				//tr[3] = 0;
@@ -354,7 +366,7 @@ void Body::run() {
 }
 
 void Body::setCground() {
-	for (int i = 0; i < 6; i++) legs[i].setCground();
+	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setCground();
 }
 
 float PT1(float input, float valuePrev, float alpha) {
@@ -433,10 +445,10 @@ void Body::setCommand() {
 		}
 		else
 		{
-			tr[1] = 0;
+			//tr[1] = 0;
 			//tr[2] = 0;
 			tr[3] = 0;
-			tr[4] = 0;
+			tr[4] = 0.45;
 			tr[5] = 0;
 		}
 	}

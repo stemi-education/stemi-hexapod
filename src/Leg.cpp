@@ -75,7 +75,7 @@ void Leg::init(char* labelNew, double offNew, double adNew[2], double aNew[3], d
 	preFootholdHight = stepHight;
 	preFootholdScaler = 1.3;
 
-	alpha_rise_move = 0.85;
+	alpha_rise_move = 0.00;
 	alpha_lower_move = 0.1;
 	alpha_ground_move = 0.95;
 
@@ -209,7 +209,7 @@ void Leg::setWs(double wsScalar)
 	//now, the workspace is defined with the wsCenter and wsRadius for this leg
 }
 
-void Leg::setCustomWs(float xOffset, float yOffset, double wsScalar)
+void Leg::setCustomWs(float xOffset, float yOffset, double wsScalar, float wsRadiusScalar)
 {
 	double alpha = asin(tr[0] / (a[1] + a[2]));//PI/6.0; // worst case angle of the leg. to calculate workspace (see documentation)
 	double initDist = a[0] + (a[1] + a[2])*cos(alpha) / 2.0; //distance from the hip (starting coordinates of the leg - for home position) (added a[0] to avoid collision)
@@ -218,8 +218,10 @@ void Leg::setCustomWs(float xOffset, float yOffset, double wsScalar)
 	wsCenter[1] = initDist * sin(off)*wsScalar + ad[1] + yOffset;
 
 	//workspace circle
-	wsRadius = (a[1] + a[2])*cos(alpha) / 2.0*0.5;// last number reduces the ideal circle radius to make walking more stable
+	wsRadius = (a[1] + a[2])*cos(alpha) / 2.0*0.5*wsRadiusScalar;// last number reduces the ideal circle radius to make walking more stable
 																								//now, the workspace is defined with the wsCenter and wsRadius for this leg
+
+	homeMark = 0;
 }
 
 
@@ -426,6 +428,14 @@ void Leg::calcAll()
 	checkGaitState();
 	calcWsRange();
 	calcStepScale();
+
+	Serial.print(label);
+	Serial.print(" g: ");
+	Serial.print(gaitUpFi);
+	Serial.print(" ");
+	Serial.print(gaitDownFi);
+	Serial.print(" cur ");
+	Serial.println(gaitCurFi);
 
 }
 

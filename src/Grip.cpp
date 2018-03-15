@@ -65,5 +65,5 @@ void Grip::calcPoints(){
 
 void Grip::setPose()
 {
-	//ctrl->trXYu[0];
+	ctrl->trXYu[0];
 }

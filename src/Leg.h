@@ -59,7 +59,7 @@ public:
 	void setQ(double qNew[3]); // qNew .. [1x3]
 
 	void setWs(double wsScalar = 1); //set the workspace (circle)
-	void setCustomWs(float xOffset, float yOffset, double wsScalar);
+	void setCustomWs(float xOffset, float yOffset, double wsScalar, float wsRadiusScalar);
 
 	void setMoveParam(double moveCenterNew[2], double moveDeltaFiNew); // set the move center
 	void setHomeParam(double moveDeltaNew);

@@ -101,9 +101,12 @@ public:
 	double tr[6]; //temporary saves the commands for further procesing. Exists because of timing problems.
 	double trCurrent[6] = { 0,0,0,0,0,0 }; //real tr after applying PT1 filter
 	double alpha_tr; //parametar for PT1 filter
-	double baseHeight; //base height of the robot
 	double speed;
 	double maxAllowedSpeed;
+
+	uint8_t walkingLegsMap[6] = { 1,2,4,5, 0, 3 }; //what legs are used for walking
+	uint8_t nWalkingLegs = 4; //number of used legs for walking on the robot
+	uint8_t nLegs = 6; //all installed legs on robot - 6 for hexapod 8 for octopod
 
 	double moveDelta;  //delta body movement 
 	double moveDeltaFi; //delta fi for body movement
