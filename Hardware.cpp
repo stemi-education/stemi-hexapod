@@ -312,7 +312,10 @@ void Hardware::wifiRead()
 
 			ctrl->gaitID = (signed char)bytes[9] / 25;
 
-			ctrl->stepHight = (signed char)bytes[13] / 50.0 + 1;
+			ctrl->stepHight = 2; //fixed
+
+			for (int i=0; i<7; i++)
+				ctrl->additionalBytes[i] = bytes[i+10];
 
 			if (bytes[18] > 0) ctrl->nMove = bytes[18] + 256 * bytes[17];
 			else ctrl->nMove = ctrl->nMoveMax;

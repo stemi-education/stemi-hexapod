@@ -67,6 +67,8 @@ struct Ctrl
 
 	int nMove = 0; //how many times will current command execute (0 = home)
 	int nMoveMax = 100; //max number nMove (watchdog timer)
+
+	byte additionalBytes[8] = { 0,0,0,0,0,0,0,0 }; //universal bytes to be used for custom extensions of the robot
 };
 
 //parameters TODO: try both initialisations
