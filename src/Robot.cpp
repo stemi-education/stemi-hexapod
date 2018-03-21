@@ -270,6 +270,10 @@ void Robot::checkTouch()
 				calibrationServoLayerSelected = (calibrationServoLayerSelected + 1) % 3;
 				nudgeServos = 1;
 				break;
+			case 6:
+				calibrationServoLayerSelected = (calibrationServoLayerSelected + 1) % 3;
+				nudgeServos = 1;
+				break;
 			case 2:
 				calibrationLegSelectedCounter = (calibrationLegSelectedCounter + 1) % 6;
 				calibrationLegSelected = calibrationLegSelectedMap[calibrationLegSelectedCounter];
@@ -395,10 +399,10 @@ void Robot::modeGo()
 					hardware.strip.SetPixelColor(i, hardware.red);
 					break;
 				case 1:
-					hardware.strip.SetPixelColor(i, hardware.green);
+					hardware.strip.SetPixelColor(i, hardware.blue);
 					break;
 				case 2:
-					hardware.strip.SetPixelColor(i, hardware.blue);
+					hardware.strip.SetPixelColor(i, hardware.yellow);
 					break;
 				}
 			}
