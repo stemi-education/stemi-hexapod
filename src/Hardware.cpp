@@ -240,7 +240,7 @@ void Hardware::PKTread()
 	ctrl->buttons[2] = bytes[5]; //sleep
 	ctrl->trXYu[0] = ((signed char)bytes[6]) / 40.0*PI / 12;
 	ctrl->trXYu[1] = ((signed char)bytes[7]) / 40.0*PI / 12;
-	ctrl->roboHightu = (signed char)bytes[8] / 25.0 + 2; //body hight
+	ctrl->tr[0] = (signed char)bytes[8] / 25.0 + 2; //body hight
 	//ctrl->gaitID = (signed char)bytes[9] / 25;
 	//current mobile app alyways send fixed value = 50
 	//ctrl->stepHight = (signed char)bytes[13] / 50.0 + 1;
@@ -254,7 +254,7 @@ void Hardware::PKTread()
 		ctrl->ax1u[1] < -1 || ctrl->ax1u[1]>1 ||
 		ctrl->ax2u[0] < -1 || ctrl->ax2u[0]>1 ||
 		ctrl->ax2u[1] < -1 || ctrl->ax2u[1]>1 ||
-		ctrl->roboHightu < 1 || ctrl->roboHightu>6 ||
+		ctrl->tr[0] < 1 || ctrl->tr[0]>6 ||
 		ctrl->stepHight < 1 || ctrl->stepHight>3 ||
 		ctrl->gaitID < 0 || ctrl->gaitID>4 ||
 		!(ctrl->buttons[0] == 0 || ctrl->buttons[0] == 1) ||

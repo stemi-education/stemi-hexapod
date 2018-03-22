@@ -83,10 +83,10 @@ void Robot::wakeUp()
 int Robot::go()
 {
 	body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
-
+	grip.setPose(body.gaitCurFi);
 	body.run();
-	float gripPoint[3] = {0, 11, 4};
-	grip.setGripParam(gripPoint, 6, 0);
+	float gripPoint[3] = {0, 12, 6};
+	grip.setGripParam(gripPoint, 12, 0);
 
 	grip.calcPoints();
 	body.moveOneLegGlobal(0, grip.point1);
@@ -187,22 +187,22 @@ void Robot::turnRight(float distance)
 
 void Robot::setRotation(float xTilt, float yTilt, float zTilt)
 {
-	body.tr[3] = saturate(zTilt, -0.15, 0.15);
-	body.tr[4] = saturate(xTilt, -0.15, 0.15);
-	body.tr[5] = saturate(yTilt, -0.15, 0.15);
+	ctrl.tr[3] = saturate(zTilt, -0.15, 0.15);
+	ctrl.tr[4] = saturate(xTilt, -0.15, 0.15);
+	ctrl.tr[5] = saturate(yTilt, -0.15, 0.15);
 }
 
 void Robot::setTranslation(float xRotation, float yRotation, float zRotation)
 {
-	body.tr[0] = saturate(zRotation, 1, 7);
-	body.tr[1] = saturate(xRotation, -2, 2);
-	body.tr[2] = saturate(yRotation, -2, 2);
+	ctrl.tr[0] = saturate(zRotation, 1, 7);
+	ctrl.tr[1] = saturate(xRotation, -2, 2);
+	ctrl.tr[2] = saturate(yRotation, -2, 2);
 }
 
 void Robot::danceHip(float angle, float translation, float time)
 {
-	body.tr[3] = angle;
-	body.tr[1] = translation;
+	ctrl.tr[3] = angle;
+	ctrl.tr[1] = translation;
 	goHome(time * 2 / 3);
 	Serial.print(" time: ");
 	Serial.println(time * 2 / 3);
@@ -305,10 +305,10 @@ void Robot::checkTouch()
 			switch (touchState)
 			{
 			case 1:
-				body.tr[2] = body.saturate((body.tr[2] - 3), -3, 3);
+				ctrl.tr[2] = body.saturate((ctrl.tr[2] - 3), -3, 3);
 				break;
 			case 4:
-				body.tr[2] = body.saturate((body.tr[2] + 3), -3, 3);
+				ctrl.tr[2] = body.saturate((ctrl.tr[2] + 3), -3, 3);
 				break;
 				//state change
 			case 2:
@@ -320,7 +320,7 @@ void Robot::checkTouch()
 			}
 			break;
 		case OFFLINE_MODE:
-			body.tr[2] = 0;
+			ctrl.tr[2] = 0;
 			ctrl.gaitID = 3;
 			body.setGaitUpDown(body.gait.selectSequence(ctrl.gaitID));
 			switch (touchState)

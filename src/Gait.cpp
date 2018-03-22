@@ -87,11 +87,11 @@ Gait::Gait() {
 													5, 0 };
 
 	double quadWaveBase[12] = { 0, 0,
-													0, 1.5,
-													1.5, 3,
-													0, 0,
-													4.5, 0,
-													3, 4.5 };
+															0, 1.5,
+															1.5, 3,
+															0, 0,
+															4.5, 0,
+															3, 4.5 };
 
 	double offsetZero[6] = { 0, 0, 0, 0, 0, 0 };
 	double offsetMod2[6] = { 0.8, 0.8, 0.4, 0.4, 0, 0 };
@@ -101,7 +101,7 @@ Gait::Gait() {
 	gaitSequence[2].set("tripodMod2 ", tripodBase, 0.8, offsetMod2, 0);
 	gaitSequence[3].set("rippleBase ", rippleBase, 0, offsetZero, 0);
 	gaitSequence[4].set("waveBase ", waveBase, 0, offsetZero, 0);
-	gaitSequence[5].set("manipulation", quadWaveBase, 0.7, offsetZero, 0);
+	gaitSequence[5].set("manipulation", quadWaveBase, 0, offsetZero, 0);
 }
 
 double * Gait::selectSequence(int index) {

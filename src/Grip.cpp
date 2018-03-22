@@ -63,7 +63,9 @@ void Grip::calcPoints(){
 	point1[2] = pointCenter[2];
 }
 
-void Grip::setPose()
+void Grip::setPose(float gaitPhi)
 {
-	ctrl->trXYu[0];
+	float translationAmplitude = 1;
+	ctrl->tr[1] = translationAmplitude * cos(-gaitPhi + 5 * PI / 4);
+	ctrl->tr[2] = translationAmplitude * sin(-gaitPhi + 5 * PI / 4);
 }

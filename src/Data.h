@@ -56,7 +56,7 @@ struct Ctrl
 	float ax1u[2] = { 0, 0 };
 	float joy2u[2] = { 0, 0 }; //r, fi
 	float ax2u[2] = { 0, 0 };
-	float roboHightu = 4;
+	//float roboHightu = 4;
 	int gaitID = 5;
 	boolean buttons[2] = { 0, 0 }; // up, down, full rotation, part rotation (moving) 
 	float trXYu[2] = { 0, 0 }; //robot tilt

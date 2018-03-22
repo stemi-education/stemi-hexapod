@@ -48,7 +48,7 @@ public:
 
 	void calcPoints();
 
-	void setPose();
+	void setPose(float gaitPhi);
 
 	Parameters *parameters;
 	Ctrl *ctrl;

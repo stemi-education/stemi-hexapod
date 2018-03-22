@@ -56,19 +56,12 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 
 	ts = 1.0 / parameters->freq;
 
-	trCurrent[0] = 0;//Start with legs rised up - simple standup routine
+	trCurrent[0] = ctrl->tr[0];//0;//Start with legs rised up - simple standup routine
 	trCurrent[1] = ctrl->tr[1];
 	trCurrent[2] = ctrl->tr[2];
 	trCurrent[3] = ctrl->tr[3];
 	trCurrent[4] = ctrl->tr[4];
 	trCurrent[5] = ctrl->tr[5];
-
-	tr[0] = ctrl->tr[0];
-	tr[1] = ctrl->tr[1];
-	tr[2] = ctrl->tr[2];
-	tr[3] = ctrl->tr[3];
-	tr[4] = ctrl->tr[4];
-	tr[5] = ctrl->tr[5];
 
 	dim[0] = parameters->dim[0]; dim[1] = parameters->dim[1]; dim[2] = parameters->dim[2]; // body: [x1, x2, y]
 	a[0] = parameters->a[0]; a[1] = parameters->a[1]; a[2] = parameters->a[2];
@@ -92,18 +85,18 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 	ad[0] = -dim[0]; ad[1] = -dim[2];
 	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, parameters->freq);
 
-	legs[1].setCustomWs(-1.5, 6, 1, 0.4);
-	legs[4].setCustomWs(1.5, 6, 1, 0.4);
+	legs[1].setCustomWs(-1.5, 6, 1, 0.7);
+	legs[4].setCustomWs(1.5, 6, 1, 0.7);
 
-	legs[2].setCustomWs(3, 3, 1, 0.4);
-	legs[5].setCustomWs(-3, 3, 1, 0.4);
+	legs[2].setCustomWs(3, 3, 1, 0.7);
+	legs[5].setCustomWs(-3, 3, 1, 0.7);
 
 	setGaitUpDown(gait.selectSequence(ctrl->gaitID));
 	setGaitCurFi(gait.selectStart(ctrl->gaitID));
 
 	setStepHight(ctrl->stepHight);
 
-	alpha_tr = 0.94;
+	alpha_tr = 0;// 0.94;
 
 	setMoveParam(0, PI / 2, 0, 0);
 
@@ -165,7 +158,11 @@ void Body::calcHomeAll()
 
 void Body::incGaitFi(double gaitStep)
 {
-	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].incGaitCurFi(gaitStep);
+	for (int i = 0; i < nWalkingLegs; i++)
+	{
+		legs[walkingLegsMap[i]].incGaitCurFi(gaitStep);
+		gaitCurFi = legs[walkingLegsMap[i]].gaitCurFi;
+	}
 }
 
 void Body::setGaitUpDown(double gaitArray[12])
@@ -183,7 +180,11 @@ void Body::setGaitUpDown(double gaitArray[12])
 
 void Body::setGaitCurFi(double gaitCurFiNew)
 {
-	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setGaitCurFi(gaitCurFiNew*PI / 3.0);
+	for (int i = 0; i < nWalkingLegs; i++)
+	{
+		legs[walkingLegsMap[i]].setGaitCurFi(gaitCurFiNew*PI / 3.0);
+		gaitCurFi = legs[walkingLegsMap[i]].gaitCurFi;
+	}
 }
 
 void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew) {
@@ -311,12 +312,12 @@ void Body::run() {
 			else
 			{
 				setMoveParam(0, PI / 2, 0, ctrl->nMoveMax); //if nMove == 0 go to home ... no command present
-				tr[0] = ctrl->tr[0];
-				//tr[1] = 0;
-				//tr[2] = 0;
-				//tr[3] = 0;
-				//tr[4] = 0;
-				//tr[5] = 0;
+				ctrl->tr[0];
+				//ctrl->tr[1] = 0;
+				//ctrl->tr[2] = 0; STAVITI DA BUDE U CTRL
+				//ctrl->tr[3] = 0;
+				//ctrl->tr[4] = 0;
+				//ctrl->tr[5] = 0;
 			}
 
 			//setWs(0.85);
@@ -349,12 +350,12 @@ void Body::run() {
 	else
 	{
 		setMoveParam(0, PI / 2, 0, ctrl->nMoveMax); //go to home, dont receive commands while !running
-		tr[0] = 0; //raise legs = put them on 0 hight
-		tr[1] = 0;
-		tr[2] = 0;
-		tr[3] = 0;
-		tr[4] = 0;
-		tr[5] = 0;
+		ctrl->tr[0] = 0; //raise legs = put them on 0 hight
+		ctrl->tr[1] = 0;
+		ctrl->tr[2] = 0;
+		ctrl->tr[3] = 0;
+		ctrl->tr[4] = 0;
+		ctrl->tr[5] = 0;
 
 		//setWs(0.85);
 		trPT1(); //smooth the tr tranistion
@@ -373,12 +374,12 @@ float PT1(float input, float valuePrev, float alpha) {
 	return alpha*valuePrev + (1 - alpha)*(input);
 }
 void Body::trPT1() {
-	trCurrent[0] = PT1(tr[0], trCurrent[0], alpha_tr - 0.02);
-	trCurrent[1] = PT1(tr[1], trCurrent[1], alpha_tr - 0.02);
-	trCurrent[2] = PT1(tr[2], trCurrent[2], alpha_tr - 0.02);
-	trCurrent[3] = PT1(tr[3], trCurrent[3], alpha_tr);
-	trCurrent[4] = PT1(tr[4], trCurrent[4], alpha_tr);
-	trCurrent[5] = PT1(tr[5], trCurrent[5], alpha_tr);
+	trCurrent[0] = PT1(ctrl->tr[0], trCurrent[0], alpha_tr - 0.02);
+	trCurrent[1] = PT1(ctrl->tr[1], trCurrent[1], alpha_tr - 0.02);
+	trCurrent[2] = PT1(ctrl->tr[2], trCurrent[2], alpha_tr - 0.02);
+	trCurrent[3] = PT1(ctrl->tr[3], trCurrent[3], alpha_tr);
+	trCurrent[4] = PT1(ctrl->tr[4], trCurrent[4], alpha_tr);
+	trCurrent[5] = PT1(ctrl->tr[5], trCurrent[5], alpha_tr);
 }
 //-------------------------BT
 
@@ -418,7 +419,6 @@ void Body::setCommand() {
 	setStepHight(ctrl->stepHight);
 
 	setGaitUpDown(gait.selectSequence(ctrl->gaitID));
-	tr[0] = ctrl->roboHightu;
 
 	float speedMultiplyer = 1;
 
@@ -437,29 +437,29 @@ void Body::setCommand() {
 			ctrl->nMoveMax);
 		if (ctrl->buttons[1]) //aditional translation and rotation available while walking
 		{
-			tr[1] = 0;
-			tr[2] = 0;
-			tr[3] = 0;
-			tr[4] = ctrl->trXYu[0];
-			tr[5] = ctrl->trXYu[1];
+			ctrl->tr[1] = 0;
+			ctrl->tr[2] = 0;
+			ctrl->tr[3] = 0;
+			ctrl->tr[4] = ctrl->trXYu[0];
+			ctrl->tr[5] = ctrl->trXYu[1];
 		}
 		else
 		{
-			//tr[1] = 0;
-			//tr[2] = 0;
-			tr[3] = 0;
-			tr[4] = 0.45;
-			tr[5] = 0;
+			//ctrl->tr[1] = 0;
+			//ctrl->tr[2] = 0;
+			ctrl->tr[3] = 0;
+			ctrl->tr[4] = 0.45;
+			ctrl->tr[5] = 0;
 		}
 	}
 	else
 	{
 		setMoveParam(0, PI / 2, 0, ctrl->nMoveMax);
-		tr[1] = 3 * ctrl->ax1u[0];
-		tr[2] = 3 * ctrl->ax1u[1];
-		tr[3] = ctrl->ax2u[0] * PI / 12;
-		tr[4] = ctrl->trXYu[0];
-		tr[5] = ctrl->trXYu[1];
+		ctrl->tr[1] = 3 * ctrl->ax1u[0];
+		ctrl->tr[2] = 3 * ctrl->ax1u[1];
+		ctrl->tr[3] = ctrl->ax2u[0] * PI / 12;
+		ctrl->tr[4] = ctrl->trXYu[0];
+		ctrl->tr[5] = ctrl->trXYu[1];
 	}
 }
 
