@@ -60,7 +60,7 @@ struct Ctrl
 	int gaitID = 5;
 	boolean buttons[2] = { 0, 0 }; // up, down, full rotation, part rotation (moving) 
 	float trXYu[2] = { 0, 0 }; //robot tilt
-	float stepHight = 3;
+	float stepHight = 2;
 
 	bool linMode = 0; //state, if robot is in calibration mode
 	bool running = 1; //state, if the robot is ready for control (power on-off)

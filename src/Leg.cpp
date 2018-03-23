@@ -75,7 +75,7 @@ void Leg::init(char* labelNew, double offNew, double adNew[2], double aNew[3], d
 	preFootholdHight = stepHight;
 	preFootholdScaler = 1.3;
 
-	alpha_rise_move = 0.00;
+	alpha_rise_move = 0.85;
 	alpha_lower_move = 0.1;
 	alpha_ground_move = 0.95;
 
@@ -428,15 +428,6 @@ void Leg::calcAll()
 	checkGaitState();
 	calcWsRange();
 	calcStepScale();
-
-	Serial.print(label);
-	Serial.print(" g: ");
-	Serial.print(gaitUpFi);
-	Serial.print(" ");
-	Serial.print(gaitDownFi);
-	Serial.print(" cur ");
-	Serial.println(gaitCurFi);
-
 }
 
 void Leg::calcHomeAll() {

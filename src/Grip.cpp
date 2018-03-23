@@ -36,10 +36,11 @@ For additional information please check http://www.stemi.education.
 
 #include "Grip.h"
 
-Grip::Grip(Ctrl & ctrlNew, Parameters & parametersNew)
+Grip::Grip(Body &bodyNew, Ctrl &ctrlNew, Parameters &parametersNew)
 {
 	parameters = &parametersNew;
 	ctrl = &ctrlNew;
+	body = &bodyNew;
 }
 
 void Grip::setGripParam(float pointCenterNew[3], float interspaceNew, float angleNew)
@@ -65,7 +66,37 @@ void Grip::calcPoints(){
 
 void Grip::setPose(float gaitPhi)
 {
-	float translationAmplitude = 1;
-	ctrl->tr[1] = translationAmplitude * cos(-gaitPhi + 5 * PI / 4);
-	ctrl->tr[2] = translationAmplitude * sin(-gaitPhi + 5 * PI / 4);
+
+	float poseVector[] = { 0,0 };
+	uint8_t nGroundedLegs = 0;
+	float poseVectorFactor = 0.4;
+
+	for (int i = 0; i < body->nWalkingLegs; i++)
+	{
+		if (body->legs[body->walkingLegsMap[i]].gaitState)
+		{
+			nGroundedLegs++;
+			//sum legs coordinates
+			poseVector[0] += body->legs[body->walkingLegsMap[i]].c[0]; //x
+			poseVector[1] += body->legs[body->walkingLegsMap[i]].c[1]; //y
+
+			Serial.print(body->legs[body->walkingLegsMap[i]].label);
+			Serial.print(" ");
+			Serial.print(body->legs[body->walkingLegsMap[i]].c[0]);
+			Serial.print(" ");
+			Serial.print(body->legs[body->walkingLegsMap[i]].c[1]);
+			Serial.print(" ");
+		}
+		Serial.print(" | ");
+	}
+	poseVector[0] /= nGroundedLegs;
+	poseVector[1] /= nGroundedLegs;
+
+	Serial.print("PoseVector: ");
+	Serial.print(poseVector[0]);
+	Serial.print(" ");
+	Serial.println(poseVector[1]);
+
+	ctrl->tr[1] = poseVector[0]* poseVectorFactor;
+	ctrl->tr[2] = poseVector[1] * poseVectorFactor-2;
 }

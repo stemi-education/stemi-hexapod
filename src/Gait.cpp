@@ -101,7 +101,7 @@ Gait::Gait() {
 	gaitSequence[2].set("tripodMod2 ", tripodBase, 0.8, offsetMod2, 0);
 	gaitSequence[3].set("rippleBase ", rippleBase, 0, offsetZero, 0);
 	gaitSequence[4].set("waveBase ", waveBase, 0, offsetZero, 0);
-	gaitSequence[5].set("manipulation", quadWaveBase, 0, offsetZero, 0);
+	gaitSequence[5].set("manipulation", quadWaveBase, 0.5, offsetZero, 0);
 }
 
 double * Gait::selectSequence(int index) {

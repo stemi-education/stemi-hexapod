@@ -73,6 +73,7 @@ public:
 	void printq();
 
 	void checkGaitState();
+	bool checkFutureGaitState(float gaitDeltaFi);
 	void setGaitUpDown(double gaitUpFiNew, double gaitDownFiNew);
 	void setGaitCurFi(double gaitCurFiNew);
 	void incGaitCurFi(double gaitDeltaFi);

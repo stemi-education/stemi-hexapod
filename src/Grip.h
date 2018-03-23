@@ -38,11 +38,12 @@ For additional information please check http://www.stemi.education.
 #define GRIP_H
 
 #include "Data.h"
+#include "Body.h"
 
 class Grip
 {
 public:
-	Grip(Ctrl &ctrlNew, Parameters &parametersNew);
+	Grip(Body &bodyNew, Ctrl &ctrlNew, Parameters &parametersNew);
 
 	void setGripParam(float pointCenter[3], float interspace, float angle);
 
@@ -52,6 +53,7 @@ public:
 
 	Parameters *parameters;
 	Ctrl *ctrl;
+	Body *body;
 
 	float pointCenter[3], point0[3], point1[3];
 	float angle;

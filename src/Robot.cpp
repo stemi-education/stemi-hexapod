@@ -42,7 +42,7 @@ float saturate(float value, float minimum, float maximum)
 	return _min(maximum, _max(minimum, value));
 }
 
-Robot::Robot() : body(ctrl, parameters), hardware(ctrl), grip(ctrl, parameters)
+Robot::Robot() : body(ctrl, parameters), hardware(ctrl), grip(body, ctrl, parameters)
 {
 	hardware.servoPower(0);
 	go();
@@ -85,7 +85,7 @@ int Robot::go()
 	body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
 	grip.setPose(body.gaitCurFi);
 	body.run();
-	float gripPoint[3] = {0, 12, 6};
+	float gripPoint[3] = {0, 10, 9};
 	grip.setGripParam(gripPoint, 12, 0);
 
 	grip.calcPoints();

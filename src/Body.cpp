@@ -85,18 +85,18 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 	ad[0] = -dim[0]; ad[1] = -dim[2];
 	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, parameters->freq);
 
-	legs[1].setCustomWs(-1.5, 6, 1, 0.7);
-	legs[4].setCustomWs(1.5, 6, 1, 0.7);
+	legs[1].setCustomWs(-1.5, 3, 0.8, 0.8);
+	legs[4].setCustomWs(1.5, 3, 0.8, 0.8);
 
-	legs[2].setCustomWs(3, 3, 1, 0.7);
-	legs[5].setCustomWs(-3, 3, 1, 0.7);
+	legs[2].setCustomWs(3, 3, 1, 1);
+	legs[5].setCustomWs(-3, 3, 1, 1);
 
 	setGaitUpDown(gait.selectSequence(ctrl->gaitID));
 	setGaitCurFi(gait.selectStart(ctrl->gaitID));
 
 	setStepHight(ctrl->stepHight);
 
-	alpha_tr = 0;// 0.94;
+	alpha_tr = 0.9;
 
 	setMoveParam(0, PI / 2, 0, 0);
 
@@ -170,10 +170,6 @@ void Body::setGaitUpDown(double gaitArray[12])
 	for (int i = 0; i < nWalkingLegs; i++)
 	{
 		legs[walkingLegsMap[i]].setGaitUpDown(gaitArray[walkingLegsMap[i] * 2] * PI / 3.0, gaitArray[walkingLegsMap[i] * 2 + 1] * PI / 3.0);
-		Serial.print("g: ");
-		Serial.print(gaitArray[i * 2] * PI / 3.0);
-		Serial.print(" ");
-		Serial.println(gaitArray[i * 2 + 1] * PI / 3.0);
 		//TODO zasto se upisuju krivi FIjevi? ispiši i quadWaveBase pa provjeri
 	}
 }
@@ -431,9 +427,9 @@ void Body::setCommand() {
 
 	if (!ctrl->buttons[0]) //walking available
 	{
-		setMoveParam(speedMultiplyer * 16 * saturate(ctrl->joy1u[0], -1, 1),
+		setMoveParam(speedMultiplyer * 3 * saturate(ctrl->joy1u[0], -1, 1),
 			ctrl->joy1u[1],
-			speedMultiplyer*1.1*saturate(ctrl->ax2u[0], -1, 1),
+			speedMultiplyer*0.3*saturate(ctrl->ax2u[0], -1, 1),
 			ctrl->nMoveMax);
 		if (ctrl->buttons[1]) //aditional translation and rotation available while walking
 		{
@@ -448,7 +444,7 @@ void Body::setCommand() {
 			//ctrl->tr[1] = 0;
 			//ctrl->tr[2] = 0;
 			ctrl->tr[3] = 0;
-			ctrl->tr[4] = 0.45;
+			ctrl->tr[4] = 0.55;
 			ctrl->tr[5] = 0;
 		}
 	}
