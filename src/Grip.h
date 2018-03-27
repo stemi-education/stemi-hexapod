@@ -51,6 +51,8 @@ public:
 
 	void setPose(float gaitPhi);
 
+	void setLegWorkspace();
+
 	Parameters *parameters;
 	Ctrl *ctrl;
 	Body *body;

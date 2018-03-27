@@ -100,3 +100,12 @@ void Grip::setPose(float gaitPhi)
 	ctrl->tr[1] = poseVector[0]* poseVectorFactor;
 	ctrl->tr[2] = poseVector[1] * poseVectorFactor-2;
 }
+
+void Grip::setLegWorkspace()
+{
+	body->legs[1].setCustomWs(0, 3, 0.7, 0.6);
+	body->legs[4].setCustomWs(0, 3, 0.7, 0.6);
+
+	body->legs[2].setCustomWs(3, 3, 1, 1);
+	body->legs[5].setCustomWs(-3, 3, 1, 1);
+}

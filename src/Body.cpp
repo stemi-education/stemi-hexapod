@@ -85,8 +85,8 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 	ad[0] = -dim[0]; ad[1] = -dim[2];
 	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, parameters->freq);
 
-	legs[1].setCustomWs(-1.5, 3, 0.8, 0.8);
-	legs[4].setCustomWs(1.5, 3, 0.8, 0.8);
+	legs[1].setCustomWs(0, 3, 0.7, 0.6);
+	legs[4].setCustomWs(0, 3, 0.7, 0.6);
 
 	legs[2].setCustomWs(3, 3, 1, 1);
 	legs[5].setCustomWs(-3, 3, 1, 1);
