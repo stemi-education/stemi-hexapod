@@ -44,18 +44,18 @@ float saturate(float value, float minimum, float maximum)
 
 Robot::Robot() : body(ctrl, parameters), hardware(ctrl), grip(body, ctrl, parameters)
 {
-	hardware.servoPower(0);
+	hardware.servoPower(1);
+	delay(10);
 	go();
 }
 
 void Robot::wakeUp()
 {
-	
+	//hardware.servoPower(1);
 	hardware.wifiInit();
 	body.setLinMode(LIN_MODE_PERMANENT);
 	go(); //make a first run(), put the legs in the air
-
-	hardware.servoPower(1);
+	
 
 	hardware.setAllLEDs(100, RgbColor(0, 255, 255));
 
