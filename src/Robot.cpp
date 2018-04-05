@@ -61,7 +61,7 @@ void Robot::wakeUp()
 
 	unsigned long startTime = millis(); //start measuring time
 	Serial.println("Waiting for 3 sec ...");
-	/*while (millis() - startTime < 3000) //read wifi for 3 seconds
+	while (millis() - startTime < 3000) //read wifi for 3 seconds
 	{
 		hardware.wifiRead();
 	}
@@ -77,22 +77,12 @@ void Robot::wakeUp()
 		go(); //run the algorithm, just to stand up
 	}
 	//hardware.setAllLEDs(30, RgbColor(0, 255, 255));
-	Serial.println("STEMI has waken up!");*/
+	Serial.println("STEMI has waken up!");
 }
 
 int Robot::go()
 {
-	body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
-	grip.setPose(body.gaitCurFi);
 	body.run();
-	float gripPoint[3] = {0, 10, 9};
-	grip.setGripParam(gripPoint, 12, 0);
-
-	grip.calcPoints();
-	body.moveOneLegGlobal(0, grip.point1);
-	body.moveOneLegGlobal(3, grip.point0);
-
-	//Serial.println()
 	body.packQArray();
 	wait(); //wait until enough time has passed
 	hardware.servoWrite(body.qAll);
@@ -370,6 +360,30 @@ void Robot::checkTouch()
 				break;
 			}
 			break;
+		case GRIP_MODE:
+			switch (touchState)
+			{
+				//make state specific initialisation parameters:
+				//ctrl.gaitID = 5;
+				//body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+				//body.nWalkingLegs = 4;
+				//grip.setLegWorkspace();
+				//change state
+			case 2:
+				robotMode = (robotMode + 1) % NUMBER_OF_MODES;
+				//ctrl.gaitID = 1;
+				//body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+				//body.nWalkingLegs = 6;
+				//grip.resetWorkspace();
+				break;
+			case 5:
+				robotMode = PRE_CALIBRATION_MODE;
+				//ctrl.gaitID = 1;
+				//body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+				//body.nWalkingLegs = 6;
+				//grip.resetWorkspace();
+				break;
+			}
 		}
 		Serial.print("mode: ");
 		Serial.println(robotMode);
@@ -388,7 +402,7 @@ void Robot::modeGo()
 		hardware.strip.SetBrightness(255);
 		int selectedLED;
 		//mapping from selected leg to LED number
-			
+
 		for (int i = 0; i < 6; i++)
 		{
 			if (i == calibrationLegSelectedMapLED[calibrationLegSelected])
@@ -423,7 +437,7 @@ void Robot::modeGo()
 			{
 				for (int i = 0; i < 18; i++)
 				{
-					if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += nudgeAmmount/delayTime;
+					if (i % 3 == calibrationServoLayerSelected) body.qAll[i] += nudgeAmmount / delayTime;
 				}
 				hardware.servoWrite(body.qAll);
 				delay(delayTime);
@@ -524,5 +538,28 @@ void Robot::modeGo()
 		hardware.setAllLEDs(100, RgbColor(255, 255, 0));
 		resetPose();
 		goHome();
+		break;
+	case GRIP_MODE:
+		/*body.setCommand();
+
+		ctrl.gaitID = 5;
+		body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+		body.nWalkingLegs = 4;
+
+		grip.setPose(body.gaitCurFi);
+
+		float gripPoint[3] = { 0, 10, 9 };
+		grip.setGripParam(gripPoint, 12, 0);
+
+		grip.calcPoints();
+		body.moveOneLegGlobal(0, grip.point1);
+		body.moveOneLegGlobal(3, grip.point0);
+
+		
+		
+		go();
+		*/
+		hardware.setAllLEDs(100, RgbColor(255, 0, 255));
+		break;
 	}
 }

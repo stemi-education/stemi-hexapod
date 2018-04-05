@@ -53,6 +53,8 @@ public:
 
 	void setLegWorkspace();
 
+	void resetWorkspace();
+
 	Parameters *parameters;
 	Ctrl *ctrl;
 	Body *body;

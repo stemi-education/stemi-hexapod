@@ -109,3 +109,12 @@ void Grip::setLegWorkspace()
 	body->legs[2].setCustomWs(3, 3, 1, 1);
 	body->legs[5].setCustomWs(-3, 3, 1, 1);
 }
+
+void Grip::resetWorkspace()
+{
+	body->legs[1].setCustomWs(0, 0, 1, 1);
+	body->legs[4].setCustomWs(0, 0, 1, 1);
+
+	body->legs[2].setCustomWs(0, 0, 1, 1);
+	body->legs[5].setCustomWs(0, 0, 1, 1);
+}

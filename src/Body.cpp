@@ -56,7 +56,7 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 
 	ts = 1.0 / parameters->freq;
 
-	trCurrent[0] = ctrl->tr[0];//0;//Start with legs rised up - simple standup routine
+	trCurrent[0] = 0;//Start with legs rised up - simple standup routine
 	trCurrent[1] = ctrl->tr[1];
 	trCurrent[2] = ctrl->tr[2];
 	trCurrent[3] = ctrl->tr[3];
@@ -85,18 +85,12 @@ Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
 	ad[0] = -dim[0]; ad[1] = -dim[2];
 	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, parameters->freq);
 
-	legs[1].setCustomWs(0, 3, 0.7, 0.6);
-	legs[4].setCustomWs(0, 3, 0.7, 0.6);
-
-	legs[2].setCustomWs(3, 3, 1, 1);
-	legs[5].setCustomWs(-3, 3, 1, 1);
-
 	setGaitUpDown(gait.selectSequence(ctrl->gaitID));
 	setGaitCurFi(gait.selectStart(ctrl->gaitID));
 
 	setStepHight(ctrl->stepHight);
 
-	alpha_tr = 0.9;
+	alpha_tr = 0.95;
 
 	setMoveParam(0, PI / 2, 0, 0);
 
@@ -380,39 +374,6 @@ void Body::trPT1() {
 //-------------------------BT
 
 void Body::setCommand() {
-	/*Serial.print("joy: ");
-	Serial.print(ctrl_joy1u[0]);
-	Serial.print(" ");
-	Serial.print(ctrl_joy1u[1]);
-	Serial.print("  ");
-	Serial.print(ctrl_joy2u[0]);
-	Serial.print(" ");
-	Serial.print(ctrl_joy2u[1]);
-	Serial.print("  ax: ");
-	Serial.print(ctrl_ax1u[0]);
-	Serial.print(" ");
-	Serial.print(ctrl_ax1u[1]);
-	Serial.print("  ");
-	Serial.print(ctrl_ax2u[0]);
-	Serial.print(" ");
-	Serial.print(ctrl_ax2u[1]);
-	Serial.print(" Hight: ");
-	Serial.print(" ");nMove
-	Serial.print(ctrl_stepHight);
-	Serial.print("  ");
-	Serial.print(ctrl_roboHightu);
-	Serial.print(" ");
-	Serial.println(ctrl_gaitID);
-	Serial.print("  tr: ");
-	Serial.print(ctrl_trXYu[0]);
-	Serial.print(" ");
-	Serial.print(ctrl_trXYu[1]);
-	Serial.print(" but: ");
-	Serial.print(ctrl_buttons[0]);
-	Serial.print(" ");
-	Serial.println(ctrl_buttons[1]);*/
-
-	setStepHight(ctrl->stepHight);
 
 	setGaitUpDown(gait.selectSequence(ctrl->gaitID));
 
@@ -427,9 +388,9 @@ void Body::setCommand() {
 
 	if (!ctrl->buttons[0]) //walking available
 	{
-		setMoveParam(speedMultiplyer * 3 * saturate(ctrl->joy1u[0], -1, 1),
+		setMoveParam(speedMultiplyer * 10 * saturate(ctrl->joy1u[0], -1, 1),
 			ctrl->joy1u[1],
-			speedMultiplyer*0.3*saturate(ctrl->ax2u[0], -1, 1),
+			speedMultiplyer*1*saturate(ctrl->ax2u[0], -1, 1),
 			ctrl->nMoveMax);
 		if (ctrl->buttons[1]) //aditional translation and rotation available while walking
 		{
@@ -444,7 +405,7 @@ void Body::setCommand() {
 			//ctrl->tr[1] = 0;
 			//ctrl->tr[2] = 0;
 			ctrl->tr[3] = 0;
-			ctrl->tr[4] = 0.55;
+			ctrl->tr[4] = 0;
 			ctrl->tr[5] = 0;
 		}
 	}
