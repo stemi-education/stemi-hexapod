@@ -34,33 +34,9 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef GRIP_H
-#define GRIP_H
-
 #include "SharedData.h"
-#include "Body.h"
 
-class Grip
+SharedData:: SharedData()
 {
-public:
-	Grip(SharedData *sharedDataNew, Body &bodyNew);
-
-	void setGripParam(float pointCenter[3], float interspace, float angle);
-
-	void calcPoints();
-
-	void setPose(float gaitPhi);
-
-	void setLegWorkspace();
-
-	void resetWorkspace();
-
-	Body *body;
-
-	SharedData *sharedData;
-
-	float pointCenter[3], point0[3], point1[3];
-	float angle;
-	float interspace;
-};
-#endif
+	
+}

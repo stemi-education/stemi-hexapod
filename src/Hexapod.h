@@ -34,33 +34,24 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef GRIP_H
-#define GRIP_H
+#ifndef HEXAPOD_H
+#define HEXAPOD_H
+
+#if CONFIG_FREERTOS_UNICORE
+#define ARDUINO_RUNNING_CORE 0
+#else
+#define ARDUINO_RUNNING_CORE 1
+#endif
 
 #include "SharedData.h"
-#include "Body.h"
 
-class Grip
+class Hexapod
 {
 public:
-	Grip(SharedData *sharedDataNew, Body &bodyNew);
+	Hexapod();
 
-	void setGripParam(float pointCenter[3], float interspace, float angle);
-
-	void calcPoints();
-
-	void setPose(float gaitPhi);
-
-	void setLegWorkspace();
-
-	void resetWorkspace();
-
-	Body *body;
-
-	SharedData *sharedData;
-
-	float pointCenter[3], point0[3], point1[3];
-	float angle;
-	float interspace;
+	SharedData sharedData;
 };
+
 #endif
+

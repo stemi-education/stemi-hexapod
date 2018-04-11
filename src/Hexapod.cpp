@@ -32,35 +32,38 @@ If not, see http://www.gnu.org/licenses/.
 For additional information please check http://www.stemi.education.
 
 */
+#include "Arduino.h"
 
+#include "Hexapod.h"
+#include "Robot.h"
 
-#ifndef GRIP_H
-#define GRIP_H
-
-#include "SharedData.h"
-#include "Body.h"
-
-class Grip
+void walkingEngine(void *sharedData) 
 {
-public:
-	Grip(SharedData *sharedDataNew, Body &bodyNew);
+	Robot robot((SharedData*)sharedData);
+	robot.wakeUp();
 
-	void setGripParam(float pointCenter[3], float interspace, float angle);
+	int b = ((SharedData*)sharedData)->a;
+	Serial.print("primljeno: ");
+	Serial.println(b);
+	//robot.hardware.blinkLED(3, 3, 50, 100);
 
-	void calcPoints();
+	while (1) //repeat following commands forever
+	{
+		////check all inputs and change state and variables accordingly////
+		//robot.checkTouch();
+		//wifi input
+		//robot.hardware.wifiRead(); // read wifi package if available
+		////execute actions based on state and variables////
+		robot.modeGo();
+	}
+}
 
-	void setPose(float gaitPhi);
+Hexapod::Hexapod()
+{
+	Serial.begin(115200);
+	Serial.println("Hexapod init");
 
-	void setLegWorkspace();
-
-	void resetWorkspace();
-
-	Body *body;
-
-	SharedData *sharedData;
-
-	float pointCenter[3], point0[3], point1[3];
-	float angle;
-	float interspace;
-};
-#endif
+	Serial.print("primljeno prije: ");
+	Serial.println(sharedData.a);
+	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 10*4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
+}

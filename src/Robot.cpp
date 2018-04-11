@@ -42,8 +42,9 @@ float saturate(float value, float minimum, float maximum)
 	return _min(maximum, _max(minimum, value));
 }
 
-Robot::Robot() : body(ctrl, parameters), hardware(ctrl), grip(body, ctrl, parameters)
+Robot::Robot(SharedData *sharedDataNew) : body(sharedData), hardware(sharedData), grip(sharedData, body)
 {
+	sharedData = sharedDataNew;
 	hardware.servoPower(1);
 	delay(10);
 	go();
@@ -52,7 +53,6 @@ Robot::Robot() : body(ctrl, parameters), hardware(ctrl), grip(body, ctrl, parame
 void Robot::wakeUp()
 {
 	//hardware.servoPower(1);
-	hardware.wifiInit();
 	body.setLinMode(LIN_MODE_PERMANENT);
 	go(); //make a first run(), put the legs in the air
 	
@@ -63,7 +63,6 @@ void Robot::wakeUp()
 	Serial.println("Waiting for 3 sec ...");
 	while (millis() - startTime < 3000) //read wifi for 3 seconds
 	{
-		hardware.wifiRead();
 	}
 
 	body.setLinMode(LIN_MODE_PERMANENT);
@@ -71,8 +70,6 @@ void Robot::wakeUp()
 	startTime = millis();
 	while (millis() - startTime < 2000) //wait for 2 seconds until the robot becomes responsive (safety reasons)
 	{
-
-		hardware.wifiRead(); //read commands to keep the buffer empty and receive LIN packages
 		body.resetCommands(); //but ignore movement commands
 		go(); //run the algorithm, just to stand up
 	}
@@ -112,7 +109,7 @@ void Robot::wait()
 
 void Robot::loopMove() {
 	//Serial.println("pocetak");
-	while (ctrl.nMove > 0)
+	while (sharedData->moveCtrl.nMove > 0)
 	{
 		//Serial.println("before");
 		go();
@@ -124,7 +121,7 @@ void Robot::loopHome(float timeWaiting) {
 
 	while (!body.checkHomeMark() || (millis() - startTime2 < timeWaiting * 1000))
 	{
-		ctrl.nMove = 0;
+		sharedData->moveCtrl.nMove = 0;
 		go();
 	}
 	go();
@@ -136,63 +133,63 @@ void Robot::goHome(float time)
 void Robot::goForward(float distance)
 {
 	distance *= 1.08;
-	body.setMoveParam(goSpeed, PI / 2, 0, abs(distance / goSpeed*parameters.freq));
+	body.setMoveParam(goSpeed, PI / 2, 0, abs(distance / goSpeed*sharedData->param.freq));
 	loopMove();
 }
 
 void Robot::goBackwards(float distance)
 {
 	distance *= 1.08;
-	body.setMoveParam(goSpeed, -PI / 2, 0, abs(distance / goSpeed*parameters.freq));
+	body.setMoveParam(goSpeed, -PI / 2, 0, abs(distance / goSpeed*sharedData->param.freq));
 	loopMove();
 }
 
 void Robot::goLeft(float distance)
 {
 	distance *= 1.08;
-	body.setMoveParam(goSpeed, PI, 0, abs(distance / goSpeed*parameters.freq));
+	body.setMoveParam(goSpeed, PI, 0, abs(distance / goSpeed*sharedData->param.freq));
 	loopMove();
 }
 
 void Robot::goRight(float distance)
 {
 	distance *= 1.08;
-	body.setMoveParam(goSpeed, 0, 0, abs(distance / goSpeed*parameters.freq));
+	body.setMoveParam(goSpeed, 0, 0, abs(distance / goSpeed*sharedData->param.freq));
 	loopMove();
 }
 
 void Robot::turnLeft(float distance)
 {
 	distance *= 1.15;
-	body.setMoveParam(0, 0, -turnSpeed, abs((distance*PI / 180) / turnSpeed*parameters.freq));
+	body.setMoveParam(0, 0, -turnSpeed, abs((distance*PI / 180) / turnSpeed*sharedData->param.freq));
 	loopMove();
 }
 
 void Robot::turnRight(float distance)
 {
 	distance *= 1.15;
-	body.setMoveParam(0, 0, turnSpeed, abs((distance*PI / 180) / turnSpeed*parameters.freq));
+	body.setMoveParam(0, 0, turnSpeed, abs((distance*PI / 180) / turnSpeed*sharedData->param.freq));
 	loopMove();
 }
 
 void Robot::setRotation(float xTilt, float yTilt, float zTilt)
 {
-	ctrl.tr[3] = saturate(zTilt, -0.15, 0.15);
-	ctrl.tr[4] = saturate(xTilt, -0.15, 0.15);
-	ctrl.tr[5] = saturate(yTilt, -0.15, 0.15);
+	sharedData->moveCtrl.tr[3] = saturate(zTilt, -0.15, 0.15);
+	sharedData->moveCtrl.tr[4] = saturate(xTilt, -0.15, 0.15);
+	sharedData->moveCtrl.tr[5] = saturate(yTilt, -0.15, 0.15);
 }
 
 void Robot::setTranslation(float xRotation, float yRotation, float zRotation)
 {
-	ctrl.tr[0] = saturate(zRotation, 1, 7);
-	ctrl.tr[1] = saturate(xRotation, -2, 2);
-	ctrl.tr[2] = saturate(yRotation, -2, 2);
+	sharedData->moveCtrl.tr[0] = saturate(zRotation, 1, 7);
+	sharedData->moveCtrl.tr[1] = saturate(xRotation, -2, 2);
+	sharedData->moveCtrl.tr[2] = saturate(yRotation, -2, 2);
 }
 
 void Robot::danceHip(float angle, float translation, float time)
 {
-	ctrl.tr[3] = angle;
-	ctrl.tr[1] = translation;
+	sharedData->moveCtrl.tr[3] = angle;
+	sharedData->moveCtrl.tr[1] = translation;
 	goHome(time * 2 / 3);
 	Serial.print(" time: ");
 	Serial.println(time * 2 / 3);
@@ -202,7 +199,7 @@ void Robot::danceHip(float angle, float translation, float time)
 void Robot::resetPose()
 {
 	setRotation(0, 0, 0);
-	setTranslation(0, 0, ctrl.tr[0]);
+	setTranslation(0, 0, sharedData->moveCtrl.tr[0]);
 }
 
 //check all touch inputs and change state and variables accordingly
@@ -295,10 +292,10 @@ void Robot::checkTouch()
 			switch (touchState)
 			{
 			case 1:
-				ctrl.tr[2] = body.saturate((ctrl.tr[2] - 3), -3, 3);
+				sharedData->moveCtrl.tr[2] = body.saturate((sharedData->moveCtrl.tr[2] - 3), -3, 3);
 				break;
 			case 4:
-				ctrl.tr[2] = body.saturate((ctrl.tr[2] + 3), -3, 3);
+				sharedData->moveCtrl.tr[2] = body.saturate((sharedData->moveCtrl.tr[2] + 3), -3, 3);
 				break;
 				//state change
 			case 2:
@@ -310,9 +307,9 @@ void Robot::checkTouch()
 			}
 			break;
 		case OFFLINE_MODE:
-			ctrl.tr[2] = 0;
-			ctrl.gaitID = 3;
-			body.setGaitUpDown(body.gait.selectSequence(ctrl.gaitID));
+			sharedData->moveCtrl.tr[2] = 0;
+			sharedData->moveCtrl.gaitID = 3;
+			body.setGaitUpDown(body.gait.selectSequence(sharedData->moveCtrl.gaitID));
 			switch (touchState)
 			{
 			case 1:
@@ -364,22 +361,22 @@ void Robot::checkTouch()
 			switch (touchState)
 			{
 				//make state specific initialisation parameters:
-				//ctrl.gaitID = 5;
-				//body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+				//sharedData->moveCtrl.gaitID = 5;
+				//body.setGaitUpDown(body.gait.selectSequence(body.sharedData->moveCtrl.gaitID));
 				//body.nWalkingLegs = 4;
 				//grip.setLegWorkspace();
 				//change state
 			case 2:
 				robotMode = (robotMode + 1) % NUMBER_OF_MODES;
-				//ctrl.gaitID = 1;
-				//body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+				//sharedData->moveCtrl.gaitID = 1;
+				//body.setGaitUpDown(body.gait.selectSequence(body.sharedData->moveCtrl.gaitID));
 				//body.nWalkingLegs = 6;
 				//grip.resetWorkspace();
 				break;
 			case 5:
 				robotMode = PRE_CALIBRATION_MODE;
-				//ctrl.gaitID = 1;
-				//body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+				//sharedData->moveCtrl.gaitID = 1;
+				//body.setGaitUpDown(body.gait.selectSequence(body.sharedData->moveCtrl.gaitID));
 				//body.nWalkingLegs = 6;
 				//grip.resetWorkspace();
 				break;
@@ -542,8 +539,8 @@ void Robot::modeGo()
 	case GRIP_MODE:
 		/*body.setCommand();
 
-		ctrl.gaitID = 5;
-		body.setGaitUpDown(body.gait.selectSequence(body.ctrl->gaitID));
+		sharedData->moveCtrl.gaitID = 5;
+		body.setGaitUpDown(body.gait.selectSequence(body.sharedData->moveCtrl.gaitID));
 		body.nWalkingLegs = 4;
 
 		grip.setPose(body.gaitCurFi);

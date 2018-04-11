@@ -39,23 +39,23 @@ For additional information please check http://www.stemi.education.
 
 #define LIN_MODE_PERMANENT 0 //set this to 1 if you want your robot to stand still in linearisation pose permanently - all the servos in home position - used for robot assembly
 
+#include "SharedData.h"
 #include "Hardware.h"
 #include "Body.h"
-#include "Data.h"
 #include "RobotModes.h"
 #include "Grip.h"
 
 class Robot
 {
 public:
-	Robot();
+	Robot(SharedData *sharedDataNew);
 	void wakeUp();
 	int go();
 	Hardware hardware;
-	Ctrl ctrl;
-	Parameters parameters;
+
 	Body body;
 	Grip grip;
+	SharedData *sharedData;
 
 	void measureTime();
 	void wait();

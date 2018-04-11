@@ -36,11 +36,10 @@ For additional information please check http://www.stemi.education.
 
 #include "Grip.h"
 
-Grip::Grip(Body &bodyNew, Ctrl &ctrlNew, Parameters &parametersNew)
+Grip::Grip(SharedData *sharedDataNew, Body &bodyNew)
 {
-	parameters = &parametersNew;
-	ctrl = &ctrlNew;
 	body = &bodyNew;
+	sharedData = sharedDataNew;
 }
 
 void Grip::setGripParam(float pointCenterNew[3], float interspaceNew, float angleNew)
@@ -97,8 +96,8 @@ void Grip::setPose(float gaitPhi)
 	Serial.print(" ");
 	Serial.println(poseVector[1]);
 
-	ctrl->tr[1] = poseVector[0]* poseVectorFactor;
-	ctrl->tr[2] = poseVector[1] * poseVectorFactor-2;
+	sharedData->moveCtrl.tr[1] = poseVector[0]* poseVectorFactor;
+	sharedData->moveCtrl.tr[2] = poseVector[1] * poseVectorFactor-2;
 }
 
 void Grip::setLegWorkspace()

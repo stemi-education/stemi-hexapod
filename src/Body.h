@@ -37,13 +37,13 @@ For additional information please check http://www.stemi.education.
 #ifndef BODY_H
 #define BODY_H
 
+#include "SharedData.h"
 #include "Gait.h"
 #include "Leg.h"
-#include "Data.h"
 
 class Body {
 public:
-	Body(Ctrl &ctrlNew, Parameters &parametersNew); // constructor
+	Body(SharedData *sharedDataNew); // constructor
 	void packQArray();
 	void IK(); // sets all q's from wanted coordinates of each leg ---> q[3] = joint angles
 	void setLinMode(); // set the robot in servo linearisation mode
@@ -87,8 +87,7 @@ public:
 
 	Gait gait;
 
-	Parameters *parameters;
-	Ctrl *ctrl;
+	SharedData *sharedData;
 
 	//sampling time
 	double ts; //TODO move ts to ctrl in data.h

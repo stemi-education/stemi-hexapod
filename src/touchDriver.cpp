@@ -5,7 +5,7 @@
 Touch* Touch::instance;
 
 Touch::Touch(int treshold, int interval, int value) {
-
+	Serial.println("check touch...");
 	instance = this;
 	touch_treshold = treshold;
 	cycle_counter_detect_interval = interval;

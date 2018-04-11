@@ -37,10 +37,11 @@ For additional information please check http://www.stemi.education.
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#include "SharedData.h"
 #include <Preferences.h>
 #include "ServoController.h"
 #include <NeoPixelBrightnessBus.h>
-#include "Data.h"
+
 #include "touchDriver.h"
 
 #include "WiFi.h"
@@ -58,7 +59,7 @@ For additional information please check http://www.stemi.education.
 class Hardware
 {
 public:
-	Hardware(Ctrl & ctrlNew);
+	Hardware(SharedData *sharedDataNew);
 
 	Touch touch; // initialize touch sensors
 
@@ -92,14 +93,6 @@ public:
 
 	void setCalibration(int8_t linData[18]);
 
-	void wifiInit();
-	void wifiRead();
-	void PKTread();
-	void LINread();
-	void GETread();
-
-	
-
 	void storageInit();
 	void storeCalibrationData(int8_t linData[18]);
 	void loadCalibrationData();
@@ -113,18 +106,7 @@ public:
 
 	RgbColor ledPhaseColor(float phase);
 
-	void IRAM_ATTR onTimer();
-	void blinkLED(uint8_t LEDno, uint8_t blinkTimes, uint8_t blinkSpeed, uint16_t blinkPause);
-	void stopBlinkLED();
-
-	Ctrl * ctrl;
-
-	//wifi
-	WiFiServer server;
-	WiFiClient client;
-	char ssid[20]; // determined in wifiInit()
-	const char* passphrase = "12345678";
-	//const char httpConfirmPkt[100] = "HTTP/1.1 200 OK\nContent-Length: 66\n\n{  \"stemiID\": \"STEMI-657654\", \"version\": \"1.0\", \"isValid\": true}\n\n";
+	SharedData *sharedData;
 
 	//Servos
 	ServoController sc;

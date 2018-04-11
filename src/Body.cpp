@@ -40,55 +40,54 @@ static double absolute(double number)
 	return number >= 0 ? number : -number;
 }
 
-Body::Body(Ctrl &ctrlNew, Parameters &parametersNew)
+Body::Body(SharedData *sharedDataNew)
 {
-	parameters = &parametersNew;
-	ctrl = &ctrlNew;
+	sharedData = sharedDataNew;
+	
+	sharedData->moveCtrl.linMode = 0; //state, if the robot is ready for control
+	sharedData->moveCtrl.running = 1;
 
-	ctrl->linMode = 0; //state, if the robot is ready for control
-	ctrl->running = 1;
 
-
-	ctrl->nMove = 0;
-	ctrl->nMoveMax = 100;
+	sharedData->moveCtrl.nMove = 0;
+	sharedData->moveCtrl.nMoveMax = 100;
 
 	double ad[2], a[3], dim[3];
-
-	ts = 1.0 / parameters->freq;
+	
+	ts = 1.0 / sharedData->param.freq;
 
 	trCurrent[0] = 0;//Start with legs rised up - simple standup routine
-	trCurrent[1] = ctrl->tr[1];
-	trCurrent[2] = ctrl->tr[2];
-	trCurrent[3] = ctrl->tr[3];
-	trCurrent[4] = ctrl->tr[4];
-	trCurrent[5] = ctrl->tr[5];
+	trCurrent[1] = sharedData->moveCtrl.tr[1];
+	trCurrent[2] = sharedData->moveCtrl.tr[2];
+	trCurrent[3] = sharedData->moveCtrl.tr[3];
+	trCurrent[4] = sharedData->moveCtrl.tr[4];
+	trCurrent[5] = sharedData->moveCtrl.tr[5];
 
-	dim[0] = parameters->dim[0]; dim[1] = parameters->dim[1]; dim[2] = parameters->dim[2]; // body: [x1, x2, y]
-	a[0] = parameters->a[0]; a[1] = parameters->a[1]; a[2] = parameters->a[2];
+	dim[0] = sharedData->param.dim[0]; dim[1] = sharedData->param.dim[1]; dim[2] = sharedData->param.dim[2]; // body: [x1, x2, y]
+	a[0] = sharedData->param.a[0]; a[1] = sharedData->param.a[1]; a[2] = sharedData->param.a[2];
 
 	//Legs initialisation
 	ad[0] = dim[0]; ad[1] = dim[2];
-	legs[0].init("R1", PI / 4, ad, a, trCurrent, parameters->freq);
+	legs[0].init("R1", PI / 4, ad, a, trCurrent, sharedData->param.freq);
 
 	ad[0] = dim[1]; ad[1] = 0;
-	legs[1].init("R2", 0.0, ad, a, trCurrent, parameters->freq);
+	legs[1].init("R2", 0.0, ad, a, trCurrent, sharedData->param.freq);
 
 	ad[0] = dim[0]; ad[1] = -dim[2];
-	legs[2].init("R3", -PI / 4, ad, a, trCurrent, parameters->freq);
+	legs[2].init("R3", -PI / 4, ad, a, trCurrent, sharedData->param.freq);
 
 	ad[0] = -dim[0]; ad[1] = dim[2];
-	legs[3].init("L1", 3.0*PI / 4, ad, a, trCurrent, parameters->freq);
+	legs[3].init("L1", 3.0*PI / 4, ad, a, trCurrent, sharedData->param.freq);
 
 	ad[0] = -dim[1]; ad[1] = 0;
-	legs[4].init("L2", PI, ad, a, trCurrent, parameters->freq);
+	legs[4].init("L2", PI, ad, a, trCurrent, sharedData->param.freq);
 
 	ad[0] = -dim[0]; ad[1] = -dim[2];
-	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, parameters->freq);
+	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, sharedData->param.freq);
 
-	setGaitUpDown(gait.selectSequence(ctrl->gaitID));
-	setGaitCurFi(gait.selectStart(ctrl->gaitID));
+	setGaitUpDown(gait.selectSequence(sharedData->moveCtrl.gaitID));
+	setGaitCurFi(gait.selectStart(sharedData->moveCtrl.gaitID));
 
-	setStepHight(ctrl->stepHight);
+	setStepHight(sharedData->moveCtrl.stepHight);
 
 	alpha_tr = 0.95;
 
@@ -180,7 +179,7 @@ void Body::setGaitCurFi(double gaitCurFiNew)
 void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew) {
 	speed = speedNew;
 	double moveCenterNew[2];
-	moveDeltaFi = deltaFiNew == 0 ? speed / parameters->freq / 100000 : deltaFiNew / parameters->freq;
+	moveDeltaFi = deltaFiNew == 0 ? speed / sharedData->param.freq / 100000 : deltaFiNew / sharedData->param.freq;
 
 	double r = deltaFiNew == 0 ? 100000 : absolute(speedNew) / deltaFiNew;
 	moveCenterNew[0] = r*cos(fiNew - PI / 2);
@@ -188,7 +187,7 @@ void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nM
 
 	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setMoveParam(moveCenterNew, moveDeltaFi); //TODO wrapper
 
-	ctrl->nMove = nMoveNew;
+	sharedData->moveCtrl.nMove = nMoveNew;
 }
 
 void Body::setRotateParam(double  moveDeltaFiNew) {
@@ -216,7 +215,7 @@ void Body::scaleStepFi() {
 	gaitDeltaFi = absolute(moveDeltaFi / minScale);
 	slowingScale = 1;
 
-	double preFootholdHight = ctrl->stepHight, preFootholdScaler = 1.3;
+	double preFootholdHight = sharedData->moveCtrl.stepHight, preFootholdScaler = 1.3;
 
 	for (int i = 0; i < nWalkingLegs; i++)
 		if (!legs[walkingLegsMap[i]].gaitState)
@@ -246,7 +245,7 @@ void Body::scaleHomeStep() {
 	else
 
 		if (maxScale > 0.0)
-			gaitDeltaFi = absolute(8 / parameters->freq / maxScale); //scalar speeds up the legs traveling to the home position
+			gaitDeltaFi = absolute(8 / sharedData->param.freq / maxScale); //scalar speeds up the legs traveling to the home position
 
 }
 
@@ -289,25 +288,25 @@ void Body::home(float moveDeltaNew) {
 		//All legs are at home position
 		setCground();
 		for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].gaitState = 1;
-		setGaitCurFi(gait.selectStart(ctrl->gaitID));
+		setGaitCurFi(gait.selectStart(sharedData->moveCtrl.gaitID));
 	}
 }
 
 void Body::run() {
-	if (ctrl->running)
+	if (sharedData->moveCtrl.running)
 	{
-		if (!ctrl->linMode)
+		if (!sharedData->moveCtrl.linMode)
 		{
-			if (ctrl->nMove > 0) ctrl->nMove--; //check the duration of the command and reduce nMove
+			if (sharedData->moveCtrl.nMove > 0) sharedData->moveCtrl.nMove--; //check the duration of the command and reduce nMove
 			else
 			{
-				setMoveParam(0, PI / 2, 0, ctrl->nMoveMax); //if nMove == 0 go to home ... no command present
-				ctrl->tr[0];
-				//ctrl->tr[1] = 0;
-				//ctrl->tr[2] = 0; STAVITI DA BUDE U CTRL
-				//ctrl->tr[3] = 0;
-				//ctrl->tr[4] = 0;
-				//ctrl->tr[5] = 0;
+				setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax); //if nMove == 0 go to home ... no command present
+				sharedData->moveCtrl.tr[0];
+				//sharedData->moveCtrl.tr[1] = 0;
+				//sharedData->moveCtrl.tr[2] = 0; STAVITI DA BUDE U CTRL
+				//sharedData->moveCtrl.tr[3] = 0;
+				//sharedData->moveCtrl.tr[4] = 0;
+				//sharedData->moveCtrl.tr[5] = 0;
 			}
 
 			//setWs(0.85);
@@ -339,13 +338,13 @@ void Body::run() {
 	}
 	else
 	{
-		setMoveParam(0, PI / 2, 0, ctrl->nMoveMax); //go to home, dont receive commands while !running
-		ctrl->tr[0] = 0; //raise legs = put them on 0 hight
-		ctrl->tr[1] = 0;
-		ctrl->tr[2] = 0;
-		ctrl->tr[3] = 0;
-		ctrl->tr[4] = 0;
-		ctrl->tr[5] = 0;
+		setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax); //go to home, dont receive commands while !running
+		sharedData->moveCtrl.tr[0] = 0; //raise legs = put them on 0 hight
+		sharedData->moveCtrl.tr[1] = 0;
+		sharedData->moveCtrl.tr[2] = 0;
+		sharedData->moveCtrl.tr[3] = 0;
+		sharedData->moveCtrl.tr[4] = 0;
+		sharedData->moveCtrl.tr[5] = 0;
 
 		//setWs(0.85);
 		trPT1(); //smooth the tr tranistion
@@ -364,70 +363,70 @@ float PT1(float input, float valuePrev, float alpha) {
 	return alpha*valuePrev + (1 - alpha)*(input);
 }
 void Body::trPT1() {
-	trCurrent[0] = PT1(ctrl->tr[0], trCurrent[0], alpha_tr - 0.02);
-	trCurrent[1] = PT1(ctrl->tr[1], trCurrent[1], alpha_tr - 0.02);
-	trCurrent[2] = PT1(ctrl->tr[2], trCurrent[2], alpha_tr - 0.02);
-	trCurrent[3] = PT1(ctrl->tr[3], trCurrent[3], alpha_tr);
-	trCurrent[4] = PT1(ctrl->tr[4], trCurrent[4], alpha_tr);
-	trCurrent[5] = PT1(ctrl->tr[5], trCurrent[5], alpha_tr);
+	trCurrent[0] = PT1(sharedData->moveCtrl.tr[0], trCurrent[0], alpha_tr - 0.02);
+	trCurrent[1] = PT1(sharedData->moveCtrl.tr[1], trCurrent[1], alpha_tr - 0.02);
+	trCurrent[2] = PT1(sharedData->moveCtrl.tr[2], trCurrent[2], alpha_tr - 0.02);
+	trCurrent[3] = PT1(sharedData->moveCtrl.tr[3], trCurrent[3], alpha_tr);
+	trCurrent[4] = PT1(sharedData->moveCtrl.tr[4], trCurrent[4], alpha_tr);
+	trCurrent[5] = PT1(sharedData->moveCtrl.tr[5], trCurrent[5], alpha_tr);
 }
 //-------------------------BT
 
 void Body::setCommand() {
 
-	setGaitUpDown(gait.selectSequence(ctrl->gaitID));
+	setGaitUpDown(gait.selectSequence(sharedData->moveCtrl.gaitID));
 
 	float speedMultiplyer = 1;
 
-	if (ctrl->gaitID == 1)
+	if (sharedData->moveCtrl.gaitID == 1)
 		speedMultiplyer = 1.4;
-	else if (ctrl->gaitID == 2)
+	else if (sharedData->moveCtrl.gaitID == 2)
 		speedMultiplyer = 1.2;
-	else if (ctrl->gaitID == 3)
+	else if (sharedData->moveCtrl.gaitID == 3)
 		speedMultiplyer = 1;
 
-	if (!ctrl->buttons[0]) //walking available
+	if (!sharedData->moveCtrl.buttons[0]) //walking available
 	{
-		setMoveParam(speedMultiplyer * 10 * saturate(ctrl->joy1u[0], -1, 1),
-			ctrl->joy1u[1],
-			speedMultiplyer*1*saturate(ctrl->ax2u[0], -1, 1),
-			ctrl->nMoveMax);
-		if (ctrl->buttons[1]) //aditional translation and rotation available while walking
+		setMoveParam(speedMultiplyer * 10 * saturate(sharedData->moveCtrl.joy1u[0], -1, 1),
+			sharedData->moveCtrl.joy1u[1],
+			speedMultiplyer*1*saturate(sharedData->moveCtrl.ax2u[0], -1, 1),
+			sharedData->moveCtrl.nMoveMax);
+		if (sharedData->moveCtrl.buttons[1]) //aditional translation and rotation available while walking
 		{
-			ctrl->tr[1] = 0;
-			ctrl->tr[2] = 0;
-			ctrl->tr[3] = 0;
-			ctrl->tr[4] = ctrl->trXYu[0];
-			ctrl->tr[5] = ctrl->trXYu[1];
+			sharedData->moveCtrl.tr[1] = 0;
+			sharedData->moveCtrl.tr[2] = 0;
+			sharedData->moveCtrl.tr[3] = 0;
+			sharedData->moveCtrl.tr[4] = sharedData->moveCtrl.trXYu[0];
+			sharedData->moveCtrl.tr[5] = sharedData->moveCtrl.trXYu[1];
 		}
 		else
 		{
-			//ctrl->tr[1] = 0;
-			//ctrl->tr[2] = 0;
-			ctrl->tr[3] = 0;
-			ctrl->tr[4] = 0;
-			ctrl->tr[5] = 0;
+			//sharedData->moveCtrl.tr[1] = 0;
+			//sharedData->moveCtrl.tr[2] = 0;
+			sharedData->moveCtrl.tr[3] = 0;
+			sharedData->moveCtrl.tr[4] = 0;
+			sharedData->moveCtrl.tr[5] = 0;
 		}
 	}
 	else
 	{
-		setMoveParam(0, PI / 2, 0, ctrl->nMoveMax);
-		ctrl->tr[1] = 3 * ctrl->ax1u[0];
-		ctrl->tr[2] = 3 * ctrl->ax1u[1];
-		ctrl->tr[3] = ctrl->ax2u[0] * PI / 12;
-		ctrl->tr[4] = ctrl->trXYu[0];
-		ctrl->tr[5] = ctrl->trXYu[1];
+		setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax);
+		sharedData->moveCtrl.tr[1] = 3 * sharedData->moveCtrl.ax1u[0];
+		sharedData->moveCtrl.tr[2] = 3 * sharedData->moveCtrl.ax1u[1];
+		sharedData->moveCtrl.tr[3] = sharedData->moveCtrl.ax2u[0] * PI / 12;
+		sharedData->moveCtrl.tr[4] = sharedData->moveCtrl.trXYu[0];
+		sharedData->moveCtrl.tr[5] = sharedData->moveCtrl.trXYu[1];
 	}
 }
 
 void Body::resetCommands()
 {
-	ctrl->nMove = 0;
+	sharedData->moveCtrl.nMove = 0;
 }
 
 void Body::setLinMode(bool linModeNew)
 {
-	ctrl->linMode = linModeNew;
+	sharedData->moveCtrl.linMode = linModeNew;
 }
 
 void Body::moveOneLegGlobal(uint8_t legNo, float pointNew[3])
