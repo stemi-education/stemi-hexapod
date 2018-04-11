@@ -63,7 +63,6 @@ public:
 	void setGaitUpDown(double gaitArray[12]);
 	void setGaitCurFi(double gaitCurFiNew);
 	void setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew);
-	void setRotateParam(double  moveDeltaFiNew);
 	void setHomeParam(double moveDeltaNew);
 	void setStepHight(double stepHightNew);
 	void scaleStepFi();
@@ -76,7 +75,6 @@ public:
 	void run();
 
 	void setCground();
-	void setCommand();
 	void setLinMode(bool linModeNew);
 
 	void moveOneLegGlobal(uint8_t legNo, float pointNew[3]);

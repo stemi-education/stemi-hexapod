@@ -42,7 +42,7 @@ float saturate(float value, float minimum, float maximum)
 	return _min(maximum, _max(minimum, value));
 }
 
-Robot::Robot(SharedData *sharedDataNew) : body(sharedData), hardware(sharedData), grip(sharedData, body)
+Robot::Robot(SharedData *sharedDataNew) : body(sharedDataNew), hardware(sharedDataNew), grip(sharedDataNew, body)
 {
 	sharedData = sharedDataNew;
 	hardware.servoPower(1);
@@ -466,7 +466,7 @@ void Robot::modeGo()
 	}
 	case WALKING_MODE:
 		//walk
-		body.setCommand(); // set command from the package
+		//body.setCommand(); // set command from the package
 		go(); //run the algorithm		
 		hardware.setAllLEDsRainbow(100);
 		//hardware.batteryStatus();

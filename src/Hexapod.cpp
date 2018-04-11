@@ -35,17 +35,12 @@ For additional information please check http://www.stemi.education.
 #include "Arduino.h"
 
 #include "Hexapod.h"
-#include "Robot.h"
+
 
 void walkingEngine(void *sharedData) 
 {
 	Robot robot((SharedData*)sharedData);
 	robot.wakeUp();
-
-	int b = ((SharedData*)sharedData)->a;
-	Serial.print("primljeno: ");
-	Serial.println(b);
-	//robot.hardware.blinkLED(3, 3, 50, 100);
 
 	while (1) //repeat following commands forever
 	{
@@ -58,12 +53,23 @@ void walkingEngine(void *sharedData)
 	}
 }
 
+void servoDriver(void *sharedDataNew)
+{
+	SharedData *sharedData = (SharedData*)sharedDataNew;
+	ServoDriver servoDriver(sharedData);
+	while(1)
+	{
+		servoDriver.servoWrite(sharedData->servoCtrl.servoAngles);
+		delay(20);
+	}
+}
+
 Hexapod::Hexapod()
 {
 	Serial.begin(115200);
 	Serial.println("Hexapod init");
 
-	Serial.print("primljeno prije: ");
-	Serial.println(sharedData.a);
 	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 10*4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
+
 }

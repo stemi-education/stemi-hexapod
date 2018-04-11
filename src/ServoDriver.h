@@ -34,26 +34,52 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef HEXAPOD_H
-#define HEXAPOD_H
-
-#if CONFIG_FREERTOS_UNICORE
-#define ARDUINO_RUNNING_CORE 0
-#else
-#define ARDUINO_RUNNING_CORE 1
-#endif
+#ifndef SERVODRIVER_H
+#define SERVODRIVER_H
 
 #include "SharedData.h"
-#include "ServoDriver.h"
-#include "Robot.h"
+#include <Preferences.h>
+#include "ServoController.h"
 
-class Hexapod
+#define SERVO_POWER_PINN 33
+
+class ServoDriver
 {
 public:
-	Hexapod();
+	ServoDriver(SharedData *sharedDataNew);
 
-	SharedData sharedData;
+	//Servo power
+	void servoPower(bool power); //turn the servos on = 1 or off =0
+
+	int servoInit();
+	int servoWrite(float servosNew[18]);
+	
+	//Permanent storage
+	Preferences preferences;
+
+	void setCalibration(int8_t linData[18]);
+
+	void storageInit();
+	void storeCalibrationData(int8_t linData[18]);
+	void loadCalibrationData();
+
+	hw_timer_t * timer = NULL;
+
+	SharedData *sharedData;
+
+	//Servos
+	ServoController sc;
+	float calibrationOffsets[18] = {  0, 0, 0, 
+																		0, 0, 0, 
+																		0, 0, 0, 
+																		0, 0, 0, 
+																		0, 0, 0, 
+																		0, 0, 0 };
+	int8_t calibrationOffsetBytes[18]{	0, 0, 0,
+																			0, 0, 0,
+																			0, 0, 0,
+																			0, 0, 0,
+																			0, 0, 0,
+																			0, 0, 0 };
 };
-
 #endif
-

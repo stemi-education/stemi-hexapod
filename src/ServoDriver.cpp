@@ -34,40 +34,39 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#include "Hardware.h"
+#include "ServoDriver.h"
 
 
-Hardware::Hardware(SharedData *sharedDataNew) : strip(LED_COUNT, LED_PIN), touch(50, 40, 5)
+ServoDriver::ServoDriver(SharedData *sharedDataNew)
 {
 	sharedData = sharedDataNew;
 
 	storageInit();
 	servoInit();
-	LEDinit();
 	loadCalibrationData();
 }
 
-void Hardware::servoPower(bool power)
+void ServoDriver::servoPower(bool power)
 {
-	pinMode(SERVO_POWER_PIN, OUTPUT); //Servo power enable
-	digitalWrite(SERVO_POWER_PIN, power); //LOW for disable, HIGH for enable
+	pinMode(SERVO_POWER_PINN, OUTPUT); //Servo power enable
+	digitalWrite(SERVO_POWER_PINN, power); //LOW for disable, HIGH for enable
 }
 
 
-int Hardware::servoInit()
+int ServoDriver::servoInit()
 {
 	Serial.println("INICIJALIZIRAM!!!!!!");
 	return 0;
 }
 
-int Hardware::servoWrite(float servosNew[18])
+int ServoDriver::servoWrite(float servosNew[18])
 {
 	float calibratedServos[18];
 	//add calibration data:
 	float servoOffset = 0;// 12 * PI / 180; //dictated by servo nature - should be removed in the future - gets calibrated
 	for (int i = 0; i < 18; i++)
 	{
-		calibratedServos[i] = servosNew[i] + calibrationOffsets[i] + servoOffset;
+		calibratedServos[i] = servosNew[i] + sharedData->servoCtrl.calibrationOffsets[i] + servoOffset;
 		//Serial.print(calibratedServos[i]);
 		//Serial.print(" ");
 	}
@@ -76,13 +75,7 @@ int Hardware::servoWrite(float servosNew[18])
 	return 0;
 }
 
-float Hardware::batteryStatus()
-{
-	float senVal = (float)(analogRead(BATTERY_STATUS_PIN));
-	return(-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
-}
-
-void Hardware::setCalibration(int8_t linData[18])
+void ServoDriver::setCalibration(int8_t linData[18])
 {
 	for (int i = 0; i < 18; i++)
 	{
@@ -90,20 +83,12 @@ void Hardware::setCalibration(int8_t linData[18])
 	}
 }
 
-boolean ByteArrayCompare(char a[], const char b[], int array_size)
-{
-	for (int i = 0; i < array_size; ++i)
-		if (a[i] != b[i])
-			return(false);
-	return(true);
-}
-
-void Hardware::storageInit()
+void ServoDriver::storageInit()
 {
 	preferences.begin("my-app", false);
 }
 
-void Hardware::storeCalibrationData(int8_t linData[18])
+void ServoDriver::storeCalibrationData(int8_t linData[18])
 {
 	Serial.println("writing byte data: ");
 	for (int i = 0; i < 18; i++)
@@ -116,7 +101,7 @@ void Hardware::storeCalibrationData(int8_t linData[18])
 	preferences.putBytes("calibData", linData, 18);
 }
 
-void Hardware::loadCalibrationData()
+void ServoDriver::loadCalibrationData()
 {
 	/*Serial.println("array before reading: ");
 	for (int i = 0; i < 18; i++)
@@ -162,53 +147,4 @@ void Hardware::loadCalibrationData()
 		Serial.print(" ");
 	}
 	Serial.println();
-}
-
-void Hardware::LEDinit()
-{
-	strip.Begin();
-	strip.SetBrightness(50);
-	strip.SetPixelColor(0, RgbColor(255, 0, 0));
-	strip.SetPixelColor(1, RgbColor(100, 100, 0));
-	strip.SetPixelColor(2, RgbColor(0, 255, 0));
-	strip.SetPixelColor(3, RgbColor(0, 100, 100));
-	strip.SetPixelColor(4, RgbColor(0, 0, 255));
-	strip.SetPixelColor(5, RgbColor(100, 0, 100));
-	delay(1);
-	strip.Show();
-}
-
-void Hardware::setAllLEDs(int bright, RgbColor color)
-{
-	strip.SetBrightness(bright);
-	strip.SetPixelColor(0, color);
-	strip.SetPixelColor(1, color);
-	strip.SetPixelColor(2, color);
-	strip.SetPixelColor(3, color);
-	strip.SetPixelColor(4, color);
-	strip.SetPixelColor(5, color);
-	delay(1);
-	strip.Show();
-}
-
-void Hardware::setAllLEDsRainbow(int bright)
-{
-	colorCounter++;
-	if (colorCounter == 100)
-		colorCounter = 0;
-	phaseColor = colorCounter / 100.0 * 2 * PI;
-	strip.SetBrightness(bright);
-	strip.SetPixelColor(0, ledPhaseColor(0));
-	strip.SetPixelColor(1, ledPhaseColor(2 * PI / 6));
-	strip.SetPixelColor(2, ledPhaseColor(2 * 2 * PI / 6));
-	strip.SetPixelColor(3, ledPhaseColor(2 * 3 * PI / 6));
-	strip.SetPixelColor(4, ledPhaseColor(2 * 4 * PI / 6));
-	strip.SetPixelColor(5, ledPhaseColor(2 * 5 * PI / 6));
-	delay(1);
-	strip.Show();
-}
-
-RgbColor Hardware::ledPhaseColor(float phase)
-{
-	return RgbColor((int)((sin(phaseColor + phase) / 2.0 + 0.5) * 255), (int)((sin(phaseColor + phase + 2 / 3 * PI) / 2.0 + 0.5) * 255), (int)((sin(phaseColor + phase + 4 / 3 * PI) / 2.0 + 0.5) * 255));
 }

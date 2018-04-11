@@ -49,22 +49,14 @@ public:
 
 	int a = 12; //just for testing purposes
 
-	//control parameters:
-	struct MoveCtrl
+	struct Ctrl
 	{
 		float linearVelocity = 0;
 		float direction = PI / 2;
 		float angularVelocity = 0;
 		double poseVector[6] = { 4, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
-		uint8_t timer = 0;
-	} moveCtrll;
+		uint timer = 0;
 
-	struct Ctrl
-	{
-		float joy1u[2] = { 0, 0 }; //r, fi
-		float ax1u[2] = { 0, 0 };
-		float joy2u[2] = { 0, 0 }; //r, fi
-		float ax2u[2] = { 0, 0 };
 		//float roboHightu = 4;
 		int gaitID = 1;
 		boolean buttons[2] = { 0, 0 }; // up, down, full rotation, part rotation (moving) 
@@ -74,7 +66,7 @@ public:
 		bool linMode = 0; //state, if robot is in calibration mode
 		bool running = 1; //state, if the robot is ready for control (power on-off)
 
-		int nMove = 0; //how many times will current command execute (0 = home)
+		int nMove = 100; //how many times will current command execute (0 = home)
 		int nMoveMax = 100; //max number nMove (watchdog timer)
 		double tr[6] = { 4, 0, 0, 0, 0, 0 }; //initial translation and rotation vector
 	} moveCtrl;
@@ -86,6 +78,24 @@ public:
 		double freq = 100; //frequency of the algorithm
 		double ts = 1.0 / freq;
 	} param;
+
+	struct ServoCtrl
+	{
+		bool power = 0;
+		float servoAngles[18] = { 0, 0, 0,
+															0, 0, 0,
+															0, 0, 0,
+															0, 0, 0,
+															0, 0, 0,
+															0, 0, 0 };
+		float calibrationOffsets[18] = { 0, 0, 0,
+																		0, 0, 0,
+																		0, 0, 0,
+																		0, 0, 0,
+																		0, 0, 0,
+																		0, 0, 0 };
+		bool store = 0;
+	} servoCtrl;
 };
 
 

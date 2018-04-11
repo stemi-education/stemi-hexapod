@@ -190,13 +190,6 @@ void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nM
 	sharedData->moveCtrl.nMove = nMoveNew;
 }
 
-void Body::setRotateParam(double  moveDeltaFiNew) {
-	moveDeltaFi = moveDeltaFiNew;
-	double moveCenterNew[2] = { 0, 0 };
-
-	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setMoveParam(moveCenterNew, moveDeltaFi);
-}
-
 void Body::setHomeParam(double moveDeltaNew) {
 	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setHomeParam(moveDeltaNew);
 }
@@ -293,6 +286,9 @@ void Body::home(float moveDeltaNew) {
 }
 
 void Body::run() {
+
+	setMoveParam(sharedData->moveCtrl.linearVelocity, sharedData->moveCtrl.direction, sharedData->moveCtrl.angularVelocity, sharedData->moveCtrl.nMoveMax);
+
 	if (sharedData->moveCtrl.running)
 	{
 		if (!sharedData->moveCtrl.linMode)
@@ -371,53 +367,6 @@ void Body::trPT1() {
 	trCurrent[5] = PT1(sharedData->moveCtrl.tr[5], trCurrent[5], alpha_tr);
 }
 //-------------------------BT
-
-void Body::setCommand() {
-
-	setGaitUpDown(gait.selectSequence(sharedData->moveCtrl.gaitID));
-
-	float speedMultiplyer = 1;
-
-	if (sharedData->moveCtrl.gaitID == 1)
-		speedMultiplyer = 1.4;
-	else if (sharedData->moveCtrl.gaitID == 2)
-		speedMultiplyer = 1.2;
-	else if (sharedData->moveCtrl.gaitID == 3)
-		speedMultiplyer = 1;
-
-	if (!sharedData->moveCtrl.buttons[0]) //walking available
-	{
-		setMoveParam(speedMultiplyer * 10 * saturate(sharedData->moveCtrl.joy1u[0], -1, 1),
-			sharedData->moveCtrl.joy1u[1],
-			speedMultiplyer*1*saturate(sharedData->moveCtrl.ax2u[0], -1, 1),
-			sharedData->moveCtrl.nMoveMax);
-		if (sharedData->moveCtrl.buttons[1]) //aditional translation and rotation available while walking
-		{
-			sharedData->moveCtrl.tr[1] = 0;
-			sharedData->moveCtrl.tr[2] = 0;
-			sharedData->moveCtrl.tr[3] = 0;
-			sharedData->moveCtrl.tr[4] = sharedData->moveCtrl.trXYu[0];
-			sharedData->moveCtrl.tr[5] = sharedData->moveCtrl.trXYu[1];
-		}
-		else
-		{
-			//sharedData->moveCtrl.tr[1] = 0;
-			//sharedData->moveCtrl.tr[2] = 0;
-			sharedData->moveCtrl.tr[3] = 0;
-			sharedData->moveCtrl.tr[4] = 0;
-			sharedData->moveCtrl.tr[5] = 0;
-		}
-	}
-	else
-	{
-		setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax);
-		sharedData->moveCtrl.tr[1] = 3 * sharedData->moveCtrl.ax1u[0];
-		sharedData->moveCtrl.tr[2] = 3 * sharedData->moveCtrl.ax1u[1];
-		sharedData->moveCtrl.tr[3] = sharedData->moveCtrl.ax2u[0] * PI / 12;
-		sharedData->moveCtrl.tr[4] = sharedData->moveCtrl.trXYu[0];
-		sharedData->moveCtrl.tr[5] = sharedData->moveCtrl.trXYu[1];
-	}
-}
 
 void Body::resetCommands()
 {
