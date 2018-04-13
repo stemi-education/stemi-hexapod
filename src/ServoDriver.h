@@ -41,7 +41,7 @@ For additional information please check http://www.stemi.education.
 #include <Preferences.h>
 #include "ServoController.h"
 
-#define SERVO_POWER_PINN 33
+#define SERVO_POWER_PIN 33
 
 class ServoDriver
 {
@@ -51,13 +51,10 @@ public:
 	//Servo power
 	void servoPower(bool power); //turn the servos on = 1 or off =0
 
-	int servoInit();
 	int servoWrite(float servosNew[18]);
 	
 	//Permanent storage
 	Preferences preferences;
-
-	void setCalibration(int8_t linData[18]);
 
 	void storageInit();
 	void storeCalibrationData(int8_t linData[18]);
@@ -69,17 +66,5 @@ public:
 
 	//Servos
 	ServoController sc;
-	float calibrationOffsets[18] = {  0, 0, 0, 
-																		0, 0, 0, 
-																		0, 0, 0, 
-																		0, 0, 0, 
-																		0, 0, 0, 
-																		0, 0, 0 };
-	int8_t calibrationOffsetBytes[18]{	0, 0, 0,
-																			0, 0, 0,
-																			0, 0, 0,
-																			0, 0, 0,
-																			0, 0, 0,
-																			0, 0, 0 };
 };
 #endif

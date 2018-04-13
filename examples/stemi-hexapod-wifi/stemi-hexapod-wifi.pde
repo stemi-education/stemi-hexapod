@@ -34,18 +34,13 @@ For additional information please check http://www.stemi.education.
 */
 
 #include "Hexapod.h"
-
+Hexapod  *hexapod;
 void setup()
 {
 	Serial.begin(115200);
 	Serial.println("Krenuo!");
 	
-	Hexapod hexapod;
-
-	while (1)
-	{
-
-	}
+	hexapod = new Hexapod();
 }
 
 void loop()

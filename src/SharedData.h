@@ -51,7 +51,7 @@ public:
 
 	struct Ctrl
 	{
-		float linearVelocity = 0;
+		float linearVelocity = 5;
 		float direction = PI / 2;
 		float angularVelocity = 0;
 		double poseVector[6] = { 4, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
@@ -75,7 +75,7 @@ public:
 	{
 		double a[3] = { 1.11,4.82,6.04 }; //dimensions of one leg
 		double dim[3] = { 3, 5.4, 7.2 }; //coordinates of the robots hips
-		double freq = 100; //frequency of the algorithm
+		double freq = 50; //frequency of the algorithm
 		double ts = 1.0 / freq;
 	} param;
 
@@ -88,14 +88,30 @@ public:
 															0, 0, 0,
 															0, 0, 0,
 															0, 0, 0 };
-		float calibrationOffsets[18] = { 0, 0, 0,
-																		0, 0, 0,
-																		0, 0, 0,
-																		0, 0, 0,
-																		0, 0, 0,
-																		0, 0, 0 };
+		int8_t calibrationOffsetBytes[18] = {0, 0, 0, //TODO rename to calibrationPoints or similar - to be [-100,100] of general unit
+																				0, 0, 0,
+																				0, 0, 0,
+																				0, 0, 0,
+																				0, 0, 0,
+																				0, 0, 0 };
 		bool store = 0;
 	} servoCtrl;
+	struct LedCtrl
+	{
+		float Direction = PI / 2;// [0, 2pi]
+		float spreadRatio = 0.5; // [0, 1] -spatial radio between primar and secondar color
+		uint8_t primarClr[3] = { 0,0,255 };
+		uint8_t secondarClr[3] = { 0,0,0 };
+		int rotationSpeed = 0; // [-100, 100] ~degrees / sec
+		uint8_t blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
+		uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
+	} ledCtrl;
+
+	struct BatteryState
+	{
+		float voltage = 0;
+		uint8_t percentage = 0;
+	} batteryState;
 };
 
 

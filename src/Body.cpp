@@ -368,11 +368,6 @@ void Body::trPT1() {
 }
 //-------------------------BT
 
-void Body::resetCommands()
-{
-	sharedData->moveCtrl.nMove = 0;
-}
-
 void Body::setLinMode(bool linModeNew)
 {
 	sharedData->moveCtrl.linMode = linModeNew;

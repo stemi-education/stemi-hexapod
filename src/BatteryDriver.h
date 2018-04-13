@@ -34,27 +34,20 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef HEXAPOD_H
-#define HEXAPOD_H
+#ifndef BATTERYDRIVER_H
+#define BATTERYDRIVER_H
 
-#if CONFIG_FREERTOS_UNICORE
-#define ARDUINO_RUNNING_CORE 0
-#else
-#define ARDUINO_RUNNING_CORE 1
-#endif
+#define BATTERY_STATUS_PIN 35 //voltage is scaled to fit 3V max - see documentation
 
+#include "Arduino.h"
 #include "SharedData.h"
-#include "ServoDriver.h"
-#include "BatteryDriver.h"
-#include "Robot.h"
 
-class Hexapod
+class BatteryDriver
 {
 public:
-	Hexapod();
+	BatteryDriver(SharedData *sharedDataNew);
+	void checkState();
 
-	SharedData sharedData;
+	SharedData *sharedData;
 };
-
 #endif
-

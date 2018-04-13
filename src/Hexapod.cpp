@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 This file is part of STEMI hexapod library.
 
@@ -57,10 +57,34 @@ void servoDriver(void *sharedDataNew)
 {
 	SharedData *sharedData = (SharedData*)sharedDataNew;
 	ServoDriver servoDriver(sharedData);
+	// sex: servoDriver.setCalibration(sharedData->servoCtrl.calibrationOffsetBytes);
+	// ne imati membera shareddata nego prosljeđivati samo potrebno u funkcijama
 	while(1)
 	{
+		if (sharedData->servoCtrl.store)
+		{
+			Serial.println("Storing calibration data ...");
+			servoDriver.storeCalibrationData(sharedData->servoCtrl.calibrationOffsetBytes);
+			sharedData->servoCtrl.store = 0;
+		}
+		servoDriver.servoPower(sharedData->servoCtrl.power);
 		servoDriver.servoWrite(sharedData->servoCtrl.servoAngles);
 		delay(20);
+	}
+}
+
+void batteryDriver(void *sharedDataNew)
+{
+	SharedData *sharedData = (SharedData*)sharedDataNew;
+	BatteryDriver battery(sharedData);
+	while (1)
+	{
+		battery.checkState();
+		Serial.print("bat: ");
+		Serial.print(sharedData->batteryState.percentage);
+		Serial.print("% ");
+		Serial.println(sharedData->batteryState.voltage);
+		delay(200);
 	}
 }
 
@@ -69,7 +93,8 @@ Hexapod::Hexapod()
 	Serial.begin(115200);
 	Serial.println("Hexapod init");
 
-	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 10*4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, (void*)&sharedData, 2, NULL, ARDUINO_RUNNING_CORE);
 
 }

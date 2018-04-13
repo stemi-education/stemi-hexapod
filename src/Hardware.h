@@ -38,18 +38,13 @@ For additional information please check http://www.stemi.education.
 #define HARDWARE_H
 
 #include "SharedData.h"
-#include <Preferences.h>
-#include "ServoController.h"
 #include <NeoPixelBrightnessBus.h>
 
 #include "touchDriver.h"
 
-#include "WiFi.h"
-
 #define BUZZER_PIN 7
-#define SERVO_POWER_PIN 33
 #define WIFI_POWER_PIN 41
-#define BATTERY_STATUS_PIN 35 //voltage is scaled to fit 3V max - see documentation
+
 //#define ULTRASONIC_TRIGGER_PIN 34 // Arduino pin tied to trigger pin on the ultrasonic sensor.
 //#define ULTRASONIC_ECHO_PIN 35  // Arduino pin tied to echo pin on the ultrasonic sensor.
 #define ULTRASONIC_MAX_DISTANCE 100 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
@@ -62,18 +57,6 @@ public:
 	Hardware(SharedData *sharedDataNew);
 
 	Touch touch; // initialize touch sensors
-
-
-
-
-	//Servo power
-	void servoPower(bool power); //turn the servos on = 1 or off =0
-
-	int servoInit();
-	int servoWrite(float servosNew[18]);
-	
-	//Permanent storage
-	Preferences preferences;
 
 	//RGB LEDs
     NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
@@ -89,17 +72,6 @@ public:
 		int colorCounter = 0;
 		float phaseColor = 0;
 
-	float batteryStatus();
-
-	void setCalibration(int8_t linData[18]);
-
-	void storageInit();
-	void storeCalibrationData(int8_t linData[18]);
-	void loadCalibrationData();
-
-	hw_timer_t * timer = NULL;
-
-
 	void LEDinit();
 	void setAllLEDs(int bright, RgbColor color);
 	void setAllLEDsRainbow(int bright);
@@ -107,20 +79,5 @@ public:
 	RgbColor ledPhaseColor(float phase);
 
 	SharedData *sharedData;
-
-	//Servos
-	ServoController sc;
-	float calibrationOffsets[18] = {  0, 0, 0, 
-																		0, 0, 0, 
-																		0, 0, 0, 
-																		0, 0, 0, 
-																		0, 0, 0, 
-																		0, 0, 0 };
-	int8_t calibrationOffsetBytes[18]{	0, 0, 0,
-																			0, 0, 0,
-																			0, 0, 0,
-																			0, 0, 0,
-																			0, 0, 0,
-																			0, 0, 0 };
 };
 #endif

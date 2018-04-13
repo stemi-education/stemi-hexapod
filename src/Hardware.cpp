@@ -41,53 +41,7 @@ Hardware::Hardware(SharedData *sharedDataNew) : strip(LED_COUNT, LED_PIN), touch
 {
 	sharedData = sharedDataNew;
 
-	storageInit();
-	servoInit();
 	LEDinit();
-	loadCalibrationData();
-}
-
-void Hardware::servoPower(bool power)
-{
-	pinMode(SERVO_POWER_PIN, OUTPUT); //Servo power enable
-	digitalWrite(SERVO_POWER_PIN, power); //LOW for disable, HIGH for enable
-}
-
-
-int Hardware::servoInit()
-{
-	Serial.println("INICIJALIZIRAM!!!!!!");
-	return 0;
-}
-
-int Hardware::servoWrite(float servosNew[18])
-{
-	float calibratedServos[18];
-	//add calibration data:
-	float servoOffset = 0;// 12 * PI / 180; //dictated by servo nature - should be removed in the future - gets calibrated
-	for (int i = 0; i < 18; i++)
-	{
-		calibratedServos[i] = servosNew[i] + calibrationOffsets[i] + servoOffset;
-		//Serial.print(calibratedServos[i]);
-		//Serial.print(" ");
-	}
-	//Serial.println();
-	sc.moveAllServos(calibratedServos);
-	return 0;
-}
-
-float Hardware::batteryStatus()
-{
-	float senVal = (float)(analogRead(BATTERY_STATUS_PIN));
-	return(-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
-}
-
-void Hardware::setCalibration(int8_t linData[18])
-{
-	for (int i = 0; i < 18; i++)
-	{
-		calibrationOffsets[i] = -linData[i] * (PI / 180);
-	}
 }
 
 boolean ByteArrayCompare(char a[], const char b[], int array_size)
@@ -96,72 +50,6 @@ boolean ByteArrayCompare(char a[], const char b[], int array_size)
 		if (a[i] != b[i])
 			return(false);
 	return(true);
-}
-
-void Hardware::storageInit()
-{
-	preferences.begin("my-app", false);
-}
-
-void Hardware::storeCalibrationData(int8_t linData[18])
-{
-	Serial.println("writing byte data: ");
-	for (int i = 0; i < 18; i++)
-	{
-		calibrationOffsetBytes[i] = linData[i];
-		Serial.print(linData[i]);
-		Serial.print(" ");
-	}
-	Serial.println();
-	preferences.putBytes("calibData", linData, 18);
-}
-
-void Hardware::loadCalibrationData()
-{
-	/*Serial.println("array before reading: ");
-	for (int i = 0; i < 18; i++)
-	{
-		Serial.print((float)linData[i]);
-		Serial.print(" ");
-	}
-	Serial.println();*/
-
-	size_t len = preferences.getBytes("calibData", calibrationOffsetBytes, 18);
-	
-	if (!len)
-	{
-		Serial.println("Data not stored...");
-		Serial.println("Loading default numbers");
-		for (int i = 0; i < 18; i++)
-		{
-			calibrationOffsetBytes[i] = 0;
-			Serial.print(calibrationOffsetBytes[i]);
-			Serial.print(" ");
-		}
-		Serial.println();
-	}
-	else
-	{
-		Serial.print("number of bytes read: ");
-		Serial.println(len);
-	}
-	Serial.println("float array loaded: ");
-
-	//converting form bytes [from -100 to 100] to radians
-	for (int i = 0; i < 18; i++)
-	{
-		calibrationOffsets[i] = ((int8_t)calibrationOffsetBytes[i]) / 100.0 * 0.2;
-		Serial.print(calibrationOffsets[i]);
-		Serial.print(" ");
-	}
-	Serial.println();
-	Serial.println("byte array loaded: ");
-	for (int i = 0; i < 18; i++)
-	{
-		Serial.print(calibrationOffsetBytes[i]);
-		Serial.print(" ");
-	}
-	Serial.println();
 }
 
 void Hardware::LEDinit()

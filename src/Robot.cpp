@@ -45,7 +45,7 @@ float saturate(float value, float minimum, float maximum)
 Robot::Robot(SharedData *sharedDataNew) : body(sharedDataNew), hardware(sharedDataNew), grip(sharedDataNew, body)
 {
 	sharedData = sharedDataNew;
-	hardware.servoPower(1);
+	sharedData->servoCtrl.power = 1;
 	delay(10);
 	go();
 }
@@ -61,16 +61,14 @@ void Robot::wakeUp()
 
 	unsigned long startTime = millis(); //start measuring time
 	Serial.println("Waiting for 3 sec ...");
-	while (millis() - startTime < 3000) //read wifi for 3 seconds
-	{
-	}
+	delay(3000);
+
 
 	body.setLinMode(LIN_MODE_PERMANENT);
 
 	startTime = millis();
 	while (millis() - startTime < 2000) //wait for 2 seconds until the robot becomes responsive (safety reasons)
 	{
-		body.resetCommands(); //but ignore movement commands
 		go(); //run the algorithm, just to stand up
 	}
 	//hardware.setAllLEDs(30, RgbColor(0, 255, 255));
@@ -82,7 +80,10 @@ int Robot::go()
 	body.run();
 	body.packQArray();
 	wait(); //wait until enough time has passed
-	hardware.servoWrite(body.qAll);
+	//mutex TODO
+	//hardware.servoWrite(body.qAll);
+	for (int i = 0; i < 18; i++)
+		sharedData->servoCtrl.servoAngles[i] = body.qAll[i];
 	measureTime(); //start measuring time
 
 	return 0;
@@ -97,13 +98,13 @@ void Robot::wait()
 {
 	while (millis() - startTime < body.ts * 1000)
 	{
-
+		delay(1);
 	}
 	//Serial.println(millis() - startTime);
 	if (millis() - startTime > body.ts * 1000)
 	{
-		Serial.print("This cycle took more than expected: ");
-		Serial.println(millis() - startTime);
+		//Serial.print("This cycle took more than expected: ");
+		//Serial.println(millis() - startTime);
 	}
 }
 
@@ -231,26 +232,26 @@ void Robot::checkTouch()
 			{
 				//changing calibration value
 			case 1:
-				hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] =
-					body.saturate((hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] - 10), -100, 100);
+				sharedData->servoCtrl.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] =
+					body.saturate((sharedData->servoCtrl.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] - 10), -100, 100);
 				for (int i = 0; i < 18; i++)
 				{
-					Serial.print(hardware.calibrationOffsetBytes[i]);
+					Serial.print(sharedData->servoCtrl.calibrationOffsetBytes[i]);
 					Serial.print(" ");
 				}
 				Serial.println();
-				Serial.println((hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] + 100.0) / 200 * 255);
+				Serial.println((sharedData->servoCtrl.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] + 100.0) / 200 * 255);
 				break;
 			case 4:
-				hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] =
-					body.saturate((hardware.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] + 10), -100, 100);
+				sharedData->servoCtrl.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] =
+					body.saturate((sharedData->servoCtrl.calibrationOffsetBytes[calibrationLegSelected * 3 + calibrationServoLayerSelected] + 10), -100, 100);
 				for (int i = 0; i < 18; i++)
 				{
-					Serial.print(hardware.calibrationOffsetBytes[i]);
+					Serial.print(sharedData->servoCtrl.calibrationOffsetBytes[i]);
 					Serial.print(" ");
 				}
 				Serial.println();
-				Serial.println((hardware.calibrationOffsetBytes[calibrationLegSelected*3+ calibrationServoLayerSelected] + 100.0) / 200 * 255);
+				Serial.println((sharedData->servoCtrl.calibrationOffsetBytes[calibrationLegSelected*3+ calibrationServoLayerSelected] + 100.0) / 200 * 255);
 				break;
 				//changing selected servo
 			case 3:
@@ -274,19 +275,18 @@ void Robot::checkTouch()
 				//for (int i = 0; i<18; i++)
 					//linDataByte[i] = hardware.calibrationOffsets[]
 				//hardware.storeCalibrationData(linDataByte);
-				hardware.storeCalibrationData(hardware.calibrationOffsetBytes);
-				body.setLinMode(0);
+				sharedData->servoCtrl.store = 1;//signal servo task to store current calib offsets
+				body.setLinMode(0); //migrate to shareddata
 				break;
 			//reset values
 			case 7:
-				for (int i = 0; i < 18; i++)
-					hardware.calibrationOffsetBytes[i] = 0;
-				hardware.storeCalibrationData(hardware.calibrationOffsetBytes);
+				//TODO implement reset shareddata.servo.calibReset = 1;
+				//TODO store it after immediately
+				//for (int i = 0; i < 18; i++)
+					//hardware.calibrationOffsetBytes[i] = 0;
+				//hardware.storeCalibrationData(hardware.calibrationOffsetBytes);
 				break;
 			}
-			//store in radians also - for walking algorithm
-			for (int i = 0; i < 18; i++)
-				hardware.calibrationOffsets[i] = hardware.calibrationOffsetBytes[i] / 100.0 * 0.2;
 			break;
 		case WALKING_MODE:
 			switch (touchState)
@@ -425,7 +425,8 @@ void Robot::modeGo()
 
 		//nudge servos
 		body.setLinMode(1);
-		if (nudgeServos)
+		//TODO all calibration functions move to servo task
+		/*if (nudgeServos)
 		{
 			int delayTime = 7;
 			Serial.println(calibrationServoLayerSelected);
@@ -459,7 +460,7 @@ void Robot::modeGo()
 			}
 			nudgeServos = 0;
 		}
-		else
+		else*/
 			go();
 
 		break;
