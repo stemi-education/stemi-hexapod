@@ -47,6 +47,8 @@ For additional information please check http://www.stemi.education.
 #define LED_PIN 19 //Neopixel RGB LED strip pin
 #define SERVO_POWER_PIN 33
 
+#define SERVO_WALKING_MODE 0 //mode for walking
+#define SERVO_CALIBRATION_MODE 1 //mode for servo calibration 
 
 class SharedData {
 public:
@@ -73,7 +75,6 @@ public:
 
 		int nMove = 100; //how many times will current command execute (0 = home)
 		int nMoveMax = 100; //max number nMove (watchdog timer)
-		double tr[6] = { 4, 0, 0, 0, 0, 0 }; //initial translation and rotation vector
 	} moveCtrl;
 
 	struct Parameters
@@ -93,6 +94,7 @@ public:
 															0, 0, 0,
 															0, 0, 0,
 															0, 0, 0 };
+		bool mode = SERVO_WALKING_MODE;
 		int8_t calibrationOffsetBytes[18] = {0, 0, 0, //TODO rename to calibrationPoints or similar - to be [-100,100] of general unit
 																				0, 0, 0,
 																				0, 0, 0,

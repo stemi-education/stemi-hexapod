@@ -53,7 +53,6 @@ Robot::Robot(SharedData *sharedDataNew) : body(sharedDataNew), hardware(sharedDa
 void Robot::wakeUp()
 {
 	//hardware.servoPower(1);
-	body.setLinMode(LIN_MODE_PERMANENT);
 	go(); //make a first run(), put the legs in the air
 	
 
@@ -62,9 +61,6 @@ void Robot::wakeUp()
 	unsigned long startTime = millis(); //start measuring time
 	Serial.println("Waiting for 3 sec ...");
 	delay(3000);
-
-
-	body.setLinMode(LIN_MODE_PERMANENT);
 
 	startTime = millis();
 	while (millis() - startTime < 2000) //wait for 2 seconds until the robot becomes responsive (safety reasons)
@@ -175,22 +171,22 @@ void Robot::turnRight(float distance)
 
 void Robot::setRotation(float xTilt, float yTilt, float zTilt)
 {
-	sharedData->moveCtrl.tr[3] = saturate(zTilt, -0.15, 0.15);
-	sharedData->moveCtrl.tr[4] = saturate(xTilt, -0.15, 0.15);
-	sharedData->moveCtrl.tr[5] = saturate(yTilt, -0.15, 0.15);
+	sharedData->moveCtrl.poseVector[3] = saturate(zTilt, -0.15, 0.15);
+	sharedData->moveCtrl.poseVector[4] = saturate(xTilt, -0.15, 0.15);
+	sharedData->moveCtrl.poseVector[5] = saturate(yTilt, -0.15, 0.15);
 }
 
 void Robot::setTranslation(float xRotation, float yRotation, float zRotation)
 {
-	sharedData->moveCtrl.tr[0] = saturate(zRotation, 1, 7);
-	sharedData->moveCtrl.tr[1] = saturate(xRotation, -2, 2);
-	sharedData->moveCtrl.tr[2] = saturate(yRotation, -2, 2);
+	sharedData->moveCtrl.poseVector[0] = saturate(zRotation, 1, 7);
+	sharedData->moveCtrl.poseVector[1] = saturate(xRotation, -2, 2);
+	sharedData->moveCtrl.poseVector[2] = saturate(yRotation, -2, 2);
 }
 
 void Robot::danceHip(float angle, float translation, float time)
 {
-	sharedData->moveCtrl.tr[3] = angle;
-	sharedData->moveCtrl.tr[1] = translation;
+	sharedData->moveCtrl.poseVector[3] = angle;
+	sharedData->moveCtrl.poseVector[1] = translation;
 	goHome(time * 2 / 3);
 	Serial.print(" time: ");
 	Serial.println(time * 2 / 3);
@@ -200,7 +196,7 @@ void Robot::danceHip(float angle, float translation, float time)
 void Robot::resetPose()
 {
 	setRotation(0, 0, 0);
-	setTranslation(0, 0, sharedData->moveCtrl.tr[0]);
+	setTranslation(0, 0, sharedData->moveCtrl.poseVector[0]);
 }
 
 //check all touch inputs and change state and variables accordingly
@@ -276,7 +272,7 @@ void Robot::checkTouch()
 					//linDataByte[i] = hardware.calibrationOffsets[]
 				//hardware.storeCalibrationData(linDataByte);
 				sharedData->servoCtrl.store = 1;//signal servo task to store current calib offsets
-				body.setLinMode(0); //migrate to shareddata
+				sharedData->servoCtrl.mode = SERVO_WALKING_MODE;
 				break;
 			//reset values
 			case 7:
@@ -292,10 +288,10 @@ void Robot::checkTouch()
 			switch (touchState)
 			{
 			case 1:
-				sharedData->moveCtrl.tr[2] = body.saturate((sharedData->moveCtrl.tr[2] - 3), -3, 3);
+				sharedData->moveCtrl.poseVector[2] = body.saturate((sharedData->moveCtrl.poseVector[2] - 3), -3, 3);
 				break;
 			case 4:
-				sharedData->moveCtrl.tr[2] = body.saturate((sharedData->moveCtrl.tr[2] + 3), -3, 3);
+				sharedData->moveCtrl.poseVector[2] = body.saturate((sharedData->moveCtrl.poseVector[2] + 3), -3, 3);
 				break;
 				//state change
 			case 2:
@@ -307,7 +303,7 @@ void Robot::checkTouch()
 			}
 			break;
 		case OFFLINE_MODE:
-			sharedData->moveCtrl.tr[2] = 0;
+			sharedData->moveCtrl.poseVector[2] = 0;
 			sharedData->moveCtrl.gaitID = 3;
 			body.setGaitUpDown(body.gait.selectSequence(sharedData->moveCtrl.gaitID));
 			switch (touchState)
@@ -424,7 +420,7 @@ void Robot::modeGo()
 		//TODO hardware.strip.Show();
 
 		//nudge servos
-		body.setLinMode(1);
+		sharedData->servoCtrl.mode = SERVO_CALIBRATION_MODE;
 		//TODO all calibration functions move to servo task
 		/*if (nudgeServos)
 		{

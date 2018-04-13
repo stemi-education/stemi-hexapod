@@ -49,13 +49,13 @@ public:
 	//Servo power
 	void servoPower(bool power); //turn the servos on = 1 or off =0
 
-	int servoWrite(float servosNew[18]);
+	int servoWrite();
 	
 	//Permanent storage
 	Preferences preferences;
 
 	void storageInit();
-	void storeCalibrationData(int8_t linData[18]);
+	void storeCalibrationData();
 	void loadCalibrationData();
 
 	hw_timer_t * timer = NULL;

@@ -150,13 +150,6 @@ void Leg::IK()
 	q[2] = saturate(q[2], -PI, 0);
 }
 
-void Leg::setLinMode()
-{
-	q[0] = 0;
-	q[1] = 0;
-	q[2] = -PI / 2;
-}
-
 void Leg::setC(double cNew[3])
 {
 	cMat[3] = cNew[0]; cMat[7] = cNew[1]; cMat[11] = cNew[2];

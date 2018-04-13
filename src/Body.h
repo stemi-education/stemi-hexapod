@@ -46,7 +46,6 @@ public:
 	Body(SharedData *sharedDataNew); // constructor
 	void packQArray();
 	void IK(); // sets all q's from wanted coordinates of each leg ---> q[3] = joint angles
-	void setLinMode(); // set the robot in servo linearisation mode
 	void setTr(double trNew[6]); //sets the T and Tinv matrices acording to tr vector    
 	void trPT1(); //PT1 filter for translation and rotation
 	void printq(); // prints all joint angles
@@ -75,7 +74,6 @@ public:
 	void run();
 
 	void setCground();
-	void setLinMode(bool linModeNew);
 
 	void moveOneLegGlobal(uint8_t legNo, float pointNew[3]);
 

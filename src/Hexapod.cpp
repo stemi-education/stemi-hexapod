@@ -64,11 +64,10 @@ void servoDriver(void *sharedDataNew)
 		if (sharedData->servoCtrl.store)
 		{
 			Serial.println("Storing calibration data ...");
-			servoDriver.storeCalibrationData(sharedData->servoCtrl.calibrationOffsetBytes);
+			servoDriver.storeCalibrationData();
 			sharedData->servoCtrl.store = 0;
 		}
-		servoDriver.servoPower(sharedData->servoCtrl.power);
-		servoDriver.servoWrite(sharedData->servoCtrl.servoAngles);
+		servoDriver.servoWrite();
 		delay(20);
 	}
 }

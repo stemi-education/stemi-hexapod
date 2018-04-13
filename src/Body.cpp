@@ -43,8 +43,6 @@ static double absolute(double number)
 Body::Body(SharedData *sharedDataNew)
 {
 	sharedData = sharedDataNew;
-	
-	sharedData->moveCtrl.linMode = 0; //state, if the robot is ready for control
 	sharedData->moveCtrl.running = 1;
 
 
@@ -56,11 +54,11 @@ Body::Body(SharedData *sharedDataNew)
 	ts = 1.0 / sharedData->param.freq;
 
 	trCurrent[0] = 0;//Start with legs rised up - simple standup routine
-	trCurrent[1] = sharedData->moveCtrl.tr[1];
-	trCurrent[2] = sharedData->moveCtrl.tr[2];
-	trCurrent[3] = sharedData->moveCtrl.tr[3];
-	trCurrent[4] = sharedData->moveCtrl.tr[4];
-	trCurrent[5] = sharedData->moveCtrl.tr[5];
+	trCurrent[1] = sharedData->moveCtrl.poseVector[1];
+	trCurrent[2] = sharedData->moveCtrl.poseVector[2];
+	trCurrent[3] = sharedData->moveCtrl.poseVector[3];
+	trCurrent[4] = sharedData->moveCtrl.poseVector[4];
+	trCurrent[5] = sharedData->moveCtrl.poseVector[5];
 
 	dim[0] = sharedData->param.dim[0]; dim[1] = sharedData->param.dim[1]; dim[2] = sharedData->param.dim[2]; // body: [x1, x2, y]
 	a[0] = sharedData->param.a[0]; a[1] = sharedData->param.a[1]; a[2] = sharedData->param.a[2];
@@ -109,12 +107,6 @@ void Body::IK() {
 void Body::packQArray() //pack all the q's into one array
 {
 	for (int i = 0; i < nLegs*3; i++) qAll[i] = legs[i / 3].q[i % 3];
-}
-
-void Body::setLinMode()
-{
-	for (int i = 0; i < nLegs; i++) legs[i].setLinMode();
-	packQArray();
 }
 
 void Body::setTr(double trNew[6]) {
@@ -291,56 +283,48 @@ void Body::run() {
 
 	if (sharedData->moveCtrl.running)
 	{
-		if (!sharedData->moveCtrl.linMode)
+		if (sharedData->moveCtrl.nMove > 0) sharedData->moveCtrl.nMove--; //check the duration of the command and reduce nMove
+		else
 		{
-			if (sharedData->moveCtrl.nMove > 0) sharedData->moveCtrl.nMove--; //check the duration of the command and reduce nMove
-			else
-			{
-				setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax); //if nMove == 0 go to home ... no command present
-				sharedData->moveCtrl.tr[0];
-				//sharedData->moveCtrl.tr[1] = 0;
-				//sharedData->moveCtrl.tr[2] = 0; STAVITI DA BUDE U CTRL
-				//sharedData->moveCtrl.tr[3] = 0;
-				//sharedData->moveCtrl.tr[4] = 0;
-				//sharedData->moveCtrl.tr[5] = 0;
-			}
+			setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax); //if nMove == 0 go to home ... no command present
+			sharedData->moveCtrl.poseVector[0];
+			//sharedData->moveCtrl.poseVector[1] = 0;
+			//sharedData->moveCtrl.poseVector[2] = 0; STAVITI DA BUDE U CTRL
+			//sharedData->moveCtrl.poseVector[3] = 0;
+			//sharedData->moveCtrl.poseVector[4] = 0;
+			//sharedData->moveCtrl.poseVector[5] = 0;
+		}
 
-			//setWs(0.85);
-			trPT1(); //smooth the tr tranistion
-			setTr(trCurrent); //set the smoothed tr 
+		//setWs(0.85);
+		trPT1(); //smooth the tr tranistion
+		setTr(trCurrent); //set the smoothed tr 
 
 
 
 
-			if (speed || moveDeltaFi)
-			{
-				//Serial.println("M");
-				move();
-				//printc();
-			}
-			else
-			{
-				//Serial.println("H");
-				home(0.001);
-				//printc();
-			}
-			IK();
+		if (speed || moveDeltaFi)
+		{
+			//Serial.println("M");
+			move();
+			//printc();
 		}
 		else
 		{
-			//Serial.println("L");
-			setLinMode();
+			//Serial.println("H");
+			home(0.001);
+			//printc();
 		}
+		IK();
 	}
 	else
 	{
 		setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax); //go to home, dont receive commands while !running
-		sharedData->moveCtrl.tr[0] = 0; //raise legs = put them on 0 hight
-		sharedData->moveCtrl.tr[1] = 0;
-		sharedData->moveCtrl.tr[2] = 0;
-		sharedData->moveCtrl.tr[3] = 0;
-		sharedData->moveCtrl.tr[4] = 0;
-		sharedData->moveCtrl.tr[5] = 0;
+		sharedData->moveCtrl.poseVector[0] = 0; //raise legs = put them on 0 hight
+		sharedData->moveCtrl.poseVector[1] = 0;
+		sharedData->moveCtrl.poseVector[2] = 0;
+		sharedData->moveCtrl.poseVector[3] = 0;
+		sharedData->moveCtrl.poseVector[4] = 0;
+		sharedData->moveCtrl.poseVector[5] = 0;
 
 		//setWs(0.85);
 		trPT1(); //smooth the tr tranistion
@@ -359,19 +343,14 @@ float PT1(float input, float valuePrev, float alpha) {
 	return alpha*valuePrev + (1 - alpha)*(input);
 }
 void Body::trPT1() {
-	trCurrent[0] = PT1(sharedData->moveCtrl.tr[0], trCurrent[0], alpha_tr - 0.02);
-	trCurrent[1] = PT1(sharedData->moveCtrl.tr[1], trCurrent[1], alpha_tr - 0.02);
-	trCurrent[2] = PT1(sharedData->moveCtrl.tr[2], trCurrent[2], alpha_tr - 0.02);
-	trCurrent[3] = PT1(sharedData->moveCtrl.tr[3], trCurrent[3], alpha_tr);
-	trCurrent[4] = PT1(sharedData->moveCtrl.tr[4], trCurrent[4], alpha_tr);
-	trCurrent[5] = PT1(sharedData->moveCtrl.tr[5], trCurrent[5], alpha_tr);
+	trCurrent[0] = PT1(sharedData->moveCtrl.poseVector[0], trCurrent[0], alpha_tr - 0.02);
+	trCurrent[1] = PT1(sharedData->moveCtrl.poseVector[1], trCurrent[1], alpha_tr - 0.02);
+	trCurrent[2] = PT1(sharedData->moveCtrl.poseVector[2], trCurrent[2], alpha_tr - 0.02);
+	trCurrent[3] = PT1(sharedData->moveCtrl.poseVector[3], trCurrent[3], alpha_tr);
+	trCurrent[4] = PT1(sharedData->moveCtrl.poseVector[4], trCurrent[4], alpha_tr);
+	trCurrent[5] = PT1(sharedData->moveCtrl.poseVector[5], trCurrent[5], alpha_tr);
 }
 //-------------------------BT
-
-void Body::setLinMode(bool linModeNew)
-{
-	sharedData->moveCtrl.linMode = linModeNew;
-}
 
 void Body::moveOneLegGlobal(uint8_t legNo, float pointNew[3])
 {

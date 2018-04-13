@@ -96,8 +96,8 @@ void Grip::setPose(float gaitPhi)
 	Serial.print(" ");
 	Serial.println(poseVector[1]);
 
-	sharedData->moveCtrl.tr[1] = poseVector[0]* poseVectorFactor;
-	sharedData->moveCtrl.tr[2] = poseVector[1] * poseVectorFactor-2;
+	sharedData->moveCtrl.poseVector[1] = poseVector[0]* poseVectorFactor;
+	sharedData->moveCtrl.poseVector[2] = poseVector[1] * poseVectorFactor-2;
 }
 
 void Grip::setLegWorkspace()

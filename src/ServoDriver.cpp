@@ -43,6 +43,8 @@ ServoDriver::ServoDriver(SharedData *sharedDataNew)
 
 	storageInit();
 	loadCalibrationData();
+	servoPower(1);
+	sharedData->servoCtrl.power = 1;
 }
 
 void ServoDriver::servoPower(bool power)
@@ -51,19 +53,39 @@ void ServoDriver::servoPower(bool power)
 	digitalWrite(SERVO_POWER_PIN, power); //LOW for disable, HIGH for enable
 }
 
-int ServoDriver::servoWrite(float servosNew[18])
+int ServoDriver::servoWrite()
 {
-	float calibratedServos[18];
-	//add calibration data:
-	float servoOffset = 0;// 12 * PI / 180; //dictated by servo nature - should be removed in the future - gets calibrated
-	for (int i = 0; i < 18; i++)
+
+	if (!sharedData->servoCtrl.power)
 	{
-		calibratedServos[i] = servosNew[i] + sharedData->servoCtrl.calibrationOffsetBytes[i] / 100.0 * 0.2 + servoOffset;
-		//Serial.print(calibratedServos[i]);
-		//Serial.print(" ");
+		servoPower(0);
 	}
-	//Serial.println();
-	sc.moveAllServos(calibratedServos);
+	
+	//SERVO MODES
+	float calibratedServos[18];
+	switch (sharedData->servoCtrl.mode)
+	{
+	case SERVO_CALIBRATION_MODE:
+		for (int i = 0; i < 6; i++)
+		{
+			calibratedServos[i * 3] = 0 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3] / 100.0 * 0.2;
+			calibratedServos[i * 3 +1] = 0 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3 +1] / 100.0 * 0.2;
+			calibratedServos[i * 3 +2] = -PI/2 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3 +2] / 100.0 * 0.2;
+		}
+		sc.moveAllServos(calibratedServos);
+		break;
+	case SERVO_WALKING_MODE:
+		//add calibration data:
+		for (int i = 0; i < 18; i++)
+		{
+			calibratedServos[i] = sharedData->servoCtrl.servoAngles[i] + sharedData->servoCtrl.calibrationOffsetBytes[i] / 100.0 * 0.2;
+			//Serial.print(calibratedServos[i]);
+			//Serial.print(" ");
+		}
+		//Serial.println();
+		sc.moveAllServos(calibratedServos);
+		break;
+	}
 	return 0;
 }
 
@@ -72,17 +94,16 @@ void ServoDriver::storageInit()
 	preferences.begin("my-app", false);
 }
 
-void ServoDriver::storeCalibrationData(int8_t linData[18])
+void ServoDriver::storeCalibrationData()
 {
 	Serial.println("writing byte data: ");
 	for (int i = 0; i < 18; i++)
 	{
-		sharedData->servoCtrl.calibrationOffsetBytes[i] = linData[i];
-		Serial.print(linData[i]);
+		Serial.print(sharedData->servoCtrl.calibrationOffsetBytes[i]);
 		Serial.print(" ");
 	}
 	Serial.println();
-	preferences.putBytes("calibData", linData, 18);
+	preferences.putBytes("calibData", sharedData->servoCtrl.calibrationOffsetBytes, 18);
 }
 
 void ServoDriver::loadCalibrationData()
