@@ -34,35 +34,29 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef SERVODRIVER_H
-#define SERVODRIVER_H
+#ifndef LEDDRIVER_H
+#define LEDDRIVER_H
 
+#include <NeoPixelBrightnessBus.h>
 #include "SharedData.h"
-#include <Preferences.h>
-#include "ServoController.h"
 
-class ServoDriver
+class LedDriver
 {
 public:
-	ServoDriver(SharedData *sharedDataNew);
-
-	//Servo power
-	void servoPower(bool power); //turn the servos on = 1 or off =0
-
-	int servoWrite(float servosNew[18]);
+	LedDriver(SharedData *sharedDataNew);
 	
-	//Permanent storage
-	Preferences preferences;
-
-	void storageInit();
-	void storeCalibrationData(int8_t linData[18]);
-	void loadCalibrationData();
-
-	hw_timer_t * timer = NULL;
-
 	SharedData *sharedData;
 
-	//Servos
-	ServoController sc;
+	NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
+
+	//Colors
+	RgbColor red = RgbColor(255, 0, 0);
+	RgbColor green = RgbColor(0, 255, 0);
+	RgbColor blue = RgbColor(0, 0, 255);
+	RgbColor yellow = RgbColor(255, 242, 0);
+	RgbColor purple = RgbColor(255, 0, 255);
+	RgbColor white = RgbColor(255);
+	RgbColor black = RgbColor(0);
+
 };
 #endif

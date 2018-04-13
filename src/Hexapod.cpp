@@ -88,6 +88,17 @@ void batteryDriver(void *sharedDataNew)
 	}
 }
 
+void ledDriver(void *sharedDataNew)
+{
+	SharedData *sharedData = (SharedData*)sharedDataNew;
+	LedDriver ledDriver(sharedData);
+	while (1)
+	{
+		//TODO insert functions to control LEDs based on sharedData->ledCtrl variables
+		delay(100);
+	}
+}
+
 Hexapod::Hexapod()
 {
 	Serial.begin(115200);
@@ -96,5 +107,6 @@ Hexapod::Hexapod()
 	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, (void*)&sharedData, 2, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
 
 }

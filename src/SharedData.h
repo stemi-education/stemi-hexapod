@@ -43,6 +43,11 @@ For additional information please check http://www.stemi.education.
 #include "WProgram.h"
 #endif
 
+#define LED_COUNT 6
+#define LED_PIN 19 //Neopixel RGB LED strip pin
+#define SERVO_POWER_PIN 33
+
+
 class SharedData {
 public:
 	SharedData();

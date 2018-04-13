@@ -57,7 +57,7 @@ void Robot::wakeUp()
 	go(); //make a first run(), put the legs in the air
 	
 
-	hardware.setAllLEDs(100, RgbColor(0, 255, 255));
+	//TODO hardware.setAllLEDs(100, RgbColor(0, 255, 255));
 
 	unsigned long startTime = millis(); //start measuring time
 	Serial.println("Waiting for 3 sec ...");
@@ -392,11 +392,11 @@ void Robot::modeGo()
 	switch (robotMode)
 	{
 	case PRE_CALIBRATION_MODE:
-		hardware.setAllLEDs(50, RgbColor(255, 0, 0));
+		//TODO hardware.setAllLEDs(50, RgbColor(255, 0, 0));
 		break;
 	case CALIBRATION_MODE:
 	{
-		hardware.strip.SetBrightness(255);
+		//TODO hardware.strip.SetBrightness(255);
 		int selectedLED;
 		//mapping from selected leg to LED number
 
@@ -407,21 +407,21 @@ void Robot::modeGo()
 				switch (calibrationServoLayerSelected % 3)
 				{
 				case 0:
-					hardware.strip.SetPixelColor(i, hardware.red);
+					//TODO hardware.strip.SetPixelColor(i, hardware.red);
 					break;
 				case 1:
-					hardware.strip.SetPixelColor(i, hardware.blue);
+					//TODO hardware.strip.SetPixelColor(i, hardware.blue);
 					break;
 				case 2:
-					hardware.strip.SetPixelColor(i, hardware.yellow);
+					//TODO hardware.strip.SetPixelColor(i, hardware.yellow);
 					break;
 				}
 			}
-			else
-				hardware.strip.SetPixelColor(i, 0);
+			//else
+				//TODO hardware.strip.SetPixelColor(i, 0);
 		}
 		delay(1);
-		hardware.strip.Show();
+		//TODO hardware.strip.Show();
 
 		//nudge servos
 		body.setLinMode(1);
@@ -469,12 +469,12 @@ void Robot::modeGo()
 		//walk
 		//body.setCommand(); // set command from the package
 		go(); //run the algorithm		
-		hardware.setAllLEDsRainbow(100);
+					//TODO hardware.setAllLEDsRainbow(100);
 		//hardware.batteryStatus();
 		break;
 	case OFFLINE_MODE:
 		//offline move
-		hardware.setAllLEDs(100, RgbColor(0, 255, 0));
+		//TODO hardware.setAllLEDs(100, RgbColor(0, 255, 0));
 
 		if (hipMode == -1)
 		{
@@ -500,7 +500,7 @@ void Robot::modeGo()
 		float pitch;
 		float hipRotation = 0.15, hipTranslation = 0;
 
-		hardware.setAllLEDs(100, RgbColor(0, 0, 255));
+		//TODO hardware.setAllLEDs(100, RgbColor(0, 0, 255));
 		if (hipMode == -1)
 		{
 			int randomNumber = random(4, 8);
@@ -533,7 +533,7 @@ void Robot::modeGo()
 		break;
 	}
 	case RANDOM_MODE:
-		hardware.setAllLEDs(100, RgbColor(255, 255, 0));
+		//TODO hardware.setAllLEDs(100, RgbColor(255, 255, 0));
 		resetPose();
 		goHome();
 		break;
@@ -557,7 +557,7 @@ void Robot::modeGo()
 		
 		go();
 		*/
-		hardware.setAllLEDs(100, RgbColor(255, 0, 255));
+		//TODO hardware.setAllLEDs(100, RgbColor(255, 0, 255));
 		break;
 	}
 }

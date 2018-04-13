@@ -34,35 +34,22 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef SERVODRIVER_H
-#define SERVODRIVER_H
+#include "LedDriver.h"
 
-#include "SharedData.h"
-#include <Preferences.h>
-#include "ServoController.h"
 
-class ServoDriver
+LedDriver::LedDriver(SharedData *sharedDataNew): strip(LED_COUNT, LED_PIN)
 {
-public:
-	ServoDriver(SharedData *sharedDataNew);
 
-	//Servo power
-	void servoPower(bool power); //turn the servos on = 1 or off =0
+	sharedData = sharedDataNew;
 
-	int servoWrite(float servosNew[18]);
-	
-	//Permanent storage
-	Preferences preferences;
-
-	void storageInit();
-	void storeCalibrationData(int8_t linData[18]);
-	void loadCalibrationData();
-
-	hw_timer_t * timer = NULL;
-
-	SharedData *sharedData;
-
-	//Servos
-	ServoController sc;
+	strip.Begin();
+	strip.SetBrightness(50);
+	strip.SetPixelColor(0, RgbColor(255, 0, 0));
+	strip.SetPixelColor(1, RgbColor(100, 100, 0));
+	strip.SetPixelColor(2, RgbColor(0, 255, 0));
+	strip.SetPixelColor(3, RgbColor(0, 100, 100));
+	strip.SetPixelColor(4, RgbColor(0, 0, 255));
+	strip.SetPixelColor(5, RgbColor(100, 0, 100));
+	delay(1);
+	strip.Show();
 };
-#endif

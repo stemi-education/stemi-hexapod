@@ -46,6 +46,7 @@ For additional information please check http://www.stemi.education.
 #include "SharedData.h"
 #include "ServoDriver.h"
 #include "BatteryDriver.h"
+#include "LedDriver.h"
 #include "Robot.h"
 
 class Hexapod
