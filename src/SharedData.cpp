@@ -40,3 +40,18 @@ SharedData:: SharedData()
 {
 	
 }
+
+void SharedData::writeServoAngles(float servoAnglesNew[18])
+{
+	for (int i = 0; i < 18; i++)
+		servoCtrl.servoAngles[i] = servoAnglesNew[i];
+}
+
+void SharedData::writeBtCtrlToMoveCtrl()
+{
+	moveCtrl.linearVelocity = btCtrl.linearVelocity;
+	moveCtrl.direction = btCtrl.direction;
+	moveCtrl.angularVelocity = btCtrl.angularVelocity;
+}
+
+

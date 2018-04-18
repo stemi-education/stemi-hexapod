@@ -107,7 +107,7 @@ bool Touch::isTouchDetected() {
 }
 
 int Touch::getTouchPattern(bool printPattern) {
-	if (printPattern) Serial.printf("Touch pattern: %i \n", activeTouchID);
+	//if (printPattern) Serial.printf("Touch pattern: %i \n", activeTouchID);
 	return activeTouchID;
 }
 

@@ -34,74 +34,27 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef ROBOT_H
-#define ROBOT_H
-
-#define LIN_MODE_PERMANENT 0 //set this to 1 if you want your robot to stand still in linearisation pose permanently - all the servos in home position - used for robot assembly
+#ifndef ROBOTENGINE_H
+#define ROBOTENGINE_H
 
 #include "SharedData.h"
-#include "Hardware.h"
-#include "Body.h"
-#include "RobotModes.h"
-#include "Grip.h"
+#include "touchDriver.h"
 
-class Robot
+class RobotEngine
 {
 public:
-	Robot(SharedData *sharedDataNew);
-	void wakeUp();
-	int go();
-	Hardware hardware;
+	RobotEngine(SharedData *sharedDataNew);
+	void checkState();
+	void modesGO();
 
-	Body body;
-	Grip grip;
 	SharedData *sharedData;
+	Touch touch;
 
-	void measureTime();
-	void wait();
-
-	/* High level functions that are ment to be called once. They set the parameters and then loop so
-	* the robot will do some action like walk the given distance.
-	*/
-	void loopMove();
-	void loopHome(float timeWaiting = 0);
-	void goHome(float time = 0);
-
-	void goForward(float distance);
-	void goBackwards(float distance);
-	void goLeft(float distance);
-	void goRight(float distance);
-	void turnLeft(float distance);
-	void turnRight(float distance);
-
-	void setRotation(float xTilt, float yTilt, float zTilt);
-	void setTranslation(float xRotation, float yRotation, float zRotation);
-	void danceHip(float angle, float translation, float time);
-
-	void resetPose();
-
-	void checkTouch();
-
-	void modeGo();
-
-	long startTime;
-
-	//high level functions
-	float goSpeed = 5;
-	float turnSpeed = 0.4;
-
+	//calibration mode bariables
 	//calibrationMode variables
 	int calibrationLegSelected = 0, calibrationLegSelectedCounter = 0, calibrationServoLayerSelected = 0;// , calibrationValue = 0;
-	bool nudgeServos = 0;
 	uint8_t calibrationLegSelectedMap[6] = { 0, 1, 2, 5, 4, 3 };
 	uint8_t calibrationLegSelectedMapLED[6] = { 3, 4, 5, 2, 1, 0 };
 
-	int robotMode = WALKING_MODE; //start with basic wlking mode that listens to wifi
-	int moveSpeed = 0; //moving speed
-	int hipMode = 0; //blue mode moving parameter
-
-
 };
-
 #endif
-

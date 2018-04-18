@@ -106,7 +106,7 @@ void Body::IK() {
 
 void Body::packQArray() //pack all the q's into one array
 {
-	for (int i = 0; i < nLegs*3; i++) qAll[i] = legs[i / 3].q[i % 3];
+	for (int i = 0; i < nLegs*3; i++) sharedData->servoCtrl.servoAngles[i] = legs[i / 3].q[i % 3];
 }
 
 void Body::setTr(double trNew[6]) {
@@ -277,7 +277,8 @@ void Body::home(float moveDeltaNew) {
 	}
 }
 
-void Body::run() {
+void Body::run() 
+{
 
 	setMoveParam(sharedData->moveCtrl.linearVelocity, sharedData->moveCtrl.direction, sharedData->moveCtrl.angularVelocity, sharedData->moveCtrl.nMoveMax);
 
@@ -333,6 +334,7 @@ void Body::run() {
 		home(0.001);
 		IK();
 	}
+	packQArray();
 }
 
 void Body::setCground() {

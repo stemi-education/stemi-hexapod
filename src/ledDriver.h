@@ -45,6 +45,8 @@ class LedDriver
 public:
 	LedDriver(SharedData *sharedDataNew);
 	
+	void setColor();
+
 	SharedData *sharedData;
 
 	NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;

@@ -86,8 +86,6 @@ public:
 	//sampling time
 	double ts; //TODO move ts to ctrl in data.h
 
-	//limb angles:
-	float qAll[18];
 //private:
 
 	// parameters

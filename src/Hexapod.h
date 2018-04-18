@@ -47,7 +47,13 @@ For additional information please check http://www.stemi.education.
 #include "ServoDriver.h"
 #include "BatteryDriver.h"
 #include "LedDriver.h"
-#include "Robot.h"
+#include "Body.h"
+#include "RobotEngine.h"
+#include "BluetoothLowEnergy.h"
+
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
 
 class Hexapod
 {

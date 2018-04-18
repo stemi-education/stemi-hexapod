@@ -52,4 +52,17 @@ LedDriver::LedDriver(SharedData *sharedDataNew): strip(LED_COUNT, LED_PIN)
 	strip.SetPixelColor(5, RgbColor(100, 0, 100));
 	delay(1);
 	strip.Show();
-};
+}
+void LedDriver::setColor()
+{
+	RgbColor color(sharedData->ledCtrl.primarClr[0],
+		sharedData->ledCtrl.primarClr[1], sharedData->ledCtrl.primarClr[2]);
+	strip.SetPixelColor(0, color);
+	strip.SetPixelColor(1, color);
+	strip.SetPixelColor(2, color);
+	strip.SetPixelColor(3, color);
+	strip.SetPixelColor(4, color);
+	strip.SetPixelColor(5, color);
+	delay(1);
+	strip.Show();
+}

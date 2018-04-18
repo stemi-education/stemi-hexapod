@@ -36,20 +36,27 @@ For additional information please check http://www.stemi.education.
 
 #include "Hexapod.h"
 
-
-void walkingEngine(void *sharedData) 
+void robotEngine(void *sharedDataNew)
 {
-	Robot robot((SharedData*)sharedData);
-	robot.wakeUp();
-
-	while (1) //repeat following commands forever
+	SharedData *sharedData = (SharedData*)sharedDataNew;
+  RobotEngine robotEngine(sharedData);
+	while (1)
 	{
-		////check all inputs and change state and variables accordingly////
-		//robot.checkTouch();
-		//wifi input
-		//robot.hardware.wifiRead(); // read wifi package if available
-		////execute actions based on state and variables////
-		robot.modeGo();
+		robotEngine.checkState();
+		robotEngine.modesGO();
+		delay(20);
+	}
+}
+
+void walkingEngine(void *sharedDataNew) 
+{
+	SharedData *sharedData = (SharedData*)sharedDataNew;
+	Body body(sharedData);
+
+	while (1)
+	{
+		body.run();
+		delay(20);
 	}
 }
 
@@ -57,14 +64,12 @@ void servoDriver(void *sharedDataNew)
 {
 	SharedData *sharedData = (SharedData*)sharedDataNew;
 	ServoDriver servoDriver(sharedData);
-	// sex: servoDriver.setCalibration(sharedData->servoCtrl.calibrationOffsetBytes);
-	// ne imati membera shareddata nego prosljeđivati samo potrebno u funkcijama
 	while(1)
 	{
 		if (sharedData->servoCtrl.store)
 		{
 			Serial.println("Storing calibration data ...");
-			servoDriver.storeCalibrationData();
+			//servoDriver.storeCalibrationData();
 			sharedData->servoCtrl.store = 0;
 		}
 		servoDriver.servoWrite();
@@ -79,10 +84,6 @@ void batteryDriver(void *sharedDataNew)
 	while (1)
 	{
 		battery.checkState();
-		Serial.print("bat: ");
-		Serial.print(sharedData->batteryState.percentage);
-		Serial.print("% ");
-		Serial.println(sharedData->batteryState.voltage);
 		delay(200);
 	}
 }
@@ -94,7 +95,19 @@ void ledDriver(void *sharedDataNew)
 	while (1)
 	{
 		//TODO insert functions to control LEDs based on sharedData->ledCtrl variables
+		ledDriver.setColor();
 		delay(100);
+	}
+}
+
+void BtEngine(void *sharedDataNew)
+{
+	SharedData *sharedData = (SharedData*)sharedDataNew;
+	BluetoothLowEnergy BLE(std::string("STEMIHexapod"), sharedData);
+	delay(2000);
+	while (1)
+	{
+		delay(1000);
 	}
 }
 
@@ -104,8 +117,11 @@ Hexapod::Hexapod()
 	Serial.println("Hexapod init");
 
 	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, (void*)&sharedData, 2, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(BtEngine, "BtEngine", 2*4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
+
 
 }

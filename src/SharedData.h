@@ -47,21 +47,40 @@ For additional information please check http://www.stemi.education.
 #define LED_PIN 19 //Neopixel RGB LED strip pin
 #define SERVO_POWER_PIN 33
 
+//servo modes
 #define SERVO_WALKING_MODE 0 //mode for walking
-#define SERVO_CALIBRATION_MODE 1 //mode for servo calibration 
+#define SERVO_CALIBRATION_MODE 1 //mode for servo calibration
+
+//led modes
+
+//robot modes
+#define ROBOT_STANDBY_MODE 0
+#define ROBOT_STANDING_UP_MODE 1
+#define ROBOT_WALK_MODE 2
+#define ROBOT_WALk_N_TILT_MODE 3
+#define ROBOT_DANCE_MODE 4
+#define ROBOT_EMPTY_MODE 10 //Custom mode for users to program
+
+#define ROBOT_PRE_CALIBRATION_MODE -1
+#define ROBOT_CALIBRATION_MODE -2
+#define ROBOT_BATTERY_EMPTY_MODE -3
+
+#define LED_MANUAL_MODE 0;
+#define LED_PARAMETRIC_MODE 1;
+#define LED_CUSTOM_MODE 2;
 
 class SharedData {
 public:
 	SharedData();
+	void writeServoAngles(float servoAnglesNew[18]);
+	void writeBtCtrlToMoveCtrl();
 
-	int a = 12; //just for testing purposes
-
-	struct Ctrl
+	struct MoveCtrl
 	{
-		float linearVelocity = 5;
+		float linearVelocity = 0;
 		float direction = PI / 2;
 		float angularVelocity = 0;
-		double poseVector[6] = { 4, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
+		double poseVector[6] = { 3, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
 		uint timer = 0;
 
 		//float roboHightu = 4;
@@ -76,6 +95,15 @@ public:
 		int nMove = 100; //how many times will current command execute (0 = home)
 		int nMoveMax = 100; //max number nMove (watchdog timer)
 	} moveCtrl;
+
+	struct BtCtrl
+	{
+		float linearVelocity = 0;
+		float direction = PI / 2;
+		float angularVelocity = 0;
+		double poseVector[6] = { 3, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
+		uint timer = 0;
+	} btCtrl;
 
 	struct Parameters
 	{
@@ -102,7 +130,9 @@ public:
 																				0, 0, 0,
 																				0, 0, 0 };
 		bool store = 0;
+		int8_t nudge = -1;
 	} servoCtrl;
+
 	struct LedCtrl
 	{
 		float Direction = PI / 2;// [0, 2pi]
@@ -112,6 +142,8 @@ public:
 		int rotationSpeed = 0; // [-100, 100] ~degrees / sec
 		uint8_t blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
 		uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
+		uint8_t manualClr[6][3];
+		int8_t mode = LED_PARAMETRIC_MODE;
 	} ledCtrl;
 
 	struct BatteryState
@@ -119,6 +151,8 @@ public:
 		float voltage = 0;
 		uint8_t percentage = 0;
 	} batteryState;
+
+	int8_t mode = ROBOT_STANDBY_MODE;
 };
 
 

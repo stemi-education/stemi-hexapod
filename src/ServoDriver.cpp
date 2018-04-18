@@ -40,7 +40,7 @@ For additional information please check http://www.stemi.education.
 ServoDriver::ServoDriver(SharedData *sharedDataNew)
 {
 	sharedData = sharedDataNew;
-
+	delay(200);
 	storageInit();
 	loadCalibrationData();
 	servoPower(1);
@@ -66,13 +66,49 @@ int ServoDriver::servoWrite()
 	switch (sharedData->servoCtrl.mode)
 	{
 	case SERVO_CALIBRATION_MODE:
+		
 		for (int i = 0; i < 6; i++)
 		{
 			calibratedServos[i * 3] = 0 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3] / 100.0 * 0.2;
-			calibratedServos[i * 3 +1] = 0 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3 +1] / 100.0 * 0.2;
-			calibratedServos[i * 3 +2] = -PI/2 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3 +2] / 100.0 * 0.2;
+			calibratedServos[i * 3 + 1] = 0 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3 + 1] / 100.0 * 0.2;
+			calibratedServos[i * 3 + 2] = -PI / 2 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3 + 2] / 100.0 * 0.2;
 		}
 		sc.moveAllServos(calibratedServos);
+
+		if (sharedData->servoCtrl.nudge > -1) //if nudge is required for some servo layer
+		{
+			int delayTime = 10;
+			//Serial.println(calibrationServoLayerSelected);
+			float nudgeAmmount = 0.1; //radians
+			for (int j = 0; j < 20; j++)
+			{
+				for (int i = 0; i < 18; i++)
+				{
+					if (i % 3 == sharedData->servoCtrl.nudge) calibratedServos[i] += nudgeAmmount / delayTime;
+				}
+				sc.moveAllServos(calibratedServos);
+				delay(delayTime);
+			}
+			for (int j = 0; j < 40; j++)
+			{
+				for (int i = 0; i < 18; i++)
+				{
+					if (i % 3 == sharedData->servoCtrl.nudge) calibratedServos[i] -= nudgeAmmount / delayTime;
+				}
+				sc.moveAllServos(calibratedServos);
+				delay(delayTime);
+			}
+			for (int j = 0; j < 20; j++)
+			{
+				for (int i = 0; i < 18; i++)
+				{
+					if (i % 3 == sharedData->servoCtrl.nudge) calibratedServos[i] += nudgeAmmount / delayTime;
+				}
+				sc.moveAllServos(calibratedServos);
+				delay(delayTime);
+			}
+			sharedData->servoCtrl.nudge = -1;
+		}
 		break;
 	case SERVO_WALKING_MODE:
 		//add calibration data:

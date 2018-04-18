@@ -53,7 +53,6 @@ public:
 	void init(char* labelNew, double offNew, double adNew[2], double aNew[3], double trNew[6], double freqNew);
 	MatrixMath Matrix;
 	void IK();
-	void setLinMode();
 	void setC(double cNew[3]); // cNew .. [1x3]
 	void setTr(double trNew[6]);
 	void setQ(double qNew[3]); // qNew .. [1x3]
@@ -73,7 +72,6 @@ public:
 	void printq();
 
 	void checkGaitState();
-	bool checkFutureGaitState(float gaitDeltaFi);
 	void setGaitUpDown(double gaitUpFiNew, double gaitDownFiNew);
 	void setGaitCurFi(double gaitCurFiNew);
 	void incGaitCurFi(double gaitDeltaFi);
