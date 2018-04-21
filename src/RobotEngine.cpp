@@ -61,6 +61,9 @@ void RobotEngine::checkState()
 	//make changes based on input and current robotMode
 	switch (sharedData->mode)
 	{
+	case ROBOT_BATTERY_EMPTY_MODE:
+		//rebooting the robot is the only way out of this mode
+		break;
 	case ROBOT_STANDBY_MODE:
 		switch (touchState)
 		{
@@ -167,23 +170,37 @@ void RobotEngine::modesGO()
 		break;
 	case ROBOT_WALK_MODE:
 		//set up walking parameters
-		sharedData->ledCtrl.primarClr[0] = 255;
-		sharedData->ledCtrl.primarClr[1] = 0;
-		sharedData->ledCtrl.primarClr[2] = 255;
+		sharedData->ledCtrl.primarClr[0] = 0;
+		sharedData->ledCtrl.primarClr[1] = 255;
+		sharedData->ledCtrl.primarClr[2] = 0;
+		sharedData->ledCtrl.secondarClr[0] = 0;
+		sharedData->ledCtrl.secondarClr[1] = 0;
+		sharedData->ledCtrl.secondarClr[2] = 0;
 		sharedData->writeBtCtrlToMoveCtrl();
 		sharedData->moveCtrl.poseVector[0] = 4;
 		break;
 	case ROBOT_EMPTY_MODE:
 		//set up empty parameters
+		sharedData->ledCtrl.blinkingSpeed = 0;
+		sharedData->ledCtrl.rotationSpeed = 0.1;
+		sharedData->ledCtrl.direction = 0;
+		sharedData->ledCtrl.spreadRatio = 0.5;
 		sharedData->ledCtrl.primarClr[0] = 255;
 		sharedData->ledCtrl.primarClr[1] = 255;
 		sharedData->ledCtrl.primarClr[2] = 255;
-		sharedData->moveCtrl.linearVelocity = 0;
+		sharedData->moveCtrl.linearVelocity = 5;
 		sharedData->moveCtrl.angularVelocity = 0;
-		sharedData->moveCtrl.poseVector[0] = 7;
+		sharedData->moveCtrl.poseVector[0] = 5;
 		break;
 	case ROBOT_PRE_CALIBRATION_MODE:
+		sharedData->ledCtrl.blinkingSpeed = 0;
+		sharedData->ledCtrl.rotationSpeed = 0;
+		sharedData->ledCtrl.direction = 0;
+		sharedData->ledCtrl.spreadRatio = 0.5;
 		sharedData->ledCtrl.primarClr[0] = 100;
+		sharedData->ledCtrl.primarClr[1] = 0;
+		sharedData->ledCtrl.primarClr[2] = 0;
+		sharedData->ledCtrl.primarClr[0] = 0;
 		sharedData->ledCtrl.primarClr[1] = 0;
 		sharedData->ledCtrl.primarClr[2] = 0;
 		break;
@@ -191,6 +208,15 @@ void RobotEngine::modesGO()
 		sharedData->ledCtrl.primarClr[0] = 255;
 		sharedData->ledCtrl.primarClr[1] = 0;
 		sharedData->ledCtrl.primarClr[2] = 0;
+		break;
+	case ROBOT_BATTERY_EMPTY_MODE:
+		//LEDS blinking
+		sharedData->ledCtrl.primarClr[0] = 255;
+		sharedData->ledCtrl.primarClr[1] = 0;
+		sharedData->ledCtrl.primarClr[2] = 0;
+		sharedData->moveCtrl.linearVelocity = 0;
+		sharedData->moveCtrl.angularVelocity = 0;
+		sharedData->servoCtrl.power = 0;
 		break;
 	}
 }

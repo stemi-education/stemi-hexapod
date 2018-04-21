@@ -50,6 +50,7 @@ For additional information please check http://www.stemi.education.
 //servo modes
 #define SERVO_WALKING_MODE 0 //mode for walking
 #define SERVO_CALIBRATION_MODE 1 //mode for servo calibration
+#define ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD 3.6 //before shutting down
 
 //led modes
 
@@ -69,6 +70,14 @@ For additional information please check http://www.stemi.education.
 #define LED_PARAMETRIC_MODE 1;
 #define LED_CUSTOM_MODE 2;
 
+//movement parameters
+#define MOVE_VTRL_TIMER_MAX 200;
+
+#ifndef min
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
+#endif
+
 class SharedData {
 public:
 	SharedData();
@@ -81,19 +90,9 @@ public:
 		float direction = PI / 2;
 		float angularVelocity = 0;
 		double poseVector[6] = { 3, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
-		uint timer = 0;
-
-		//float roboHightu = 4;
-		int gaitID = 1;
-		boolean buttons[2] = { 0, 0 }; // up, down, full rotation, part rotation (moving) 
-		float trXYu[2] = { 0, 0 }; //robot tilt
+		int timeout = 0; //how many times will current command execute (0 = home, -1 = infinite)
+		int8_t gaitID = 1;
 		float stepHight = 2;
-
-		bool linMode = 0; //state, if robot is in calibration mode
-		bool running = 1; //state, if the robot is ready for control (power on-off)
-
-		int nMove = 100; //how many times will current command execute (0 = home)
-		int nMoveMax = 100; //max number nMove (watchdog timer)
 	} moveCtrl;
 
 	struct BtCtrl
@@ -135,12 +134,12 @@ public:
 
 	struct LedCtrl
 	{
-		float Direction = PI / 2;// [0, 2pi]
-		float spreadRatio = 0.5; // [0, 1] -spatial radio between primar and secondar color
+		float direction = 0;// [0, 2pi]
+		float spreadRatio = 1; // [0, 1] -spatial radio between primar and secondar color
 		uint8_t primarClr[3] = { 0,0,255 };
 		uint8_t secondarClr[3] = { 0,0,0 };
-		int rotationSpeed = 0; // [-100, 100] ~degrees / sec
-		uint8_t blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
+		float rotationSpeed = 0; // [-100, 100] ~degrees / sec
+		float blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
 		uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
 		uint8_t manualClr[6][3];
 		int8_t mode = LED_PARAMETRIC_MODE;

@@ -43,11 +43,6 @@ static double absolute(double number)
 Body::Body(SharedData *sharedDataNew)
 {
 	sharedData = sharedDataNew;
-	sharedData->moveCtrl.running = 1;
-
-
-	sharedData->moveCtrl.nMove = 0;
-	sharedData->moveCtrl.nMoveMax = 100;
 
 	double ad[2], a[3], dim[3];
 	
@@ -89,7 +84,7 @@ Body::Body(SharedData *sharedDataNew)
 
 	alpha_tr = 0.95;
 
-	setMoveParam(0, PI / 2, 0, 0);
+	//setMoveParam(0, PI / 2, 0, 0);
 
 	maxAllowedSpeed = 30;
 
@@ -179,7 +174,7 @@ void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nM
 
 	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setMoveParam(moveCenterNew, moveDeltaFi); //TODO wrapper
 
-	sharedData->moveCtrl.nMove = nMoveNew;
+	sharedData->moveCtrl.timeout = nMoveNew;
 }
 
 void Body::setHomeParam(double moveDeltaNew) {
@@ -280,60 +275,40 @@ void Body::home(float moveDeltaNew) {
 void Body::run() 
 {
 
-	setMoveParam(sharedData->moveCtrl.linearVelocity, sharedData->moveCtrl.direction, sharedData->moveCtrl.angularVelocity, sharedData->moveCtrl.nMoveMax);
+	setMoveParam(sharedData->moveCtrl.linearVelocity, sharedData->moveCtrl.direction, sharedData->moveCtrl.angularVelocity, sharedData->moveCtrl.timeout);
 
-	if (sharedData->moveCtrl.running)
+	if (sharedData->moveCtrl.timeout > 0) sharedData->moveCtrl.timeout--; //check the duration of the command and reduce nMove
+	else if (sharedData->moveCtrl.timeout == 0)
 	{
-		if (sharedData->moveCtrl.nMove > 0) sharedData->moveCtrl.nMove--; //check the duration of the command and reduce nMove
-		else
-		{
-			setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax); //if nMove == 0 go to home ... no command present
-			sharedData->moveCtrl.poseVector[0];
-			//sharedData->moveCtrl.poseVector[1] = 0;
-			//sharedData->moveCtrl.poseVector[2] = 0; STAVITI DA BUDE U CTRL
-			//sharedData->moveCtrl.poseVector[3] = 0;
-			//sharedData->moveCtrl.poseVector[4] = 0;
-			//sharedData->moveCtrl.poseVector[5] = 0;
-		}
+		setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.timeout); //if nMove == 0 go to home ... no command present
+		//sharedData->moveCtrl.poseVector[0];
+		//sharedData->moveCtrl.poseVector[1] = 0;
+		//sharedData->moveCtrl.poseVector[2] = 0; STAVITI DA BUDE U CTRL
+		//sharedData->moveCtrl.poseVector[3] = 0;
+		//sharedData->moveCtrl.poseVector[4] = 0;
+		//sharedData->moveCtrl.poseVector[5] = 0;
+	}
 
-		//setWs(0.85);
-		trPT1(); //smooth the tr tranistion
-		setTr(trCurrent); //set the smoothed tr 
+	//setWs(0.85);
+	trPT1(); //smooth the tr tranistion
+	setTr(trCurrent); //set the smoothed tr 
 
 
 
 
-		if (speed || moveDeltaFi)
-		{
-			//Serial.println("M");
-			move();
-			//printc();
-		}
-		else
-		{
-			//Serial.println("H");
-			home(0.001);
-			//printc();
-		}
-		IK();
+	if (speed || moveDeltaFi)
+	{
+		//Serial.println("M");
+		move();
+		//printc();
 	}
 	else
 	{
-		setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.nMoveMax); //go to home, dont receive commands while !running
-		sharedData->moveCtrl.poseVector[0] = 0; //raise legs = put them on 0 hight
-		sharedData->moveCtrl.poseVector[1] = 0;
-		sharedData->moveCtrl.poseVector[2] = 0;
-		sharedData->moveCtrl.poseVector[3] = 0;
-		sharedData->moveCtrl.poseVector[4] = 0;
-		sharedData->moveCtrl.poseVector[5] = 0;
-
-		//setWs(0.85);
-		trPT1(); //smooth the tr tranistion
-		setTr(trCurrent); //set the smoothed tr 
-
+		//Serial.println("H");
 		home(0.001);
-		IK();
+		//printc();
 	}
+	IK();
 	packQArray();
 }
 

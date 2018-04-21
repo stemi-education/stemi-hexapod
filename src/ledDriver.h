@@ -45,11 +45,19 @@ class LedDriver
 public:
 	LedDriver(SharedData *sharedDataNew);
 	
-	void setColor();
+	void setColorParametric();
+	float applyDirectionSpeed();
+	float applyBlinkingSpeed();
+	void writeToLED();
 
 	SharedData *sharedData;
 
 	NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
+
+	//LED internal parameters
+	float rotationSpeedDirection = 0;
+	float blinkingSpeedPhase = 0;
+	float blinkSpeedResult = 1;
 
 	//Colors
 	RgbColor red = RgbColor(255, 0, 0);

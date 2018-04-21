@@ -40,11 +40,16 @@ void robotEngine(void *sharedDataNew)
 {
 	SharedData *sharedData = (SharedData*)sharedDataNew;
   RobotEngine robotEngine(sharedData);
+
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 20;
+	xLastWakeTime = xTaskGetTickCount();
+
 	while (1)
 	{
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		robotEngine.checkState();
 		robotEngine.modesGO();
-		delay(20);
 	}
 }
 
@@ -53,10 +58,14 @@ void walkingEngine(void *sharedDataNew)
 	SharedData *sharedData = (SharedData*)sharedDataNew;
 	Body body(sharedData);
 
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 20;
+	xLastWakeTime = xTaskGetTickCount();
+
 	while (1)
 	{
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		body.run();
-		delay(20);
 	}
 }
 
@@ -64,8 +73,14 @@ void servoDriver(void *sharedDataNew)
 {
 	SharedData *sharedData = (SharedData*)sharedDataNew;
 	ServoDriver servoDriver(sharedData);
+	
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 20;
+	xLastWakeTime = xTaskGetTickCount();
+
 	while(1)
 	{
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		if (sharedData->servoCtrl.store)
 		{
 			Serial.println("Storing calibration data ...");
@@ -73,7 +88,6 @@ void servoDriver(void *sharedDataNew)
 			sharedData->servoCtrl.store = 0;
 		}
 		servoDriver.servoWrite();
-		delay(20);
 	}
 }
 
@@ -81,10 +95,15 @@ void batteryDriver(void *sharedDataNew)
 {
 	SharedData *sharedData = (SharedData*)sharedDataNew;
 	BatteryDriver battery(sharedData);
+
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 200;
+	xLastWakeTime = xTaskGetTickCount();
+
 	while (1)
 	{
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		battery.checkState();
-		delay(200);
 	}
 }
 
@@ -92,11 +111,16 @@ void ledDriver(void *sharedDataNew)
 {
 	SharedData *sharedData = (SharedData*)sharedDataNew;
 	LedDriver ledDriver(sharedData);
+
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 30;
+	xLastWakeTime = xTaskGetTickCount();
+
 	while (1)
 	{
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		//TODO insert functions to control LEDs based on sharedData->ledCtrl variables
-		ledDriver.setColor();
-		delay(100);
+		ledDriver.setColorParametric();
 	}
 }
 
@@ -105,9 +129,15 @@ void BtEngine(void *sharedDataNew)
 	SharedData *sharedData = (SharedData*)sharedDataNew;
 	BluetoothLowEnergy BLE(std::string("STEMIHexapod"), sharedData);
 	delay(2000);
+
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = portMAX_DELAY; //wait forever
+	xLastWakeTime = xTaskGetTickCount();
+
 	while (1)
 	{
-		delay(1000);
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		//Serial.println("BT");
 	}
 }
 
