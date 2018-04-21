@@ -46,6 +46,7 @@ public:
 	RobotEngine(SharedData *sharedDataNew);
 	void checkState();
 	void modesGO();
+	void batteryCheck();
 
 	SharedData *sharedData;
 	Touch touch;

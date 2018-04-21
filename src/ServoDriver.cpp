@@ -55,14 +55,6 @@ void ServoDriver::servoPower(bool power)
 
 int ServoDriver::servoWrite()
 {
-
-	//Serial.println(sharedData->batteryState.voltage);
-	if (sharedData->batteryState.voltage < ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD)
-	{ 
-		//shut down servos and put to battery empty mode
-		sharedData->servoCtrl.power = 0;
-		sharedData->mode = ROBOT_BATTERY_EMPTY_MODE;
-	}
 	//Serial.print(" ");
 	//Serial.println(sharedData->servoCtrl.power);
 

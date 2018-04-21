@@ -54,4 +54,27 @@ void SharedData::writeBtCtrlToMoveCtrl()
 	moveCtrl.angularVelocity = btCtrl.angularVelocity;
 }
 
+void SharedData::setLedColor(Color primarClr, Color secondarClr = BLACK, float spreadRatio = 100, float direction = 0)
+{
+	ledCtrl.primarClr[0] = primarClr.r;
+	ledCtrl.primarClr[1] = primarClr.g;
+	ledCtrl.primarClr[2] = primarClr.b;
+
+	ledCtrl.secondarClr[0] = secondarClr.r;
+	ledCtrl.secondarClr[1] = secondarClr.g;
+	ledCtrl.secondarClr[2] = secondarClr.b;
+
+	ledCtrl.spreadRatio = spreadRatio;
+
+	ledCtrl.direction = direction * PI / 180 + PI/2;
+}
+
+void SharedData::setLedRotationSpeed(float rotationSpeed)
+{
+}
+
+void SharedData::setLedBlinkingSpeed(float blinkingSpeed)
+{
+}
+
 

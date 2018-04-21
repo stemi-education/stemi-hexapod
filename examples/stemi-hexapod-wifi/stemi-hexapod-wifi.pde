@@ -45,4 +45,13 @@ void setup()
 
 void loop()
 {
+	hexapod->sharedData.moveCtrl.poseVector[0] = 4;
+	delay(1000);
+	hexapod->sharedData.moveCtrl.linearVelocity = 5;
+	hexapod->sharedData.ledCtrl.primarClr[0] = 255;
+	delay(2000);
+	hexapod->sharedData.moveCtrl.linearVelocity = 0;
+	delay(2000);
+	hexapod->sharedData.mode = ROBOT_STANDBY_MODE;
+	delay(9999999);
 }

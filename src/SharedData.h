@@ -55,52 +55,69 @@ For additional information please check http://www.stemi.education.
 //led modes
 
 //robot modes
+#define ROBOT_USER_MODE -1
+
 #define ROBOT_STANDBY_MODE 0
 #define ROBOT_STANDING_UP_MODE 1
 #define ROBOT_WALK_MODE 2
-#define ROBOT_WALk_N_TILT_MODE 3
+#define ROBOT_WALK_N_TILT_MODE 3
 #define ROBOT_DANCE_MODE 4
 #define ROBOT_EMPTY_MODE 10 //Custom mode for users to program
 
-#define ROBOT_PRE_CALIBRATION_MODE -1
-#define ROBOT_CALIBRATION_MODE -2
-#define ROBOT_BATTERY_EMPTY_MODE -3
+#define ROBOT_PRE_CALIBRATION_MODE 21
+#define ROBOT_CALIBRATION_MODE 22
+#define ROBOT_BATTERY_EMPTY_MODE 23
 
 #define LED_MANUAL_MODE 0;
 #define LED_PARAMETRIC_MODE 1;
 #define LED_CUSTOM_MODE 2;
 
 //movement parameters
-#define MOVE_VTRL_TIMER_MAX 200;
+#define MOVE_CTRL_TIMER_MAX 200;
 
 #ifndef min
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))
 #endif
 
+struct Color { uint8_t r; uint8_t g; uint8_t b; };
+static Color const RED = { 255, 0, 0 };
+static Color const GREEN = { 0, 255, 0 };
+static Color const BLUE = { 0, 0, 255 };
+static Color const YELLOW = { 255, 242, 0 };
+static Color const PURPLE = { 255, 0, 255 };
+static Color const WHITE = { 255, 255, 255 };
+static Color const BLACK = { 0, 0, 0 };
+
 class SharedData {
 public:
 	SharedData();
 	void writeServoAngles(float servoAnglesNew[18]);
 	void writeBtCtrlToMoveCtrl();
+	
+	void setLedColor(Color primarClr, Color secondarClr, float spreadRatio, float direction);
+	void setLedRotationSpeed(float rotationSpeed);
+	void setLedBlinkingSpeed(float blinkingSpeed);
+
+	bool useModes = 1;
 
 	struct MoveCtrl
 	{
 		float linearVelocity = 0;
 		float direction = PI / 2;
 		float angularVelocity = 0;
-		double poseVector[6] = { 3, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
-		int timeout = 0; //how many times will current command execute (0 = home, -1 = infinite)
+		double poseVector[6] = { 1, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
+		int timeout = -1; //how many times will current command execute (0 = home, -1 = infinite)
 		int8_t gaitID = 1;
 		float stepHight = 2;
-	} moveCtrl;
+	} moveCtrl, userMoveCtrl;
 
 	struct BtCtrl
 	{
 		float linearVelocity = 0;
 		float direction = PI / 2;
 		float angularVelocity = 0;
-		double poseVector[6] = { 3, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
+		double poseVector[6] = { 1, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
 		uint timer = 0;
 	} btCtrl;
 
@@ -136,14 +153,14 @@ public:
 	{
 		float direction = 0;// [0, 2pi]
 		float spreadRatio = 1; // [0, 1] -spatial radio between primar and secondar color
-		uint8_t primarClr[3] = { 0,0,255 };
+		uint8_t primarClr[3] = { 0,0,0 };
 		uint8_t secondarClr[3] = { 0,0,0 };
 		float rotationSpeed = 0; // [-100, 100] ~degrees / sec
 		float blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
 		uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
 		uint8_t manualClr[6][3];
 		int8_t mode = LED_PARAMETRIC_MODE;
-	} ledCtrl;
+	} ledCtrl, userLedCtrl;
 
 	struct BatteryState
 	{
@@ -151,7 +168,7 @@ public:
 		uint8_t percentage = 0;
 	} batteryState;
 
-	int8_t mode = ROBOT_STANDBY_MODE;
+	int8_t mode = ROBOT_USER_MODE;
 };
 
 

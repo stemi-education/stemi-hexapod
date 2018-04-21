@@ -65,17 +65,16 @@ void LedDriver::setColorParametric()
 		for (int j = 0; j < 3; j++) {
 			gauss0 = sharedData->ledCtrl.secondarClr[j] +
 				(sharedData->ledCtrl.primarClr[j] - sharedData->ledCtrl.secondarClr[j])
-				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection)), 2) / (2 * gaussWidth));
+				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection)), 2) / (gaussWidth));
 			gauss1 = sharedData->ledCtrl.secondarClr[j] +
 				(sharedData->ledCtrl.primarClr[j] - sharedData->ledCtrl.secondarClr[j])
-				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection) + 2 * PI), 2) / (2 * gaussWidth));
+				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection) + 2 * PI), 2) / (gaussWidth));
 			gauss2 = sharedData->ledCtrl.secondarClr[j] +
 				(sharedData->ledCtrl.primarClr[j] - sharedData->ledCtrl.secondarClr[j])
-				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection) - 2 * PI), 2) / (2 * gaussWidth));
+				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection) - 2 * PI), 2) / (gaussWidth));
 			sharedData->ledCtrl.manualClr[i][j] = blinkSpeedResult * max(gauss0, max(gauss1, gauss2));
 		}
 	}
-	writeToLED();
 }
 
 float LedDriver::applyDirectionSpeed() {
@@ -106,17 +105,15 @@ float LedDriver::applyBlinkingSpeed() {
 		else if (blinkingSpeedPhase < -PI)
 			blinkingSpeedPhase = blinkingSpeedPhase + 2 * PI* floor(blinkingSpeedPhase / (2 * PI));
 		blinkSpeedResult = 0.5 + cos(blinkingSpeedPhase) / 2;
-		Serial.print("bsp: ");
-		Serial.print(blinkingSpeedPhase);
-		Serial.print("r: ");
-		Serial.print(blinkSpeedResult);
 	}
 }
+
+//TODO LED color /parameter randomizator
 
 void LedDriver::writeToLED()
 {
 	for (int i = 0; i < LED_COUNT; i++)
 			strip.SetPixelColor(i, RgbColor(sharedData->ledCtrl.manualClr[i][0], sharedData->ledCtrl.manualClr[i][1], sharedData->ledCtrl.manualClr[i][2]));
-	delay(1);
+	delay(3);
 	strip.Show();
 }

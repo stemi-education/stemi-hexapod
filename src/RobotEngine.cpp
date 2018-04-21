@@ -48,19 +48,28 @@ RobotEngine::RobotEngine(SharedData *sharedDataNew) : touch(50, 40, 5)
 
 void RobotEngine::checkState()
 {
-	touch.checkTouch();
 	int touchState = -1;
-	if (touch.isTouchDetected())
+	if (sharedData->mode != ROBOT_USER_MODE) // if in user mode do nothing
 	{
-		touchState = touch.getTouchPattern(true);
-		Serial.print("t: ");
-		Serial.println(touchState);
+		batteryCheck();
+		touch.checkTouch();
+		
+		if (touch.isTouchDetected())
+		{
+			touchState = touch.getTouchPattern(true);
+			Serial.print("t: ");
+			Serial.println(touchState);
+		}
+		else
+			touchState = -1;
+
 	}
-	else
-		touchState = -1;
 	//make changes based on input and current robotMode
 	switch (sharedData->mode)
 	{
+	case ROBOT_USER_MODE:
+		//do nothing
+		break;
 	case ROBOT_BATTERY_EMPTY_MODE:
 		//rebooting the robot is the only way out of this mode
 		break;
@@ -75,10 +84,29 @@ void RobotEngine::checkState()
 			break;
 		}
 		break;
-	case ROBOT_STANDING_UP_MODE:
-		//no comands
-		break;
 	case ROBOT_WALK_MODE:
+		switch (touchState)
+		{
+		case 5:
+			sharedData->mode = ROBOT_PRE_CALIBRATION_MODE;
+			break;
+		case 2:
+			sharedData->mode = ROBOT_WALK_N_TILT_MODE;
+			break;
+		}
+		break;
+	case ROBOT_WALK_N_TILT_MODE:
+		switch (touchState)
+		{
+		case 5:
+			sharedData->mode = ROBOT_PRE_CALIBRATION_MODE;
+			break;
+		case 2:
+			sharedData->mode = ROBOT_DANCE_MODE;
+			break;
+		}
+		break;
+	case ROBOT_DANCE_MODE:
 		switch (touchState)
 		{
 		case 5:
@@ -151,44 +179,94 @@ void RobotEngine::checkState()
 	}
 }
 
-
 void RobotEngine::modesGO()
 {
 	//Serial.println("check");
 	switch (sharedData->mode)
 	{
+	case ROBOT_USER_MODE:
+		//do nothing
+		break;
 	case ROBOT_STANDBY_MODE:
-		sharedData->ledCtrl.primarClr[0] = 0;
-		sharedData->ledCtrl.primarClr[1] = 255;
+		//sharedData->setLedColor()
+		sharedData->ledCtrl.blinkingSpeed = 0;
+		sharedData->ledCtrl.rotationSpeed = 0.05;
+		sharedData->ledCtrl.direction = 0;
+		sharedData->ledCtrl.spreadRatio = 1;
+
+		sharedData->ledCtrl.primarClr[0] = 20;
+		sharedData->ledCtrl.primarClr[1] = 90;
 		sharedData->ledCtrl.primarClr[2] = 255;
+		sharedData->ledCtrl.secondarClr[0] = 0;
+		sharedData->ledCtrl.secondarClr[1] = 0;
+		sharedData->ledCtrl.secondarClr[2] = 100;
+
 		sharedData->moveCtrl.linearVelocity = 0;
 		sharedData->moveCtrl.angularVelocity = 0;
 		sharedData->moveCtrl.poseVector[0] = 1;
 		break;
-	case ROBOT_STANDING_UP_MODE:
-		//no comands
-		break;
 	case ROBOT_WALK_MODE:
 		//set up walking parameters
-		sharedData->ledCtrl.primarClr[0] = 0;
+		sharedData->ledCtrl.blinkingSpeed = 0;
+		sharedData->ledCtrl.rotationSpeed = 0.05;
+		sharedData->ledCtrl.direction = 0;
+		sharedData->ledCtrl.spreadRatio = 1;
+
+		sharedData->ledCtrl.primarClr[0] = 90;
 		sharedData->ledCtrl.primarClr[1] = 255;
-		sharedData->ledCtrl.primarClr[2] = 0;
+		sharedData->ledCtrl.primarClr[2] = 50;
+		sharedData->ledCtrl.secondarClr[0] = 0;
+		sharedData->ledCtrl.secondarClr[1] = 255;
+		sharedData->ledCtrl.secondarClr[2] = 0;
+
+		sharedData->writeBtCtrlToMoveCtrl();
+		sharedData->moveCtrl.poseVector[0] = 4;
+		break;
+	case ROBOT_WALK_N_TILT_MODE:
+		//set up walking parameters
+		sharedData->ledCtrl.blinkingSpeed = 0;
+		sharedData->ledCtrl.rotationSpeed = 0.1;
+		sharedData->ledCtrl.direction = 0;
+		sharedData->ledCtrl.spreadRatio = 1;
+
+		sharedData->ledCtrl.primarClr[0] = 255;
+		sharedData->ledCtrl.primarClr[1] = 100;
+		sharedData->ledCtrl.primarClr[2] = 40;
+		sharedData->ledCtrl.secondarClr[0] = 40;
+		sharedData->ledCtrl.secondarClr[1] = 255;
+		sharedData->ledCtrl.secondarClr[2] = 150;
+
+		sharedData->writeBtCtrlToMoveCtrl();
+		sharedData->moveCtrl.poseVector[0] = 4;
+		break;
+	case ROBOT_DANCE_MODE:
+		sharedData->ledCtrl.blinkingSpeed = 0.2;
+		sharedData->ledCtrl.rotationSpeed = 0;
+		sharedData->ledCtrl.direction = 0;
+		sharedData->ledCtrl.spreadRatio = 100;
+
+		//set up walking parameters
+		sharedData->ledCtrl.primarClr[0] = 40;
+		sharedData->ledCtrl.primarClr[1] = 255;
+		sharedData->ledCtrl.primarClr[2] = 100;
 		sharedData->ledCtrl.secondarClr[0] = 0;
 		sharedData->ledCtrl.secondarClr[1] = 0;
 		sharedData->ledCtrl.secondarClr[2] = 0;
-		sharedData->writeBtCtrlToMoveCtrl();
+
 		sharedData->moveCtrl.poseVector[0] = 4;
 		break;
 	case ROBOT_EMPTY_MODE:
 		//set up empty parameters
 		sharedData->ledCtrl.blinkingSpeed = 0;
-		sharedData->ledCtrl.rotationSpeed = 0.1;
+		sharedData->ledCtrl.rotationSpeed = 0;
 		sharedData->ledCtrl.direction = 0;
-		sharedData->ledCtrl.spreadRatio = 0.5;
+		sharedData->ledCtrl.spreadRatio = 100;
+
 		sharedData->ledCtrl.primarClr[0] = 255;
 		sharedData->ledCtrl.primarClr[1] = 255;
 		sharedData->ledCtrl.primarClr[2] = 255;
-		sharedData->moveCtrl.linearVelocity = 5;
+
+		sharedData->moveCtrl.linearVelocity = 0;
 		sharedData->moveCtrl.angularVelocity = 0;
 		sharedData->moveCtrl.poseVector[0] = 5;
 		break;
@@ -197,6 +275,7 @@ void RobotEngine::modesGO()
 		sharedData->ledCtrl.rotationSpeed = 0;
 		sharedData->ledCtrl.direction = 0;
 		sharedData->ledCtrl.spreadRatio = 0.5;
+
 		sharedData->ledCtrl.primarClr[0] = 100;
 		sharedData->ledCtrl.primarClr[1] = 0;
 		sharedData->ledCtrl.primarClr[2] = 0;
@@ -205,19 +284,42 @@ void RobotEngine::modesGO()
 		sharedData->ledCtrl.primarClr[2] = 0;
 		break;
 	case ROBOT_CALIBRATION_MODE:
+		sharedData->ledCtrl.blinkingSpeed = 0;
+		sharedData->ledCtrl.rotationSpeed = 0;
+		sharedData->ledCtrl.direction = 0;
+		sharedData->ledCtrl.spreadRatio = 0.5;
+
 		sharedData->ledCtrl.primarClr[0] = 255;
 		sharedData->ledCtrl.primarClr[1] = 0;
 		sharedData->ledCtrl.primarClr[2] = 0;
 		break;
 	case ROBOT_BATTERY_EMPTY_MODE:
 		//LEDS blinking
+		sharedData->ledCtrl.blinkingSpeed = 0.05;
+		sharedData->ledCtrl.rotationSpeed = 0;
+		sharedData->ledCtrl.direction = 0;
+		sharedData->ledCtrl.spreadRatio = 100;
+
 		sharedData->ledCtrl.primarClr[0] = 255;
 		sharedData->ledCtrl.primarClr[1] = 0;
 		sharedData->ledCtrl.primarClr[2] = 0;
+
 		sharedData->moveCtrl.linearVelocity = 0;
 		sharedData->moveCtrl.angularVelocity = 0;
+		//turn off the servos
 		sharedData->servoCtrl.power = 0;
 		break;
+	}
+}
+
+void RobotEngine::batteryCheck()
+{
+	//Serial.println(sharedData->batteryState.voltage);
+	if (sharedData->batteryState.voltage < ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD)
+	{
+		//shut down servos and put to battery empty mode
+		sharedData->servoCtrl.power = 0;
+		sharedData->mode = ROBOT_BATTERY_EMPTY_MODE;
 	}
 }
 

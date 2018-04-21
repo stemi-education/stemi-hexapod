@@ -36,8 +36,29 @@ For additional information please check http://www.stemi.education.
 
 #include "Hexapod.h"
 
+void batteryDriver(void *sharedDataNew)
+{
+	Serial.println("bat");
+	SharedData *sharedData = (SharedData*)sharedDataNew;
+	BatteryDriver battery(sharedData);
+
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 200;
+	xLastWakeTime = xTaskGetTickCount();
+	
+	battery.checkState();
+	vTaskPrioritySet(NULL, 2);
+
+	while (1)
+	{
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		battery.checkState();
+	}
+}
+
 void robotEngine(void *sharedDataNew)
 {
+	Serial.println("robot");
 	SharedData *sharedData = (SharedData*)sharedDataNew;
   RobotEngine robotEngine(sharedData);
 
@@ -91,29 +112,13 @@ void servoDriver(void *sharedDataNew)
 	}
 }
 
-void batteryDriver(void *sharedDataNew)
-{
-	SharedData *sharedData = (SharedData*)sharedDataNew;
-	BatteryDriver battery(sharedData);
-
-	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 200;
-	xLastWakeTime = xTaskGetTickCount();
-
-	while (1)
-	{
-		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		battery.checkState();
-	}
-}
-
 void ledDriver(void *sharedDataNew)
 {
 	SharedData *sharedData = (SharedData*)sharedDataNew;
 	LedDriver ledDriver(sharedData);
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 30;
+	const TickType_t xFrequency = 10;
 	xLastWakeTime = xTaskGetTickCount();
 
 	while (1)
@@ -121,6 +126,7 @@ void ledDriver(void *sharedDataNew)
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		//TODO insert functions to control LEDs based on sharedData->ledCtrl variables
 		ledDriver.setColorParametric();
+		ledDriver.writeToLED();
 	}
 }
 
@@ -146,12 +152,11 @@ Hexapod::Hexapod()
 	Serial.begin(115200);
 	Serial.println("Hexapod init");
 
+	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, (void*)&sharedData, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
 	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, (void*)&sharedData, 2, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(BtEngine, "BtEngine", 2*4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
-
 
 }
