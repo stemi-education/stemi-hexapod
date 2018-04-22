@@ -37,9 +37,8 @@ For additional information please check http://www.stemi.education.
 #include "LedDriver.h"
 
 
-LedDriver::LedDriver(SharedData *sharedDataNew): strip(LED_COUNT, LED_PIN)
+LedDriver::LedDriver(): strip(LED_COUNT, LED_PIN)
 {
-	sharedData = sharedDataNew;
 	strip.Begin();
 	strip.SetBrightness(255);
 	strip.SetPixelColor(0, RgbColor(255, 0, 0));
@@ -57,33 +56,33 @@ void LedDriver::setColorParametric()
 	applyDirectionSpeed();
 	applyBlinkingSpeed();
 
-	float gaussWidth = sharedData->ledCtrl.spreadRatio;
+	float gaussWidth = robot.ledCtrl.spreadRatio;
 	float directionOffset = -PI / 3 + PI;
 
 	int gauss0, gauss1, gauss2;
 	for (int i = 0; i < LED_COUNT; i++) {
 		for (int j = 0; j < 3; j++) {
-			gauss0 = sharedData->ledCtrl.secondarClr[j] +
-				(sharedData->ledCtrl.primarClr[j] - sharedData->ledCtrl.secondarClr[j])
-				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection)), 2) / (gaussWidth));
-			gauss1 = sharedData->ledCtrl.secondarClr[j] +
-				(sharedData->ledCtrl.primarClr[j] - sharedData->ledCtrl.secondarClr[j])
-				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection) + 2 * PI), 2) / (gaussWidth));
-			gauss2 = sharedData->ledCtrl.secondarClr[j] +
-				(sharedData->ledCtrl.primarClr[j] - sharedData->ledCtrl.secondarClr[j])
-				* exp(-pow((-i * 2 * PI / LED_COUNT - (sharedData->ledCtrl.direction + directionOffset + rotationSpeedDirection) - 2 * PI), 2) / (gaussWidth));
-			sharedData->ledCtrl.manualClr[i][j] = blinkSpeedResult * max(gauss0, max(gauss1, gauss2));
+			gauss0 = robot.ledCtrl.secondarClr[j] +
+				(robot.ledCtrl.primarClr[j] - robot.ledCtrl.secondarClr[j])
+				* exp(-pow((-i * 2 * PI / LED_COUNT - (robot.ledCtrl.direction + directionOffset + rotationSpeedDirection)), 2) / (gaussWidth));
+			gauss1 = robot.ledCtrl.secondarClr[j] +
+				(robot.ledCtrl.primarClr[j] - robot.ledCtrl.secondarClr[j])
+				* exp(-pow((-i * 2 * PI / LED_COUNT - (robot.ledCtrl.direction + directionOffset + rotationSpeedDirection) + 2 * PI), 2) / (gaussWidth));
+			gauss2 = robot.ledCtrl.secondarClr[j] +
+				(robot.ledCtrl.primarClr[j] - robot.ledCtrl.secondarClr[j])
+				* exp(-pow((-i * 2 * PI / LED_COUNT - (robot.ledCtrl.direction + directionOffset + rotationSpeedDirection) - 2 * PI), 2) / (gaussWidth));
+			robot.ledCtrl.manualClr[i][j] = blinkSpeedResult * max(gauss0, max(gauss1, gauss2));
 		}
 	}
 }
 
 float LedDriver::applyDirectionSpeed() {
-	if (sharedData->ledCtrl.rotationSpeed == 0)
+	if (robot.ledCtrl.rotationSpeed == 0)
 		rotationSpeedDirection = 0;
 	else
 	{
 
-		rotationSpeedDirection += sharedData->ledCtrl.rotationSpeed;
+		rotationSpeedDirection += robot.ledCtrl.rotationSpeed;
 		//wrap to +-PI
 		if (rotationSpeedDirection > PI)
 			rotationSpeedDirection = rotationSpeedDirection - 2 * PI* ceil(rotationSpeedDirection / (2 * PI));
@@ -92,14 +91,14 @@ float LedDriver::applyDirectionSpeed() {
 	}
 }
 float LedDriver::applyBlinkingSpeed() {
-	if (sharedData->ledCtrl.blinkingSpeed == 0)
+	if (robot.ledCtrl.blinkingSpeed == 0)
 	{
 		blinkingSpeedPhase = 0;
 		blinkSpeedResult = 1;
 	}
 	else
 	{
-		blinkingSpeedPhase += sharedData->ledCtrl.blinkingSpeed;
+		blinkingSpeedPhase += robot.ledCtrl.blinkingSpeed;
 		if (blinkingSpeedPhase > PI)
 			blinkingSpeedPhase = blinkingSpeedPhase - 2 * PI* ceil(blinkingSpeedPhase / (2 * PI));
 		else if (blinkingSpeedPhase < -PI)
@@ -113,7 +112,7 @@ float LedDriver::applyBlinkingSpeed() {
 void LedDriver::writeToLED()
 {
 	for (int i = 0; i < LED_COUNT; i++)
-			strip.SetPixelColor(i, RgbColor(sharedData->ledCtrl.manualClr[i][0], sharedData->ledCtrl.manualClr[i][1], sharedData->ledCtrl.manualClr[i][2]));
+			strip.SetPixelColor(i, RgbColor(robot.ledCtrl.manualClr[i][0], robot.ledCtrl.manualClr[i][1], robot.ledCtrl.manualClr[i][2]));
 	delay(3);
 	strip.Show();
 }

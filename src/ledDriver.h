@@ -43,14 +43,12 @@ For additional information please check http://www.stemi.education.
 class LedDriver
 {
 public:
-	LedDriver(SharedData *sharedDataNew);
+	LedDriver();
 	
 	void setColorParametric();
 	float applyDirectionSpeed();
 	float applyBlinkingSpeed();
 	void writeToLED();
-
-	SharedData *sharedData;
 
 	NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 

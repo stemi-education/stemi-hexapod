@@ -4,8 +4,7 @@
 #include <BLE2904.h>
 #include "BluetoothLowEnergy.h"
 
-BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName, SharedData* data) {
-	sharedData = data;
+BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName) {
 	createBLEDevice(deviceName);
 	createBLEServer();
 	createMovementServiceWithCharacteristics();
@@ -80,10 +79,10 @@ void BluetoothLowEnergy::createMovementServiceWithCharacteristics() {
 	init_data[1] = 0xFF;
 	commandTimerCharacteristic->setValue(init_data, 2);
 
-	linearVelocityCharacteristic->setCallbacks(new LinearVelocityCallback(sharedData));
-	directionCharacteristic->setCallbacks(new DirectionCallback(sharedData));
-	angularVelocityCharacteristic->setCallbacks(new AngularVelocityCallback(sharedData));
-	//commandTimerCharacteristic->setCallbacks(new CommandTimerCallback(sharedData));
+	linearVelocityCharacteristic->setCallbacks(new LinearVelocityCallback());
+	directionCharacteristic->setCallbacks(new DirectionCallback());
+	angularVelocityCharacteristic->setCallbacks(new AngularVelocityCallback());
+	//commandTimerCharacteristic->setCallbacks(new CommandTimerCallback());
 	
 	movementService->start();
 };
@@ -169,7 +168,7 @@ void BluetoothLowEnergy::createBatteryServiceWithCharacteristics() {
 	
 	batteryLevelCharacteristic->setValue(&init_data[0], 1);
 
-	batteryLevelCharacteristic->setCallbacks(new BatteryLevelCallback(sharedData));
+	batteryLevelCharacteristic->setCallbacks(new BatteryLevelCallback());
 
 	batteryService->start();
 };

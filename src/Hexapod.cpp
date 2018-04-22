@@ -38,9 +38,7 @@ For additional information please check http://www.stemi.education.
 
 void batteryDriver(void *sharedDataNew)
 {
-	Serial.println("bat");
-	SharedData *sharedData = (SharedData*)sharedDataNew;
-	BatteryDriver battery(sharedData);
+	BatteryDriver battery;
 
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = 200;
@@ -58,9 +56,7 @@ void batteryDriver(void *sharedDataNew)
 
 void robotEngine(void *sharedDataNew)
 {
-	Serial.println("robot");
-	SharedData *sharedData = (SharedData*)sharedDataNew;
-  RobotEngine robotEngine(sharedData);
+  RobotEngine robotEngine;
 
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = 20;
@@ -76,8 +72,7 @@ void robotEngine(void *sharedDataNew)
 
 void walkingEngine(void *sharedDataNew) 
 {
-	SharedData *sharedData = (SharedData*)sharedDataNew;
-	Body body(sharedData);
+	Body body;
 
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = 20;
@@ -92,8 +87,7 @@ void walkingEngine(void *sharedDataNew)
 
 void servoDriver(void *sharedDataNew)
 {
-	SharedData *sharedData = (SharedData*)sharedDataNew;
-	ServoDriver servoDriver(sharedData);
+	ServoDriver servoDriver;
 	
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = 20;
@@ -102,11 +96,11 @@ void servoDriver(void *sharedDataNew)
 	while(1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		if (sharedData->servoCtrl.store)
+		if (robot.servoCtrl.store)
 		{
 			Serial.println("Storing calibration data ...");
 			//servoDriver.storeCalibrationData();
-			sharedData->servoCtrl.store = 0;
+			robot.servoCtrl.store = 0;
 		}
 		servoDriver.servoWrite();
 	}
@@ -114,8 +108,7 @@ void servoDriver(void *sharedDataNew)
 
 void ledDriver(void *sharedDataNew)
 {
-	SharedData *sharedData = (SharedData*)sharedDataNew;
-	LedDriver ledDriver(sharedData);
+	LedDriver ledDriver;
 
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = 10;
@@ -132,8 +125,7 @@ void ledDriver(void *sharedDataNew)
 
 void BtEngine(void *sharedDataNew)
 {
-	SharedData *sharedData = (SharedData*)sharedDataNew;
-	BluetoothLowEnergy BLE(std::string("STEMIHexapod"), sharedData);
+	BluetoothLowEnergy BLE(std::string("STEMIHexapod"));
 	delay(2000);
 
 	TickType_t xLastWakeTime;
@@ -152,11 +144,11 @@ Hexapod::Hexapod()
 	Serial.begin(115200);
 	Serial.println("Hexapod init");
 
-	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, (void*)&sharedData, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
-	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, (void*)&sharedData, 1, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(BtEngine, "BtEngine", 2*4096, (void*)&sharedData, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, (void*)&robot, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
+	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, (void*)&robot, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, (void*)&robot, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, (void*)&robot, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, (void*)&robot, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(BtEngine, "BtEngine", 2*4096, (void*)&robot, 3, NULL, ARDUINO_RUNNING_CORE);
 
 }

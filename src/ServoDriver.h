@@ -44,7 +44,7 @@ For additional information please check http://www.stemi.education.
 class ServoDriver
 {
 public:
-	ServoDriver(SharedData *sharedDataNew);
+	ServoDriver();
 
 	//Servo power
 	void servoPower(bool power); //turn the servos on = 1 or off =0
@@ -59,8 +59,6 @@ public:
 	void loadCalibrationData();
 
 	hw_timer_t * timer = NULL;
-
-	SharedData *sharedData;
 
 	//Servos
 	ServoController sc;

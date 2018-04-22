@@ -32,7 +32,7 @@
 class BluetoothLowEnergy {
 public:
 
-	BluetoothLowEnergy(std::string deviceName, SharedData* sharedData);
+	BluetoothLowEnergy(std::string deviceName);
 
 	BLEServer* server;
 	BLEService* movementService;
@@ -41,8 +41,6 @@ public:
 	BLEService* parameterService;
 	BLEService* batteryService;
 	BLEAdvertising* advertising;
-
-	SharedData* sharedData;
 
 	void createBLEDevice(std::string serverName);
 	void createBLEServer();
@@ -54,27 +52,21 @@ public:
 };
 
 class LinearVelocityCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shData;
 public:
-	LinearVelocityCallback(SharedData* data) {
-		shData = data;
+	LinearVelocityCallback() {
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
-		shData->btCtrl.linearVelocity = (float)(uint8_t(pCharacteristic->getValue().c_str()[0]) / 10.0); // Reciving data in interval [0, 100], maping data to interval [0, 10]
+		robot.btCtrl.linearVelocity = (float)(uint8_t(pCharacteristic->getValue().c_str()[0]) / 10.0); // Reciving data in interval [0, 100], maping data to interval [0, 10]
 	}
 };
 
 class DirectionCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shData;
 public:
-	DirectionCallback(SharedData* data) {
-		shData = data;
+	DirectionCallback() {
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
 		int16_t recived = int16_t(pCharacteristic->getValue().c_str()[0]) + int16_t(pCharacteristic->getValue().c_str()[1] << 8); // Reciving data in interval [-180, 180]
-		shData->btCtrl.direction = (float)(recived * PI / 180 + PI / 2); // Maping data to interval [0, 2PI]
+		robot.btCtrl.direction = (float)(recived * PI / 180 + PI / 2); // Maping data to interval [0, 2PI]
 	}
 };
 
@@ -82,11 +74,10 @@ class AngularVelocityCallback : public BLECharacteristicCallbacks {
 private:
 	SharedData* shData;
 public:
-	AngularVelocityCallback(SharedData* data) {
-		shData = data;
+	AngularVelocityCallback() {
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
-		shData->btCtrl.angularVelocity = (float)(int8_t(pCharacteristic->getValue().c_str()[0]) / 200.0); // Reciving data in interval [-100, 100], maping data to interval [-0.5, 0.5]
+		robot.btCtrl.angularVelocity = (float)(int8_t(pCharacteristic->getValue().c_str()[0]) / 200.0); // Reciving data in interval [-100, 100], maping data to interval [-0.5, 0.5]
 	}
 };
 
@@ -177,14 +168,11 @@ public:
 */
 
 class BatteryLevelCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shData;
 public:
-	BatteryLevelCallback(SharedData* data) {
-		shData = data;
+	BatteryLevelCallback() {
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
-		//shdata->batteryLevel = uint8_t(pCharacteristic->getValue().c_str()[0]);
+		//robot.batteryLevel = uint8_t(pCharacteristic->getValue().c_str()[0]);
 	}
 };
 

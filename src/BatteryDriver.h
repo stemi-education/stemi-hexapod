@@ -45,9 +45,7 @@ For additional information please check http://www.stemi.education.
 class BatteryDriver
 {
 public:
-	BatteryDriver(SharedData *sharedDataNew);
+	BatteryDriver();
 	void checkState();
-
-	SharedData *sharedData;
 };
 #endif

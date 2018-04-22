@@ -37,14 +37,13 @@ For additional information please check http://www.stemi.education.
 #include "ServoDriver.h"
 
 
-ServoDriver::ServoDriver(SharedData *sharedDataNew)
+ServoDriver::ServoDriver()
 {
-	sharedData = sharedDataNew;
 	delay(200);
 	storageInit();
 	loadCalibrationData();
 	servoPower(1);
-	sharedData->servoCtrl.power = 1;
+	robot.servoCtrl.power = 1;
 }
 
 void ServoDriver::servoPower(bool power)
@@ -56,28 +55,28 @@ void ServoDriver::servoPower(bool power)
 int ServoDriver::servoWrite()
 {
 	//Serial.print(" ");
-	//Serial.println(sharedData->servoCtrl.power);
+	//Serial.println(robot.servoCtrl.power);
 
-	if (!sharedData->servoCtrl.power)
+	if (!robot.servoCtrl.power)
 	{
 		servoPower(0);
 	}
 	
 	//SERVO MODES
 	float calibratedServos[18];
-	switch (sharedData->servoCtrl.mode)
+	switch (robot.servoCtrl.mode)
 	{
 	case SERVO_CALIBRATION_MODE:
 		
 		for (int i = 0; i < 6; i++)
 		{
-			calibratedServos[i * 3] = 0 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3] / 100.0 * 0.2;
-			calibratedServos[i * 3 + 1] = 0 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3 + 1] / 100.0 * 0.2;
-			calibratedServos[i * 3 + 2] = -PI / 2 + sharedData->servoCtrl.calibrationOffsetBytes[i * 3 + 2] / 100.0 * 0.2;
+			calibratedServos[i * 3] = 0 + robot.servoCtrl.calibrationOffsetBytes[i * 3] / 100.0 * 0.2;
+			calibratedServos[i * 3 + 1] = 0 + robot.servoCtrl.calibrationOffsetBytes[i * 3 + 1] / 100.0 * 0.2;
+			calibratedServos[i * 3 + 2] = -PI / 2 + robot.servoCtrl.calibrationOffsetBytes[i * 3 + 2] / 100.0 * 0.2;
 		}
 		sc.moveAllServos(calibratedServos);
 
-		if (sharedData->servoCtrl.nudge > -1) //if nudge is required for some servo layer
+		if (robot.servoCtrl.nudge > -1) //if nudge is required for some servo layer
 		{
 			int delayTime = 10;
 			//Serial.println(calibrationServoLayerSelected);
@@ -86,7 +85,7 @@ int ServoDriver::servoWrite()
 			{
 				for (int i = 0; i < 18; i++)
 				{
-					if (i % 3 == sharedData->servoCtrl.nudge) calibratedServos[i] += nudgeAmmount / delayTime;
+					if (i % 3 == robot.servoCtrl.nudge) calibratedServos[i] += nudgeAmmount / delayTime;
 				}
 				sc.moveAllServos(calibratedServos);
 				delay(delayTime);
@@ -95,7 +94,7 @@ int ServoDriver::servoWrite()
 			{
 				for (int i = 0; i < 18; i++)
 				{
-					if (i % 3 == sharedData->servoCtrl.nudge) calibratedServos[i] -= nudgeAmmount / delayTime;
+					if (i % 3 == robot.servoCtrl.nudge) calibratedServos[i] -= nudgeAmmount / delayTime;
 				}
 				sc.moveAllServos(calibratedServos);
 				delay(delayTime);
@@ -104,19 +103,19 @@ int ServoDriver::servoWrite()
 			{
 				for (int i = 0; i < 18; i++)
 				{
-					if (i % 3 == sharedData->servoCtrl.nudge) calibratedServos[i] += nudgeAmmount / delayTime;
+					if (i % 3 == robot.servoCtrl.nudge) calibratedServos[i] += nudgeAmmount / delayTime;
 				}
 				sc.moveAllServos(calibratedServos);
 				delay(delayTime);
 			}
-			sharedData->servoCtrl.nudge = -1;
+			robot.servoCtrl.nudge = -1;
 		}
 		break;
 	case SERVO_WALKING_MODE:
 		//add calibration data:
 		for (int i = 0; i < 18; i++)
 		{
-			calibratedServos[i] = sharedData->servoCtrl.servoAngles[i] + sharedData->servoCtrl.calibrationOffsetBytes[i] / 100.0 * 0.2;
+			calibratedServos[i] = robot.servoCtrl.servoAngles[i] + robot.servoCtrl.calibrationOffsetBytes[i] / 100.0 * 0.2;
 			//Serial.print(calibratedServos[i]);
 			//Serial.print(" ");
 		}
@@ -137,11 +136,11 @@ void ServoDriver::storeCalibrationData()
 	Serial.println("writing byte data: ");
 	for (int i = 0; i < 18; i++)
 	{
-		Serial.print(sharedData->servoCtrl.calibrationOffsetBytes[i]);
+		Serial.print(robot.servoCtrl.calibrationOffsetBytes[i]);
 		Serial.print(" ");
 	}
 	Serial.println();
-	preferences.putBytes("calibData", sharedData->servoCtrl.calibrationOffsetBytes, 18);
+	preferences.putBytes("calibData", robot.servoCtrl.calibrationOffsetBytes, 18);
 }
 
 void ServoDriver::loadCalibrationData()
@@ -154,7 +153,7 @@ void ServoDriver::loadCalibrationData()
 	}
 	Serial.println();*/
 
-	size_t len = preferences.getBytes("calibData", sharedData->servoCtrl.calibrationOffsetBytes, 18);
+	size_t len = preferences.getBytes("calibData", robot.servoCtrl.calibrationOffsetBytes, 18);
 	
 	if (!len)
 	{
@@ -162,8 +161,8 @@ void ServoDriver::loadCalibrationData()
 		Serial.println("Loading default numbers");
 		for (int i = 0; i < 18; i++)
 		{
-			sharedData->servoCtrl.calibrationOffsetBytes[i] = 0;
-			Serial.print(sharedData->servoCtrl.calibrationOffsetBytes[i]);
+			robot.servoCtrl.calibrationOffsetBytes[i] = 0;
+			Serial.print(robot.servoCtrl.calibrationOffsetBytes[i]);
 			Serial.print(" ");
 		}
 		Serial.println();
@@ -179,14 +178,14 @@ void ServoDriver::loadCalibrationData()
 	for (int i = 0; i < 18; i++)
 	{
 		
-		Serial.print(((int8_t)sharedData->servoCtrl.calibrationOffsetBytes[i]) / 100.0 * 0.2);
+		Serial.print(((int8_t)robot.servoCtrl.calibrationOffsetBytes[i]) / 100.0 * 0.2);
 		Serial.print(" ");
 	}
 	Serial.println();
 	Serial.println("byte array loaded: ");
 	for (int i = 0; i < 18; i++)
 	{
-		Serial.print(sharedData->servoCtrl.calibrationOffsetBytes[i]);
+		Serial.print(robot.servoCtrl.calibrationOffsetBytes[i]);
 		Serial.print(" ");
 	}
 	Serial.println();

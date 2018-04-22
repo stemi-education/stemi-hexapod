@@ -59,8 +59,6 @@ class Hexapod
 {
 public:
 	Hexapod();
-
-	SharedData sharedData;
 };
 
 #endif

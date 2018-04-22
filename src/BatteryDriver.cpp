@@ -37,15 +37,14 @@ For additional information please check http://www.stemi.education.
 #include "BatteryDriver.h"
 
 
-BatteryDriver::BatteryDriver(SharedData *sharedDataNew)
+BatteryDriver::BatteryDriver()
 {
-	sharedData = sharedDataNew;
 }
 
 void BatteryDriver::checkState()
 {
 	float senVal = (float)(analogRead(BATTERY_STATUS_PIN));
 	float minVoltage = 3.5, maxVoltage = 4.1;
-	sharedData->batteryState.voltage = (-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
-	sharedData->batteryState.percentage = min(max(sharedData->batteryState.voltage - minVoltage, 0), maxVoltage-minVoltage)/(maxVoltage-minVoltage)*100;
+	robot.batteryState.voltage = (-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
+	robot.batteryState.percentage = min(max(robot.batteryState.voltage - minVoltage, 0), maxVoltage-minVoltage)/(maxVoltage-minVoltage)*100;
 }

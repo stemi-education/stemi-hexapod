@@ -43,7 +43,7 @@ For additional information please check http://www.stemi.education.
 
 class Body {
 public:
-	Body(SharedData *sharedDataNew); // constructor
+	Body(); // constructor
 	void packQArray();
 	void IK(); // sets all q's from wanted coordinates of each leg ---> q[3] = joint angles
 	void setTr(double trNew[6]); //sets the T and Tinv matrices acording to tr vector    
@@ -80,8 +80,6 @@ public:
 	Leg legs[6] = { Leg() };
 
 	Gait gait;
-
-	SharedData *sharedData;
 
 	//sampling time
 	double ts; //TODO move ts to ctrl in data.h

@@ -43,12 +43,11 @@ For additional information please check http://www.stemi.education.
 class RobotEngine
 {
 public:
-	RobotEngine(SharedData *sharedDataNew);
+	RobotEngine();
 	void checkState();
 	void modesGO();
 	void batteryCheck();
 
-	SharedData *sharedData;
 	Touch touch;
 
 	//calibration mode bariables

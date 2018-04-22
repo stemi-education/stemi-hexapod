@@ -40,47 +40,45 @@ static double absolute(double number)
 	return number >= 0 ? number : -number;
 }
 
-Body::Body(SharedData *sharedDataNew)
+Body::Body()
 {
-	sharedData = sharedDataNew;
-
 	double ad[2], a[3], dim[3];
 	
-	ts = 1.0 / sharedData->param.freq;
+	ts = 1.0 / robot.param.freq;
 
 	trCurrent[0] = 0;//Start with legs rised up - simple standup routine
-	trCurrent[1] = sharedData->moveCtrl.poseVector[1];
-	trCurrent[2] = sharedData->moveCtrl.poseVector[2];
-	trCurrent[3] = sharedData->moveCtrl.poseVector[3];
-	trCurrent[4] = sharedData->moveCtrl.poseVector[4];
-	trCurrent[5] = sharedData->moveCtrl.poseVector[5];
+	trCurrent[1] = robot.moveCtrl.poseVector[1];
+	trCurrent[2] = robot.moveCtrl.poseVector[2];
+	trCurrent[3] = robot.moveCtrl.poseVector[3];
+	trCurrent[4] = robot.moveCtrl.poseVector[4];
+	trCurrent[5] = robot.moveCtrl.poseVector[5];
 
-	dim[0] = sharedData->param.dim[0]; dim[1] = sharedData->param.dim[1]; dim[2] = sharedData->param.dim[2]; // body: [x1, x2, y]
-	a[0] = sharedData->param.a[0]; a[1] = sharedData->param.a[1]; a[2] = sharedData->param.a[2];
+	dim[0] = robot.param.dim[0]; dim[1] = robot.param.dim[1]; dim[2] = robot.param.dim[2]; // body: [x1, x2, y]
+	a[0] = robot.param.a[0]; a[1] = robot.param.a[1]; a[2] = robot.param.a[2];
 
 	//Legs initialisation
 	ad[0] = dim[0]; ad[1] = dim[2];
-	legs[0].init("R1", PI / 4, ad, a, trCurrent, sharedData->param.freq);
+	legs[0].init("R1", PI / 4, ad, a, trCurrent, robot.param.freq);
 
 	ad[0] = dim[1]; ad[1] = 0;
-	legs[1].init("R2", 0.0, ad, a, trCurrent, sharedData->param.freq);
+	legs[1].init("R2", 0.0, ad, a, trCurrent, robot.param.freq);
 
 	ad[0] = dim[0]; ad[1] = -dim[2];
-	legs[2].init("R3", -PI / 4, ad, a, trCurrent, sharedData->param.freq);
+	legs[2].init("R3", -PI / 4, ad, a, trCurrent, robot.param.freq);
 
 	ad[0] = -dim[0]; ad[1] = dim[2];
-	legs[3].init("L1", 3.0*PI / 4, ad, a, trCurrent, sharedData->param.freq);
+	legs[3].init("L1", 3.0*PI / 4, ad, a, trCurrent, robot.param.freq);
 
 	ad[0] = -dim[1]; ad[1] = 0;
-	legs[4].init("L2", PI, ad, a, trCurrent, sharedData->param.freq);
+	legs[4].init("L2", PI, ad, a, trCurrent, robot.param.freq);
 
 	ad[0] = -dim[0]; ad[1] = -dim[2];
-	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, sharedData->param.freq);
+	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, robot.param.freq);
 
-	setGaitUpDown(gait.selectSequence(sharedData->moveCtrl.gaitID));
-	setGaitCurFi(gait.selectStart(sharedData->moveCtrl.gaitID));
+	setGaitUpDown(gait.selectSequence(robot.moveCtrl.gaitID));
+	setGaitCurFi(gait.selectStart(robot.moveCtrl.gaitID));
 
-	setStepHight(sharedData->moveCtrl.stepHight);
+	setStepHight(robot.moveCtrl.stepHight);
 
 	alpha_tr = 0.95;
 
@@ -101,7 +99,7 @@ void Body::IK() {
 
 void Body::packQArray() //pack all the q's into one array
 {
-	for (int i = 0; i < nLegs*3; i++) sharedData->servoCtrl.servoAngles[i] = legs[i / 3].q[i % 3];
+	for (int i = 0; i < nLegs*3; i++) robot.servoCtrl.servoAngles[i] = legs[i / 3].q[i % 3];
 }
 
 void Body::setTr(double trNew[6]) {
@@ -166,7 +164,7 @@ void Body::setGaitCurFi(double gaitCurFiNew)
 void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew) {
 	speed = speedNew;
 	double moveCenterNew[2];
-	moveDeltaFi = deltaFiNew == 0 ? speed / sharedData->param.freq / 100000 : deltaFiNew / sharedData->param.freq;
+	moveDeltaFi = deltaFiNew == 0 ? speed / robot.param.freq / 100000 : deltaFiNew / robot.param.freq;
 
 	double r = deltaFiNew == 0 ? 100000 : absolute(speedNew) / deltaFiNew;
 	moveCenterNew[0] = r*cos(fiNew - PI / 2);
@@ -174,7 +172,7 @@ void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nM
 
 	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setMoveParam(moveCenterNew, moveDeltaFi); //TODO wrapper
 
-	sharedData->moveCtrl.timeout = nMoveNew;
+	robot.moveCtrl.timeout = nMoveNew;
 }
 
 void Body::setHomeParam(double moveDeltaNew) {
@@ -195,7 +193,7 @@ void Body::scaleStepFi() {
 	gaitDeltaFi = absolute(moveDeltaFi / minScale);
 	slowingScale = 1;
 
-	double preFootholdHight = sharedData->moveCtrl.stepHight, preFootholdScaler = 1.3;
+	double preFootholdHight = robot.moveCtrl.stepHight, preFootholdScaler = 1.3;
 
 	for (int i = 0; i < nWalkingLegs; i++)
 		if (!legs[walkingLegsMap[i]].gaitState)
@@ -225,7 +223,7 @@ void Body::scaleHomeStep() {
 	else
 
 		if (maxScale > 0.0)
-			gaitDeltaFi = absolute(8 / sharedData->param.freq / maxScale); //scalar speeds up the legs traveling to the home position
+			gaitDeltaFi = absolute(8 / robot.param.freq / maxScale); //scalar speeds up the legs traveling to the home position
 
 }
 
@@ -268,25 +266,25 @@ void Body::home(float moveDeltaNew) {
 		//All legs are at home position
 		setCground();
 		for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].gaitState = 1;
-		setGaitCurFi(gait.selectStart(sharedData->moveCtrl.gaitID));
+		setGaitCurFi(gait.selectStart(robot.moveCtrl.gaitID));
 	}
 }
 
 void Body::run() 
 {
 
-	setMoveParam(sharedData->moveCtrl.linearVelocity, sharedData->moveCtrl.direction, sharedData->moveCtrl.angularVelocity, sharedData->moveCtrl.timeout);
+	setMoveParam(robot.moveCtrl.linearVelocity, robot.moveCtrl.direction, robot.moveCtrl.angularVelocity, robot.moveCtrl.timeout);
 
-	if (sharedData->moveCtrl.timeout > 0) sharedData->moveCtrl.timeout--; //check the duration of the command and reduce nMove
-	else if (sharedData->moveCtrl.timeout == 0)
+	if (robot.moveCtrl.timeout > 0) robot.moveCtrl.timeout--; //check the duration of the command and reduce nMove
+	else if (robot.moveCtrl.timeout == 0)
 	{
-		setMoveParam(0, PI / 2, 0, sharedData->moveCtrl.timeout); //if nMove == 0 go to home ... no command present
-		//sharedData->moveCtrl.poseVector[0];
-		//sharedData->moveCtrl.poseVector[1] = 0;
-		//sharedData->moveCtrl.poseVector[2] = 0; STAVITI DA BUDE U CTRL
-		//sharedData->moveCtrl.poseVector[3] = 0;
-		//sharedData->moveCtrl.poseVector[4] = 0;
-		//sharedData->moveCtrl.poseVector[5] = 0;
+		setMoveParam(0, PI / 2, 0, robot.moveCtrl.timeout); //if nMove == 0 go to home ... no command present
+		//robot.moveCtrl.poseVector[0];
+		//robot.moveCtrl.poseVector[1] = 0;
+		//robot.moveCtrl.poseVector[2] = 0; STAVITI DA BUDE U CTRL
+		//robot.moveCtrl.poseVector[3] = 0;
+		//robot.moveCtrl.poseVector[4] = 0;
+		//robot.moveCtrl.poseVector[5] = 0;
 	}
 
 	//setWs(0.85);
@@ -320,12 +318,12 @@ float PT1(float input, float valuePrev, float alpha) {
 	return alpha*valuePrev + (1 - alpha)*(input);
 }
 void Body::trPT1() {
-	trCurrent[0] = PT1(sharedData->moveCtrl.poseVector[0], trCurrent[0], alpha_tr - 0.02);
-	trCurrent[1] = PT1(sharedData->moveCtrl.poseVector[1], trCurrent[1], alpha_tr - 0.02);
-	trCurrent[2] = PT1(sharedData->moveCtrl.poseVector[2], trCurrent[2], alpha_tr - 0.02);
-	trCurrent[3] = PT1(sharedData->moveCtrl.poseVector[3], trCurrent[3], alpha_tr);
-	trCurrent[4] = PT1(sharedData->moveCtrl.poseVector[4], trCurrent[4], alpha_tr);
-	trCurrent[5] = PT1(sharedData->moveCtrl.poseVector[5], trCurrent[5], alpha_tr);
+	trCurrent[0] = PT1(robot.moveCtrl.poseVector[0], trCurrent[0], alpha_tr - 0.02);
+	trCurrent[1] = PT1(robot.moveCtrl.poseVector[1], trCurrent[1], alpha_tr - 0.02);
+	trCurrent[2] = PT1(robot.moveCtrl.poseVector[2], trCurrent[2], alpha_tr - 0.02);
+	trCurrent[3] = PT1(robot.moveCtrl.poseVector[3], trCurrent[3], alpha_tr);
+	trCurrent[4] = PT1(robot.moveCtrl.poseVector[4], trCurrent[4], alpha_tr);
+	trCurrent[5] = PT1(robot.moveCtrl.poseVector[5], trCurrent[5], alpha_tr);
 }
 //-------------------------BT
 
