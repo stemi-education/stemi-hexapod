@@ -171,6 +171,6 @@ public:
 	int8_t mode = ROBOT_USER_MODE;
 };
 
-static SharedData robot;
+extern SharedData robot;
 
 #endif
