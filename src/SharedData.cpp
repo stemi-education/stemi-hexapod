@@ -118,6 +118,13 @@ void SharedData::move(MoveCtrl movement)
 	moveCtrl.direction = movement.direction;
 }
 
+void SharedData::move(float linearVelocity, float direction, float angularVelocity)
+{
+	moveCtrl.linearVelocity = linearVelocity;
+	moveCtrl.direction = direction * PI / 180;
+	moveCtrl.angularVelocity = angularVelocity * PI / 180;
+}
+
 void SharedData::rotate(MoveCtrl rotation)
 {
 	moveCtrl.angularVelocity = rotation.angularVelocity;
@@ -141,6 +148,25 @@ void SharedData::setHeight(float height)
 	moveCtrl.poseVector[0] = height;
 }
 
+void SharedData::setMode(int8_t modeNew)
+{
+	mode = modeNew;
+}
+
+int8_t SharedData::getMode()
+{
+	return mode;
+}
+
+void SharedData::storeServoCalibrationData()
+{
+	robot.servoCtrl.store = 1;
+}
+
+void SharedData::setServoPower(bool power)
+{
+	servoCtrl.power = power;
+}
 
 
 

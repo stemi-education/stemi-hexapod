@@ -48,7 +48,7 @@ RobotEngine::RobotEngine() : touch(50, 40, 5)
 void RobotEngine::checkState()
 {
 	int touchState = -1;
-	if (robot.mode != ROBOT_USER_MODE) // if in user mode do nothing
+	if (robot.getMode() != ROBOT_USER_MODE) // if in user mode do nothing
 	{
 		batteryCheck();
 		touch.checkTouch();
@@ -64,7 +64,7 @@ void RobotEngine::checkState()
 
 	}
 	//make changes based on input and current robotMode
-	switch (robot.mode)
+	switch (robot.getMode())
 	{
 	case ROBOT_USER_MODE:
 		//do nothing
@@ -76,10 +76,10 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case 5:
-			robot.mode = ROBOT_PRE_CALIBRATION_MODE;
+			robot.setMode(ROBOT_PRE_CALIBRATION_MODE);
 			break;
 		case 2:
-			robot.mode = ROBOT_WALK_MODE;
+			robot.setMode(ROBOT_WALK_MODE);
 			break;
 		}
 		break;
@@ -87,10 +87,10 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case 5:
-			robot.mode = ROBOT_PRE_CALIBRATION_MODE;
+			robot.setMode(ROBOT_PRE_CALIBRATION_MODE);
 			break;
 		case 2:
-			robot.mode = ROBOT_WALK_N_TILT_MODE;
+			robot.setMode(ROBOT_WALK_N_TILT_MODE);
 			break;
 		}
 		break;
@@ -98,10 +98,10 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case 5:
-			robot.mode = ROBOT_PRE_CALIBRATION_MODE;
+			robot.setMode(ROBOT_PRE_CALIBRATION_MODE);
 			break;
 		case 2:
-			robot.mode = ROBOT_DANCE_MODE;
+			robot.setMode(ROBOT_DANCE_MODE);
 			break;
 		}
 		break;
@@ -109,10 +109,10 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case 5:
-			robot.mode = ROBOT_PRE_CALIBRATION_MODE;
+			robot.setMode(ROBOT_PRE_CALIBRATION_MODE);
 			break;
 		case 2:
-			robot.mode = ROBOT_EMPTY_MODE;
+			robot.setMode(ROBOT_EMPTY_MODE);
 			break;
 		}
 		break;
@@ -120,10 +120,10 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case 5:
-			robot.mode = ROBOT_PRE_CALIBRATION_MODE;
+			robot.setMode(ROBOT_PRE_CALIBRATION_MODE);
 			break;
 		case 2:
-			robot.mode = ROBOT_WALK_MODE;
+			robot.setMode(ROBOT_WALK_MODE);
 			break;
 		}
 		break;
@@ -133,11 +133,11 @@ void RobotEngine::checkState()
 		case -1: //nothing is pressed - needed for default case
 			break;
 		case 5:
-			robot.mode = ROBOT_CALIBRATION_MODE;
+			robot.setMode(ROBOT_CALIBRATION_MODE);
 			robot.servoCtrl.mode = SERVO_CALIBRATION_MODE;
 			break;
 		default:
-			robot.mode = ROBOT_WALK_MODE;
+			robot.setMode(ROBOT_WALK_MODE);
 			break;
 		}
 		break;
@@ -145,8 +145,8 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case 5: //save and exit
-			robot.mode = ROBOT_WALK_MODE;
-			robot.servoCtrl.store = 1;
+			robot.setMode(ROBOT_WALK_MODE);
+			robot.storeServoCalibrationData();
 			robot.servoCtrl.mode = SERVO_WALKING_MODE;
 			break;
 		//change calibration value
@@ -180,136 +180,73 @@ void RobotEngine::checkState()
 
 void RobotEngine::modesGO()
 {
+	uint8_t randomDummy = random(0, 255);
+	Color randomColor = { randomDummy, 255 - randomDummy, randomDummy/2};
+
 	//Serial.println("check");
-	switch (robot.mode)
+	switch (robot.getMode())
 	{
 	case ROBOT_USER_MODE:
 		//do nothing
 		break;
 	case ROBOT_STANDBY_MODE:
-		//robot.setLedColor()
-		robot.ledCtrl.blinkingSpeed = 0;
-		robot.ledCtrl.rotationSpeed = 0.05;
-		robot.ledCtrl.direction = 0;
-		robot.ledCtrl.spreadRatio = 1;
-
-		robot.ledCtrl.primarClr[0] = 20;
-		robot.ledCtrl.primarClr[1] = 90;
-		robot.ledCtrl.primarClr[2] = 255;
-		robot.ledCtrl.secondarClr[0] = 0;
-		robot.ledCtrl.secondarClr[1] = 0;
-		robot.ledCtrl.secondarClr[2] = 100;
-
-		robot.moveCtrl.linearVelocity = 0;
-		robot.moveCtrl.angularVelocity = 0;
-		robot.moveCtrl.poseVector[0] = 1;
+		robot.setLed(BLUE, GREEN, 2, 0);
+		robot.setLedBlinkingSpeed(0);
+		robot.setLedRotationSpeed(0.5);
+		robot.move(RESET);
+		robot.setHeight(1);
 		break;
 	case ROBOT_WALK_MODE:
 		//set up walking parameters
-		robot.ledCtrl.blinkingSpeed = 0;
-		robot.ledCtrl.rotationSpeed = 0.05;
-		robot.ledCtrl.direction = 0;
-		robot.ledCtrl.spreadRatio = 1;
-
-		robot.ledCtrl.primarClr[0] = 90;
-		robot.ledCtrl.primarClr[1] = 255;
-		robot.ledCtrl.primarClr[2] = 50;
-		robot.ledCtrl.secondarClr[0] = 0;
-		robot.ledCtrl.secondarClr[1] = 255;
-		robot.ledCtrl.secondarClr[2] = 0;
-
+		robot.setLedBlinkingSpeed(0.5);
+		robot.setLedRotationSpeed(0);
+		robot.setLed(BLUE, RED, 2, 0);
+		robot.setHeight(4);
 		robot.writeBtCtrlToMoveCtrl();
-		robot.moveCtrl.poseVector[0] = 4;
 		break;
 	case ROBOT_WALK_N_TILT_MODE:
 
-		robot.mode = ROBOT_WALK_N_TILT_MODE;
+		robot.setMode(ROBOT_WALK_N_TILT_MODE);
 
 		//set up walking parameters
-		robot.ledCtrl.blinkingSpeed = 0;
-		robot.ledCtrl.rotationSpeed = 0.1;
-		robot.ledCtrl.direction = 0;
-		robot.ledCtrl.spreadRatio = 1;
-
-		robot.ledCtrl.primarClr[0] = 255;
-		robot.ledCtrl.primarClr[1] = 100;
-		robot.ledCtrl.primarClr[2] = 40;
-		robot.ledCtrl.secondarClr[0] = 40;
-		robot.ledCtrl.secondarClr[1] = 255;
-		robot.ledCtrl.secondarClr[2] = 150;
-
+		robot.setLedBlinkingSpeed(0);
+		robot.setLedRotationSpeed(1);
+		robot.setLed(YELLOW, BLUE, 2, 0);
 		robot.writeBtCtrlToMoveCtrl();
-		robot.moveCtrl.poseVector[0] = 4;
+		robot.setHeight(4);
 		break;
 	case ROBOT_DANCE_MODE:
-		robot.ledCtrl.blinkingSpeed = 0.2;
-		robot.ledCtrl.rotationSpeed = 0;
-		robot.ledCtrl.direction = 0;
-		robot.ledCtrl.spreadRatio = 100;
-
-		//set up walking parameters
-		robot.ledCtrl.primarClr[0] = 40;
-		robot.ledCtrl.primarClr[1] = 255;
-		robot.ledCtrl.primarClr[2] = 100;
-		robot.ledCtrl.secondarClr[0] = 0;
-		robot.ledCtrl.secondarClr[1] = 0;
-		robot.ledCtrl.secondarClr[2] = 0;
-
-		robot.moveCtrl.poseVector[0] = 4;
+		robot.setLedBlinkingSpeed(2);
+		robot.setLedRotationSpeed(2);
+		robot.setLed(randomColor);
+		robot.setHeight(4);
 		break;
 	case ROBOT_EMPTY_MODE:
 		//set up empty parameters
-		robot.ledCtrl.blinkingSpeed = 0;
-		robot.ledCtrl.rotationSpeed = 0;
-		robot.ledCtrl.direction = 0;
-		robot.ledCtrl.spreadRatio = 100;
-
-		robot.ledCtrl.primarClr[0] = 255;
-		robot.ledCtrl.primarClr[1] = 255;
-		robot.ledCtrl.primarClr[2] = 255;
-
-		robot.moveCtrl.linearVelocity = 0;
-		robot.moveCtrl.angularVelocity = 0;
-		robot.moveCtrl.poseVector[0] = 5;
+		robot.setLedBlinkingSpeed(0);
+		robot.setLedRotationSpeed(0);
+		robot.setLed(WHITE);
+		robot.setHeight(4);
 		break;
 	case ROBOT_PRE_CALIBRATION_MODE:
-		robot.ledCtrl.blinkingSpeed = 0;
-		robot.ledCtrl.rotationSpeed = 0;
-		robot.ledCtrl.direction = 0;
-		robot.ledCtrl.spreadRatio = 0.5;
-
-		robot.ledCtrl.primarClr[0] = 100;
-		robot.ledCtrl.primarClr[1] = 0;
-		robot.ledCtrl.primarClr[2] = 0;
-		robot.ledCtrl.primarClr[0] = 0;
-		robot.ledCtrl.primarClr[1] = 0;
-		robot.ledCtrl.primarClr[2] = 0;
+		robot.setLedBlinkingSpeed(0);
+		robot.setLedRotationSpeed(0);
+		robot.setLed(RED);
 		break;
 	case ROBOT_CALIBRATION_MODE:
-		robot.ledCtrl.blinkingSpeed = 0;
-		robot.ledCtrl.rotationSpeed = 0;
-		robot.ledCtrl.direction = 0;
-		robot.ledCtrl.spreadRatio = 0.5;
+		robot.setLedBlinkingSpeed(0);
+		robot.setLedRotationSpeed(0);
 
-		robot.ledCtrl.primarClr[0] = 255;
-		robot.ledCtrl.primarClr[1] = 0;
-		robot.ledCtrl.primarClr[2] = 0;
+		robot.setLed(RED, BLACK, 0.2, 0);
 		break;
 	case ROBOT_BATTERY_EMPTY_MODE:
 		//LEDS blinking
-		robot.ledCtrl.blinkingSpeed = 0.05;
-		robot.ledCtrl.rotationSpeed = 0;
-		robot.ledCtrl.direction = 0;
-		robot.ledCtrl.spreadRatio = 100;
+		robot.setLedBlinkingSpeed(0.5);
+		robot.setLedRotationSpeed(0);
 
-		robot.ledCtrl.primarClr[0] = 255;
-		robot.ledCtrl.primarClr[1] = 0;
-		robot.ledCtrl.primarClr[2] = 0;
-
-		robot.moveCtrl.linearVelocity = 0;
-		robot.moveCtrl.angularVelocity = 0;
+		robot.setLed(RED);
 		//turn off the servos
-		robot.servoCtrl.power = 0;
+		robot.setServoPower(0);
 		break;
 	}
 }
@@ -320,8 +257,8 @@ void RobotEngine::batteryCheck()
 	if (robot.batteryState.voltage < ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD)
 	{
 		//shut down servos and put to battery empty mode
-		robot.servoCtrl.power = 0;
-		robot.mode = ROBOT_BATTERY_EMPTY_MODE;
+		robot.setServoPower(0);
+		robot.setMode(ROBOT_BATTERY_EMPTY_MODE);
 	}
 }
 

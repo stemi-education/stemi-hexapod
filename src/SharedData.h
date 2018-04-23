@@ -132,14 +132,20 @@ public:
 
 	//Movement
 	void move(MoveCtrl movement);
+	void move(float linearVelocity, float direction, float angularVelocity);
 	void rotate(MoveCtrl rotation);
 	void tilt(MoveCtrl tiltation);
 	void stretch(MoveCtrl stretchment);
 	void setHeight(float height);
 
-	bool useModes = 1;
+	void setMode(int8_t modeNew);
+	int8_t getMode();
 
-	MoveCtrl moveCtrl, userMoveCtrl;
+	void storeServoCalibrationData();
+
+	void setServoPower(bool power);
+
+	MoveCtrl moveCtrl;
 
 	struct BtCtrl
 	{
