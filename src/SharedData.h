@@ -68,12 +68,23 @@ For additional information please check http://www.stemi.education.
 #define ROBOT_CALIBRATION_MODE 22
 #define ROBOT_BATTERY_EMPTY_MODE 23
 
-#define LED_MANUAL_MODE 0;
-#define LED_PARAMETRIC_MODE 1;
-#define LED_CUSTOM_MODE 2;
+#define LED_MANUAL_MODE 0
+#define LED_PARAMETRIC_MODE 1
+#define LED_CUSTOM_MODE 2
+
+#define LED_R1 0
+#define LED_R2 1
+#define LED_R3 2
+#define LED_L1 5
+#define LED_L2 4
+#define LED_L3 3
 
 //movement parameters
-#define MOVE_CTRL_TIMER_MAX 200;
+#define MOVE_CTRL_TIMER_MAX 200; //iterations
+#define MOVE_SPEED 5 //cm/s
+#define TURN_SPEED 0.4 //radians/s
+#define TILT_AMMOUNT 0.2 //radians
+#define STRETCH_AMMOUNT 2 //cm
 
 #ifndef min
 #define min(a,b) ((a)<(b)?(a):(b))
@@ -89,28 +100,46 @@ static Color const PURPLE = { 255, 0, 255 };
 static Color const WHITE = { 255, 255, 255 };
 static Color const BLACK = { 0, 0, 0 };
 
+struct MoveCtrl
+{
+	float linearVelocity;
+	float direction;
+	float angularVelocity;
+	double poseVector[6]; //initial translation and rotation vector of roots pose
+	int timeout; //how many times will current command execute (0 = home, -1 = infinite)
+	int8_t gaitID;
+	float stepHight;
+};
+
+static const MoveCtrl FORWARD =  { 5, PI / 2,			0,	{ 4,0,STRETCH_AMMOUNT,0,-TILT_AMMOUNT,0 }, -1, 1, 2 };
+static const MoveCtrl BACKWARD = { 5, 3 * PI / 2, 0,	{ 4,0,-STRETCH_AMMOUNT,0,TILT_AMMOUNT,0 }, -1, 1, 2 };
+static const MoveCtrl LEFT =		 { 5, PI, 0.2,				{ 4,-STRETCH_AMMOUNT,0,0,0,-TILT_AMMOUNT }, -1, 1, 2 };
+static const MoveCtrl RIGHT =		 { 5, 0, -0.2,				{ 4,STRETCH_AMMOUNT,0,0,0,TILT_AMMOUNT }, -1, 1, 2 };
+static const MoveCtrl RESET =		 { 0, PI/2, 0,				{ 4,0,0,0,0,0 }, -1, 1, 2 };
+
 class SharedData {
 public:
 	SharedData();
 	void writeServoAngles(float servoAnglesNew[18]);
 	void writeBtCtrlToMoveCtrl();
 	
-	void setLedColor(Color primarClr, Color secondarClr, float spreadRatio, float direction);
+	//LED
+	void setLed(Color primarClr);
+	void setLed(Color primarClr, Color secondarClr, float spreadRatio = 2, float direction = 0);
+	void setLed(uint8_t ledNo, Color color);
 	void setLedRotationSpeed(float rotationSpeed);
 	void setLedBlinkingSpeed(float blinkingSpeed);
 
+	//Movement
+	void move(MoveCtrl movement);
+	void rotate(MoveCtrl rotation);
+	void tilt(MoveCtrl tiltation);
+	void stretch(MoveCtrl stretchment);
+	void setHeight(float height);
+
 	bool useModes = 1;
 
-	struct MoveCtrl
-	{
-		float linearVelocity = 0;
-		float direction = PI / 2;
-		float angularVelocity = 0;
-		double poseVector[6] = { 1, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
-		int timeout = -1; //how many times will current command execute (0 = home, -1 = infinite)
-		int8_t gaitID = 1;
-		float stepHight = 2;
-	} moveCtrl, userMoveCtrl;
+	MoveCtrl moveCtrl, userMoveCtrl;
 
 	struct BtCtrl
 	{

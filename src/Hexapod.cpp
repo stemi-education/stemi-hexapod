@@ -118,7 +118,8 @@ void ledDriver(void *sharedDataNew)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		//TODO insert functions to control LEDs based on sharedData->ledCtrl variables
-		ledDriver.setColorParametric();
+		if(robot.ledCtrl.mode == LED_PARAMETRIC_MODE)
+			ledDriver.setColorParametric();
 		ledDriver.writeToLED();
 	}
 }

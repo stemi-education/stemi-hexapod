@@ -63,17 +63,24 @@ void LedDriver::setColorParametric()
 	for (int i = 0; i < LED_COUNT; i++) {
 		for (int j = 0; j < 3; j++) {
 			gauss0 = robot.ledCtrl.secondarClr[j] +
-				(robot.ledCtrl.primarClr[j] - robot.ledCtrl.secondarClr[j])
+				((int)robot.ledCtrl.primarClr[j] - (int)robot.ledCtrl.secondarClr[j])
 				* exp(-pow((-i * 2 * PI / LED_COUNT - (robot.ledCtrl.direction + directionOffset + rotationSpeedDirection)), 2) / (gaussWidth));
 			gauss1 = robot.ledCtrl.secondarClr[j] +
-				(robot.ledCtrl.primarClr[j] - robot.ledCtrl.secondarClr[j])
+				((int)robot.ledCtrl.primarClr[j] - (int)robot.ledCtrl.secondarClr[j])
 				* exp(-pow((-i * 2 * PI / LED_COUNT - (robot.ledCtrl.direction + directionOffset + rotationSpeedDirection) + 2 * PI), 2) / (gaussWidth));
 			gauss2 = robot.ledCtrl.secondarClr[j] +
-				(robot.ledCtrl.primarClr[j] - robot.ledCtrl.secondarClr[j])
+				((int)robot.ledCtrl.primarClr[j] - (int)robot.ledCtrl.secondarClr[j])
 				* exp(-pow((-i * 2 * PI / LED_COUNT - (robot.ledCtrl.direction + directionOffset + rotationSpeedDirection) - 2 * PI), 2) / (gaussWidth));
-			robot.ledCtrl.manualClr[i][j] = blinkSpeedResult * max(gauss0, max(gauss1, gauss2));
+			robot.ledCtrl.manualClr[i][j] = robot.ledCtrl.primarClr[j] > robot.ledCtrl.secondarClr[j] ? 
+																			blinkSpeedResult * max(gauss0, max(gauss1, gauss2)) :
+																			blinkSpeedResult * min(gauss0, min(gauss1, gauss2));
+
+			//Serial.print(" ");
+			//Serial.print(robot.ledCtrl.manualClr[i][j]);
 		}
+		//Serial.print("    ");
 	}
+	//Serial.println();
 }
 
 float LedDriver::applyDirectionSpeed() {

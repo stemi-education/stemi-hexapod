@@ -39,20 +39,43 @@ Hexapod  *hexapod;
 void setup()
 {
 	Serial.begin(115200);
-	Serial.println("Krenuo!");
-	
 	hexapod = new Hexapod();
+
+	robot.setHeight(4);
+	delay(1000);
 }
 
 void loop()
 {
-	robot.moveCtrl.poseVector[0] = 4;
-	delay(1000);
-	robot.moveCtrl.linearVelocity = 5;
-	robot.ledCtrl.primarClr[0] = 255;
+	robot.setLed(LED_R2, BLUE);
+	robot.rotate(FORWARD);
 	delay(2000);
-	robot.moveCtrl.linearVelocity = 0;
+
+	robot.setLed(RED,GREEN);
+	robot.stretch(BACKWARD);
 	delay(2000);
+
+	robot.setLed(LED_L2, GREEN);
+	robot.rotate(LEFT);
+	delay(2000);
+
+	robot.setLed(RED, BLUE, 2, -60);
+	robot.stretch(RESET);
+	robot.rotate(RIGHT);
+	delay(2000);
+
+	robot.setLed(RED, BLUE, 2, 0);
+	robot.rotate(RESET);
+	robot.setLedRotationSpeed(0.5);
+	delay(2000);
+
+	robot.setLedBlinkingSpeed(1);
+	delay(5000);
+
+
+
+
+
 	robot.mode = ROBOT_STANDBY_MODE;
 	delay(9999999);
 	robot.mode = ROBOT_STANDBY_MODE;
