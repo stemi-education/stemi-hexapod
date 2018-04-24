@@ -46,6 +46,7 @@ public:
 	LedDriver();
 	
 	void setColorParametric();
+	void setColorManual();
 	float applyDirectionSpeed();
 	float applyBlinkingSpeed();
 	void writeToLED();
@@ -65,6 +66,9 @@ public:
 	RgbColor purple = RgbColor(255, 0, 255);
 	RgbColor white = RgbColor(255);
 	RgbColor black = RgbColor(0);
+
+	uint8_t ledMap[6] = { 3, 4, 5, 0, 1, 2};
+
 
 };
 #endif

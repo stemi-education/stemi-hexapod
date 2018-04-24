@@ -79,6 +79,13 @@ For additional information please check http://www.stemi.education.
 #define LED_L2 4
 #define LED_L3 3
 
+#define LED_R1_ANGLE -30
+#define LED_R2_ANGLE -90
+#define LED_R3_ANGLE -120
+#define LED_L1_ANGLE 30
+#define LED_L2_ANGLE 90
+#define LED_L3_ANGLE 120
+
 //movement parameters
 #define MOVE_CTRL_TIMER_MAX 200; //iterations
 #define MOVE_SPEED 5 //cm/s
@@ -124,7 +131,7 @@ public:
 	void writeBtCtrlToMoveCtrl();
 	
 	//LED
-	void setLed(Color primarClr);
+	void setLed(Color color);
 	void setLed(Color primarClr, Color secondarClr, float spreadRatio = 2, float direction = 0);
 	void setLed(uint8_t ledNo, Color color);
 	void setLedRotationSpeed(float rotationSpeed);
@@ -194,6 +201,7 @@ public:
 		float blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
 		uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
 		uint8_t manualClr[6][3];
+		uint8_t finalClr[6][3];
 		int8_t mode = LED_PARAMETRIC_MODE;
 	} ledCtrl, userLedCtrl;
 

@@ -236,8 +236,8 @@ void RobotEngine::modesGO()
 	case ROBOT_CALIBRATION_MODE:
 		robot.setLedBlinkingSpeed(0);
 		robot.setLedRotationSpeed(0);
-
-		robot.setLed(RED, BLACK, 0.2, 0);
+		robot.setLed(BLACK);
+		robot.setLed(calibrationLegSelectedCounter, calibrationServoLayerColors[calibrationServoLayerSelected]);// calibrationServoLayerColors[calibrationServoLayerSelected]);
 		break;
 	case ROBOT_BATTERY_EMPTY_MODE:
 		//LEDS blinking

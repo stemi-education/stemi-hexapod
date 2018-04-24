@@ -54,7 +54,7 @@ public:
 	//calibrationMode variables
 	int calibrationLegSelected = 0, calibrationLegSelectedCounter = 0, calibrationServoLayerSelected = 0;// , calibrationValue = 0;
 	uint8_t calibrationLegSelectedMap[6] = { 0, 1, 2, 5, 4, 3 };
-	uint8_t calibrationLegSelectedMapLED[6] = { 3, 4, 5, 2, 1, 0 };
+	Color calibrationServoLayerColors[3] = {RED, BLUE, YELLOW};
 
 };
 #endif

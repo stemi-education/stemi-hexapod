@@ -73,18 +73,15 @@ void SharedData::setLed(uint8_t ledNo, Color color)
 	ledCtrl.manualClr[ledNo][2] = color.b;
 }
 
-void SharedData::setLed(Color primarClr)
+void SharedData::setLed(Color color)
 {
-	ledCtrl.mode = LED_PARAMETRIC_MODE;
-	ledCtrl.primarClr[0] = primarClr.r;
-	ledCtrl.primarClr[1] = primarClr.g;
-	ledCtrl.primarClr[2] = primarClr.b;
-
-	ledCtrl.secondarClr[0] = primarClr.r;
-	ledCtrl.secondarClr[1] = primarClr.g;
-	ledCtrl.secondarClr[2] = primarClr.b;
-	ledCtrl.spreadRatio = 1;
-	ledCtrl.direction = PI/2;
+	ledCtrl.mode = LED_MANUAL_MODE;
+	for (int i = 0; i < LED_COUNT; i++) 
+	{
+			ledCtrl.manualClr[i][0] = color.r;
+			ledCtrl.manualClr[i][1] = color.g;
+			ledCtrl.manualClr[i][2] = color.b;
+	}
 }
 void SharedData::setLed(Color primarClr, Color secondarClr, float spreadRatio, float direction)
 {
@@ -97,7 +94,7 @@ void SharedData::setLed(Color primarClr, Color secondarClr, float spreadRatio, f
 	ledCtrl.secondarClr[1] = secondarClr.g;
 	ledCtrl.secondarClr[2] = secondarClr.b;
 	ledCtrl.spreadRatio = spreadRatio;
-	ledCtrl.direction = direction * PI / 180 + PI / 2;
+	ledCtrl.direction = direction * PI / 180 - PI / 2;
 }
 
 void SharedData::setLedRotationSpeed(float rotationSpeed)
