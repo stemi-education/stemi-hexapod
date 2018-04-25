@@ -132,12 +132,13 @@ void btEngine(void *sharedDataNew)
 	delay(2000);
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = portMAX_DELAY; //wait forever
+	const TickType_t xFrequency = 200;
 	xLastWakeTime = xTaskGetTickCount();
 
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		robot.btCtrl.connectedCount = BLE.server->getConnectedCount();
 	}
 }
 

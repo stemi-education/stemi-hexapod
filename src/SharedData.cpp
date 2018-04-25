@@ -48,8 +48,6 @@ SharedData:: SharedData()
 	moveCtrl.poseVector[6] = 0; 
 	moveCtrl.poseVector[6] = 0; 
 	moveCtrl.timeout = -1;
-	moveCtrl.gaitID = 1;
-	moveCtrl.stepHight = 2;
 }
 
 void SharedData::writeServoAngles(float servoAnglesNew[18])

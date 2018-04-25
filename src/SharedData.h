@@ -124,15 +124,13 @@ struct MoveCtrl
 	float angularVelocity;
 	double poseVector[6]; //initial translation and rotation vector of roots pose
 	int timeout; //how many times will current command execute (0 = home, -1 = infinite)
-	int8_t gaitID;
-	float stepHight;
 };
 
-static const MoveCtrl FORWARD =  { 5, PI / 2,			0,	{ 4,0,STRETCH_AMMOUNT,0,-TILT_AMMOUNT,0 }, -1, 1, 2 };
-static const MoveCtrl BACKWARD = { 5, 3 * PI / 2, 0,	{ 4,0,-STRETCH_AMMOUNT,0,TILT_AMMOUNT,0 }, -1, 1, 2 };
-static const MoveCtrl LEFT =		 { 5, PI, 0.2,				{ 4,-STRETCH_AMMOUNT,0,0,0,-TILT_AMMOUNT }, -1, 1, 2 };
-static const MoveCtrl RIGHT =		 { 5, 0, -0.2,				{ 4,STRETCH_AMMOUNT,0,0,0,TILT_AMMOUNT }, -1, 1, 2 };
-static const MoveCtrl RESET =		 { 0, PI/2, 0,				{ 4,0,0,0,0,0 }, -1, 1, 2 };
+static const MoveCtrl FORWARD =  { 5, PI / 2,			0,	{ 4,0,STRETCH_AMMOUNT,0,-TILT_AMMOUNT,0 }, -1 };
+static const MoveCtrl BACKWARD = { 5, 3 * PI / 2, 0,	{ 4,0,-STRETCH_AMMOUNT,0,TILT_AMMOUNT,0 }, -1 };
+static const MoveCtrl LEFT =		 { 5, PI, 0.2,				{ 4,-STRETCH_AMMOUNT,0,0,0,-TILT_AMMOUNT }, -1 };
+static const MoveCtrl RIGHT =		 { 5, 0, -0.2,				{ 4,STRETCH_AMMOUNT,0,0,0,TILT_AMMOUNT }, -1 };
+static const MoveCtrl RESET =		 { 0, PI/2, 0,				{ 4,0,0,0,0,0 }, -1 };
 
 class SharedData {
 public:
@@ -178,6 +176,7 @@ public:
 		float angularVelocity = 0;
 		double poseVector[6] = { 1, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
 		uint timer = 0;
+		uint8_t connectedCount = 0;
 	} btCtrl;
 
 	struct Parameters
@@ -186,6 +185,8 @@ public:
 		double dim[3] = { 3, 5.4, 7.2 }; //coordinates of the robots hips
 		double freq = 50; //frequency of the algorithm
 		double ts = 1.0 / freq;
+		int8_t gaitID = 1;
+		float stepHeight = 2;
 	} param;
 
 	struct ServoCtrl
@@ -222,6 +223,8 @@ public:
 		int8_t mode = LED_PARAMETRIC_MODE;
 	} ledCtrl, userLedCtrl;
 
+	int8_t mode = ROBOT_USER_MODE;
+
 	struct BatteryState
 	{
 		float voltage = 0;
@@ -232,8 +235,6 @@ public:
 	{
 		uint8_t state = TOUCH_000;
 	} touch;
-
-	int8_t mode = ROBOT_USER_MODE;
 };
 
 extern SharedData robot;

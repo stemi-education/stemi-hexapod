@@ -75,10 +75,10 @@ Body::Body()
 	ad[0] = -dim[0]; ad[1] = -dim[2];
 	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, robot.param.freq);
 
-	setGaitUpDown(gait.selectSequence(robot.moveCtrl.gaitID));
-	setGaitCurFi(gait.selectStart(robot.moveCtrl.gaitID));
+	setGaitUpDown(gait.selectSequence(robot.param.gaitID));
+	setGaitCurFi(gait.selectStart(robot.param.gaitID));
 
-	setStepHight(robot.moveCtrl.stepHight);
+	setStepHight(robot.param.stepHeight);
 
 	alpha_tr = 0.95;
 
@@ -193,7 +193,7 @@ void Body::scaleStepFi() {
 	gaitDeltaFi = absolute(moveDeltaFi / minScale);
 	slowingScale = 1;
 
-	double preFootholdHight = robot.moveCtrl.stepHight, preFootholdScaler = 1.3;
+	double preFootholdHight = robot.param.stepHeight, preFootholdScaler = 1.3;
 
 	for (int i = 0; i < nWalkingLegs; i++)
 		if (!legs[walkingLegsMap[i]].gaitState)
@@ -266,7 +266,7 @@ void Body::home(float moveDeltaNew) {
 		//All legs are at home position
 		setCground();
 		for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].gaitState = 1;
-		setGaitCurFi(gait.selectStart(robot.moveCtrl.gaitID));
+		setGaitCurFi(gait.selectStart(robot.param.gaitID));
 	}
 }
 
