@@ -40,10 +40,34 @@ void setup()
 {
 	Serial.begin(115200);
 	hexapod = new Hexapod();
-	robot.setMode(ROBOT_STANDBY_MODE);
+	robot.enterUserMode();
+	robot.setHeight(4);
+	robot.setLed(GREEN);
 }
 
 void loop()
 {
-	delay(1000);
+	int touchPattern = robot.getTouchPattern();
+	if (touchPattern == TOUCH_X0X)
+	{
+		Color randomColor = { random(0,255), random(0,255),  random(0,255) };
+		robot.setLed(randomColor);
+	}
+	else if (touchPattern == TOUCH_00X)
+	{
+		robot.move(FORWARD);
+	}
+	else if (touchPattern == TOUCH_X00)
+	{
+		robot.move(BACKWARD);
+	}
+	else if (touchPattern == TOUCH_0X0)
+	{
+		robot.move(RESET);
+	}
+	else if (touchPattern == TOUCH_0XX)
+	{
+		robot.exitUserMode();
+	}
+	delay(20);
 }

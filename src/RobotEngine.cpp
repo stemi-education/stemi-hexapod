@@ -41,27 +41,17 @@ float saturate(float value, float minimum, float maximum)
 	return min(maximum, max(minimum, value));
 }
 
-RobotEngine::RobotEngine() : touch(50, 40, 5)
+RobotEngine::RobotEngine()
 {
 }
 
 void RobotEngine::checkState()
 {
-	int touchState = -1;
+	int touchState = 0;
 	if (robot.getMode() != ROBOT_USER_MODE) // if in user mode do nothing
 	{
 		batteryCheck();
-		touch.checkTouch();
-		
-		if (touch.isTouchDetected())
-		{
-			touchState = touch.getTouchPattern(true);
-			Serial.print("t: ");
-			Serial.println(touchState);
-		}
-		else
-			touchState = -1;
-
+		touchState = robot.getTouchPattern();
 	}
 	//make changes based on input and current robotMode
 	switch (robot.getMode())
@@ -254,7 +244,7 @@ void RobotEngine::modesGO()
 void RobotEngine::batteryCheck()
 {
 	//Serial.println(robot.batteryState.voltage);
-	if (robot.batteryState.voltage < ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD)
+	if (robot.getBatteryVoltage() < ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD)
 	{
 		//shut down servos and put to battery empty mode
 		robot.setServoPower(0);

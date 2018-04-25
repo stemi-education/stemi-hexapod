@@ -38,7 +38,6 @@ For additional information please check http://www.stemi.education.
 #define ROBOTENGINE_H
 
 #include "SharedData.h"
-#include "touchDriver.h"
 
 class RobotEngine
 {
@@ -47,8 +46,6 @@ public:
 	void checkState();
 	void modesGO();
 	void batteryCheck();
-
-	Touch touch;
 
 	//calibration mode bariables
 	//calibrationMode variables

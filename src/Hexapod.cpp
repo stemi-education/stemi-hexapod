@@ -126,7 +126,7 @@ void ledDriver(void *sharedDataNew)
 	}
 }
 
-void BtEngine(void *sharedDataNew)
+void btEngine(void *sharedDataNew)
 {
 	BluetoothLowEnergy BLE(std::string("STEMIHexapod"));
 	delay(2000);
@@ -138,7 +138,25 @@ void BtEngine(void *sharedDataNew)
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		//Serial.println("BT");
+	}
+}
+
+void touchDriver(void *sharedDataNew)
+{
+	Touch touch(50, 40, 5);
+
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 20;
+	xLastWakeTime = xTaskGetTickCount();
+
+	while (1)
+	{
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		touch.checkTouch();
+		if (touch.isTouchDetected())
+		{
+			robot.setTouchPattern(touch.getTouchPattern(true));
+		}
 	}
 }
 
@@ -147,11 +165,12 @@ Hexapod::Hexapod()
 	Serial.begin(115200);
 	Serial.println("Hexapod init");
 
-	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, (void*)&robot, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
-	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, (void*)&robot, 1, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, (void*)&robot, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, (void*)&robot, 1, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, (void*)&robot, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(BtEngine, "BtEngine", 2*4096, (void*)&robot, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
+	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(btEngine, "BtEngine", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(touchDriver, "touchDriver", 2*4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 
 }

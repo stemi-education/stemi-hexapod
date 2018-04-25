@@ -165,5 +165,31 @@ void SharedData::setServoPower(bool power)
 	servoCtrl.power = power;
 }
 
+uint8_t SharedData::getTouchPattern()
+{
+	uint8_t touchState = touch.state;
+	touch.state = TOUCH_000; //reset the touch once it has been used
+	return touchState;
+}
 
+void SharedData::setTouchPattern(uint8_t touchState)
+{
+	touch.state = touchState;
+}
+
+float SharedData::getBatteryVoltage()
+{
+	return robot.batteryState.voltage;
+}
+
+void SharedData::enterUserMode()
+{
+	robot.setMode(ROBOT_USER_MODE);
+}
+
+void SharedData::exitUserMode()
+{
+	robot.setMode(ROBOT_WALK_MODE);
+	vTaskSuspend(NULL);
+}
 

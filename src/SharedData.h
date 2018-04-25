@@ -93,6 +93,16 @@ For additional information please check http://www.stemi.education.
 #define TILT_AMMOUNT 0.2 //radians
 #define STRETCH_AMMOUNT 2 //cm
 
+//touch parameters
+#define TOUCH_000 0
+#define TOUCH_X00 1
+#define TOUCH_0X0 2
+#define TOUCH_XX0 3
+#define TOUCH_00X 4
+#define TOUCH_X0X 5
+#define TOUCH_0XX 6
+#define TOUCH_XXX 7
+
 #ifndef min
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))
@@ -152,6 +162,13 @@ public:
 
 	void setServoPower(bool power);
 
+	uint8_t getTouchPattern();
+	void setTouchPattern(uint8_t touchState);
+	float getBatteryVoltage();
+
+	void enterUserMode();
+	void exitUserMode();
+
 	MoveCtrl moveCtrl;
 
 	struct BtCtrl
@@ -210,6 +227,11 @@ public:
 		float voltage = 0;
 		uint8_t percentage = 0;
 	} batteryState;
+
+	struct TouchState
+	{
+		uint8_t state = TOUCH_000;
+	} touch;
 
 	int8_t mode = ROBOT_USER_MODE;
 };
