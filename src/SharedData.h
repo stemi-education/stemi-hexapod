@@ -170,10 +170,26 @@ public:
 	MoveCtrl moveCtrl;
 
 	struct BtCtrl
-	{
-		float linearVelocity = 0;
-		float direction = PI / 2;
-		float angularVelocity = 0;
+	{	
+		//Movement Service
+		uint8_t linearVelocity = 0;
+		int16_t direction = 0;
+		int8_t  angularVelocity = 0;
+		//Pose Service
+		int8_t translationX = 0;
+		int8_t translationY = 0;
+		int8_t translationZ = 0;
+		int8_t rotationX = 0;
+		int8_t rotationY = 0;
+		int8_t rotationZ = 0;
+		//Led Service
+		int16_t ledDiretion = 0;
+		uint8_t spreadRatio = 0;
+		uint8_t primaryClr[3] = { 0,0,0 };
+		uint8_t secundaryClr[3] = { 0,0,0 };
+		int16_t rotationSpeed = 0;
+		uint8_t blinkingSpeed = 0;
+
 		double poseVector[6] = { 1, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
 		uint timer = 0;
 		uint8_t connectedCount = 0;
@@ -193,18 +209,18 @@ public:
 	{
 		bool power = 0;
 		float servoAngles[18] = { 0, 0, 0,
-															0, 0, 0,
-															0, 0, 0,
-															0, 0, 0,
-															0, 0, 0,
-															0, 0, 0 };
+								  0, 0, 0,
+								  0, 0, 0,
+								  0, 0, 0,
+								  0, 0, 0,
+								  0, 0, 0 };
 		bool mode = SERVO_WALKING_MODE;
 		int8_t calibrationOffsetBytes[18] = {0, 0, 0, //TODO rename to calibrationPoints or similar - to be [-100,100] of general unit
-																				0, 0, 0,
-																				0, 0, 0,
-																				0, 0, 0,
-																				0, 0, 0,
-																				0, 0, 0 };
+										   	0, 0, 0,
+											0, 0, 0,
+											0, 0, 0,
+											0, 0, 0,
+											0, 0, 0 };
 		bool store = 0;
 		int8_t nudge = -1;
 	} servoCtrl;

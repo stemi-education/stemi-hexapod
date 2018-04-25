@@ -4,7 +4,7 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
-#include "SharedData.h"
+#include <BLE2904.h>
 
 #define MOVEMENT_SERVICE_UUID "5fe3a3ac-bc0d-4484-aad5-db8865fec4c7"
 #define LINEARVELOCITY_CHARACTERISTIC_UUID "3ed49873-e0c0-4a7a-9d69-1d533cea05b7"
@@ -25,156 +25,43 @@
 #define GAITID_CHARACTERISTIC_UUID "be930e0b-db94-48de-bdde-6e50fdac6fa0"
 #define STEPHEIGHT_CHARACTERISTIC_UUID "e4fe2831-f7ae-4148-afd5-154a47f41530"
 
+#define LED_SERVICE "146d53ec-a92c-452c-9c2f-99bd7a6fbf8d"
+#define LEDDIRECTION_CHARACTERISTIC_UUID "fcd825b7-d05c-4829-b0e0-3b0fa8b4caff"
+#define SPREADRATIO_CHARACTERISTIC_UUID "6471f93b-f7b1-4464-b121-ecda42348d52"
+#define PRIMARYCLR_CHARACTERISTIC_UUID "f21d9bb4-07fb-44cc-bc69-f6db5aba834a"
+#define SECUNDARYCLR_CHARACTERISTIC_UUID "1e1df361-4b60-4758-987e-51c6fd8463fd"
+#define ROTATIONSPEED_CHARACTERISTIC_UUID "f7cae648-0243-443c-ab53-47a61cd0180e"
+#define BLINKINGSPEED_CHARACTERISTIC_UUID "174b1b6d-6ac0-4b38-8751-8d027bd325f6"
+
 #define BATTERY_SERVICE_UUID "0000180f-0000-1000-8000-00805f9b34fb"
 #define BATTERYLEVEL_CHARACTERISTIC_UUID "00002a19-0000-1000-8000-00805f9b34fb"
 
-
 class BluetoothLowEnergy {
 public:
-
 	BluetoothLowEnergy(std::string deviceName);
 
 	BLEServer* server;
+	
 	BLEService* movementService;
 	BLEService* poseService;
-	
 	BLEService* parameterService;
+	BLEService* LEDService;
 	BLEService* batteryService;
+	
 	BLEAdvertising* advertising;
 
+private:
 	void createBLEDevice(std::string serverName);
 	void createBLEServer();
-	void createMovementServiceWithCharacteristics();
-	//void createPoseServiceWithCharacteristics();
-	//void createParameterServiceWithCharacteristics();
-	void createBatteryServiceWithCharacteristics();
 	void startAdvertising();
-};
 
-class LinearVelocityCallback : public BLECharacteristicCallbacks {
-public:
-	LinearVelocityCallback() {
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		robot.btCtrl.linearVelocity = (float)(uint8_t(pCharacteristic->getValue().c_str()[0]) / 10.0); // Reciving data in interval [0, 100], maping data to interval [0, 10]
-	}
-};
+	BLE2904* createBLE2904Descriptor(uint8_t format, uint16_t unit);
 
-class DirectionCallback : public BLECharacteristicCallbacks {
-public:
-	DirectionCallback() {
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		int16_t recived = int16_t(pCharacteristic->getValue().c_str()[0]) + int16_t(pCharacteristic->getValue().c_str()[1] << 8); // Reciving data in interval [-180, 180]
-		robot.btCtrl.direction = (float)(recived * PI / 180 + PI / 2); // Maping data to interval [0, 2PI]
-	}
+	void createMovementServiceWithCharacteristics();
+	void createPoseServiceWithCharacteristics();
+	void createParameterServiceWithCharacteristics();
+	void createLEDServiceWithCharacteristics();
+	void createBatteryServiceWithCharacteristics();
 };
-
-class AngularVelocityCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shData;
-public:
-	AngularVelocityCallback() {
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		robot.btCtrl.angularVelocity = (float)(int8_t(pCharacteristic->getValue().c_str()[0]) / 200.0); // Reciving data in interval [-100, 100], maping data to interval [-0.5, 0.5]
-	}
-};
-
-/*
-class CommandTimerCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shdata;
-public:
-	CommandTimerCallback(SharedData* data) {
-		shdata = data;
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		shdata->commandTimer = int16_t(pCharacteristic->getValue().c_str()[0]) + int16_t(pCharacteristic->getValue().c_str()[1] << 8);
-	}
-};
-
-class TranslationXCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shdata;
-public:
-	TranslationXCallback(SharedData* data) {
-		shdata = data;
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		shdata->translationX = int8_t(pCharacteristic->getValue().c_str()[0]);
-	}
-};
-
-class TranslationYCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shdata;
-public:
-	TranslationYCallback(SharedData* data) {
-		shdata = data;
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		shdata->translationY = int8_t(pCharacteristic->getValue().c_str()[0]);
-	}
-};
-
-class TranslationZCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shdata;
-public:
-	TranslationZCallback(SharedData* data) {
-		shdata = data;
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		shdata->translationZ = int8_t(pCharacteristic->getValue().c_str()[0]);
-	}
-};
-
-class RotationXCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shdata;
-public:
-	RotationXCallback(SharedData* data) {
-		shdata = data;
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		shdata->rotationX = int8_t(pCharacteristic->getValue().c_str()[0]);
-	}
-};
-
-class RotationYCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shdata;
-public:
-	RotationYCallback(SharedData* data) {
-		shdata = data;
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		shdata->rotationY = int8_t(pCharacteristic->getValue().c_str()[0]);
-	}
-};
-
-class RotationZCallback : public BLECharacteristicCallbacks {
-private:
-	SharedData* shdata;
-public:
-	RotationZCallback(SharedData* data) {
-		shdata = data;
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		shdata->rotationZ = int8_t(pCharacteristic->getValue().c_str()[0]);
-	}
-};
-*/
-
-class BatteryLevelCallback : public BLECharacteristicCallbacks {
-public:
-	BatteryLevelCallback() {
-	}
-	void onWrite(BLECharacteristic* pCharacteristic) {
-		//robot.batteryLevel = uint8_t(pCharacteristic->getValue().c_str()[0]);
-	}
-};
-
 
 #endif
