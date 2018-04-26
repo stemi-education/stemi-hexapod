@@ -56,11 +56,11 @@ void SharedData::writeServoAngles(float servoAnglesNew[18])
 		servoCtrl.servoAngles[i] = servoAnglesNew[i];
 }
 
-void SharedData::writeBtCtrlToMoveCtrl()
+void SharedData::writeBtInputToMoveCtrl()
 {
-	moveCtrl.linearVelocity = btCtrl.linearVelocity;
-	moveCtrl.direction = btCtrl.direction;
-	moveCtrl.angularVelocity = btCtrl.angularVelocity;
+	moveCtrl.linearVelocity = btInputData.linearVelocity/100.0 * 10; //[0,100]% -> [0, 10]cm/s
+	moveCtrl.direction = btInputData.direction * PI / 180.0 + PI/2 ; //[-180,180]degree -> [-PI,PI]rad
+	moveCtrl.angularVelocity = btInputData.angularVelocity / 100.0 * 0.5; //[-100,100]% -> [-0.5, 0.5]rad/s
 }
 
 void SharedData::setLed(uint8_t ledNo, Color color)

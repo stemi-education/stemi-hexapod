@@ -44,7 +44,7 @@ Body::Body()
 {
 	double ad[2], a[3], dim[3];
 	
-	ts = 1.0 / robot.param.freq;
+	ts = 1.0 / robot.PMParam.freq;
 
 	trCurrent[0] = 0;//Start with legs rised up - simple standup routine
 	trCurrent[1] = robot.moveCtrl.poseVector[1];
@@ -53,32 +53,32 @@ Body::Body()
 	trCurrent[4] = robot.moveCtrl.poseVector[4];
 	trCurrent[5] = robot.moveCtrl.poseVector[5];
 
-	dim[0] = robot.param.dim[0]; dim[1] = robot.param.dim[1]; dim[2] = robot.param.dim[2]; // body: [x1, x2, y]
-	a[0] = robot.param.a[0]; a[1] = robot.param.a[1]; a[2] = robot.param.a[2];
+	dim[0] = robot.PMParam.dim[0]; dim[1] = robot.PMParam.dim[1]; dim[2] = robot.PMParam.dim[2]; // body: [x1, x2, y]
+	a[0] = robot.PMParam.a[0]; a[1] = robot.PMParam.a[1]; a[2] = robot.PMParam.a[2];
 
 	//Legs initialisation
 	ad[0] = dim[0]; ad[1] = dim[2];
-	legs[0].init("R1", PI / 4, ad, a, trCurrent, robot.param.freq);
+	legs[0].init("R1", PI / 4, ad, a, trCurrent, robot.PMParam.freq);
 
 	ad[0] = dim[1]; ad[1] = 0;
-	legs[1].init("R2", 0.0, ad, a, trCurrent, robot.param.freq);
+	legs[1].init("R2", 0.0, ad, a, trCurrent, robot.PMParam.freq);
 
 	ad[0] = dim[0]; ad[1] = -dim[2];
-	legs[2].init("R3", -PI / 4, ad, a, trCurrent, robot.param.freq);
+	legs[2].init("R3", -PI / 4, ad, a, trCurrent, robot.PMParam.freq);
 
 	ad[0] = -dim[0]; ad[1] = dim[2];
-	legs[3].init("L1", 3.0*PI / 4, ad, a, trCurrent, robot.param.freq);
+	legs[3].init("L1", 3.0*PI / 4, ad, a, trCurrent, robot.PMParam.freq);
 
 	ad[0] = -dim[1]; ad[1] = 0;
-	legs[4].init("L2", PI, ad, a, trCurrent, robot.param.freq);
+	legs[4].init("L2", PI, ad, a, trCurrent, robot.PMParam.freq);
 
 	ad[0] = -dim[0]; ad[1] = -dim[2];
-	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, robot.param.freq);
+	legs[5].init("L3", -3.0*PI / 4, ad, a, trCurrent, robot.PMParam.freq);
 
-	setGaitUpDown(gait.selectSequence(robot.param.gaitID));
-	setGaitCurFi(gait.selectStart(robot.param.gaitID));
+	setGaitUpDown(gait.selectSequence(robot.PMParam.gaitID));
+	setGaitCurFi(gait.selectStart(robot.PMParam.gaitID));
 
-	setStepHight(robot.param.stepHeight);
+	setStepHight(robot.PMParam.stepHeight);
 
 	alpha_tr = 0.95;
 
@@ -164,7 +164,7 @@ void Body::setGaitCurFi(double gaitCurFiNew)
 void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew) {
 	speed = speedNew;
 	double moveCenterNew[2];
-	moveDeltaFi = deltaFiNew == 0 ? speed / robot.param.freq / 100000 : deltaFiNew / robot.param.freq;
+	moveDeltaFi = deltaFiNew == 0 ? speed / robot.PMParam.freq / 100000 : deltaFiNew / robot.PMParam.freq;
 
 	double r = deltaFiNew == 0 ? 100000 : absolute(speedNew) / deltaFiNew;
 	moveCenterNew[0] = r*cos(fiNew - PI / 2);
@@ -193,7 +193,7 @@ void Body::scaleStepFi() {
 	gaitDeltaFi = absolute(moveDeltaFi / minScale);
 	slowingScale = 1;
 
-	double preFootholdHight = robot.param.stepHeight, preFootholdScaler = 1.3;
+	double preFootholdHight = robot.PMParam.stepHeight, preFootholdScaler = 1.3;
 
 	for (int i = 0; i < nWalkingLegs; i++)
 		if (!legs[walkingLegsMap[i]].gaitState)
@@ -223,7 +223,7 @@ void Body::scaleHomeStep() {
 	else
 
 		if (maxScale > 0.0)
-			gaitDeltaFi = absolute(8 / robot.param.freq / maxScale); //scalar speeds up the legs traveling to the home position
+			gaitDeltaFi = absolute(8 / robot.PMParam.freq / maxScale); //scalar speeds up the legs traveling to the home position
 
 }
 
@@ -266,7 +266,7 @@ void Body::home(float moveDeltaNew) {
 		//All legs are at home position
 		setCground();
 		for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].gaitState = 1;
-		setGaitCurFi(gait.selectStart(robot.param.gaitID));
+		setGaitCurFi(gait.selectStart(robot.PMParam.gaitID));
 	}
 }
 

@@ -138,7 +138,7 @@ void btEngine(void *sharedDataNew)
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		robot.btCtrl.connectedCount = BLE.server->getConnectedCount();
+		robot.BTConnectedCount = BLE.server->getConnectedCount();
 	}
 }
 

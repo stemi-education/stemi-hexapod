@@ -192,7 +192,7 @@ void RobotEngine::modesGO()
 		robot.setLedRotationSpeed(0);
 		robot.setLed(BLUE, RED, 2, 0);
 		robot.setHeight(4);
-		robot.writeBtCtrlToMoveCtrl();
+		robot.writeBtInputToMoveCtrl();
 		break;
 	case ROBOT_WALK_N_TILT_MODE:
 
@@ -202,7 +202,7 @@ void RobotEngine::modesGO()
 		robot.setLedBlinkingSpeed(0);
 		robot.setLedRotationSpeed(1);
 		robot.setLed(YELLOW, BLUE, 2, 0);
-		robot.writeBtCtrlToMoveCtrl();
+		robot.writeBtInputToMoveCtrl();
 		robot.setHeight(4);
 		break;
 	case ROBOT_DANCE_MODE:

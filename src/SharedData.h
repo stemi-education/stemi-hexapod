@@ -117,6 +117,46 @@ static Color const PURPLE = { 255, 0, 255 };
 static Color const WHITE = { 255, 255, 255 };
 static Color const BLACK = { 0, 0, 0 };
 
+struct InputData
+{
+	//Movement
+	uint8_t linearVelocity = 0;
+	int16_t direction = 0;
+	int8_t  angularVelocity = 0;
+	//Pose
+	int8_t translationX = 0;
+	int8_t translationY = 0;
+	int8_t translationZ = 0;
+	int8_t rotationX = 0;
+	int8_t rotationY = 0;
+	int8_t rotationZ = 0;
+	//Led
+	int16_t ledDiretion = 0;
+	uint8_t spreadRatio = 0;
+	uint8_t primaryClr[3] = { 0,0,0 };
+	uint8_t secundaryClr[3] = { 0,0,0 };
+	int16_t rotationSpeed = 0;
+	uint8_t blinkingSpeed = 0;
+	uint8_t manualClr[6][3];
+	int8_t ledMode = LED_PARAMETRIC_MODE;
+	//Misc
+	int8_t robotMode = ROBOT_STANDBY_MODE;
+	uint timer = 0;
+	int8_t gaitID = 1;
+	uint8_t stepHeight = 2;
+	bool servoPower = 1;
+};
+
+struct PhisicsAndMoveParameters
+{
+	double a[3] = { 1.11,4.82,6.04 }; //dimensions of one leg
+	double dim[3] = { 3, 5.4, 7.2 }; //coordinates of the robots hips
+	double freq = 50; //frequency of the algorithm
+	double ts = 1.0 / freq;
+	int8_t gaitID = 1;
+	float stepHeight = 2;
+};
+
 struct MoveCtrl
 {
 	float linearVelocity;
@@ -126,17 +166,61 @@ struct MoveCtrl
 	int timeout; //how many times will current command execute (0 = home, -1 = infinite)
 };
 
-static const MoveCtrl FORWARD =  { 5, PI / 2,			0,	{ 4,0,STRETCH_AMMOUNT,0,-TILT_AMMOUNT,0 }, -1 };
-static const MoveCtrl BACKWARD = { 5, 3 * PI / 2, 0,	{ 4,0,-STRETCH_AMMOUNT,0,TILT_AMMOUNT,0 }, -1 };
+struct ServoCtrl
+{
+	bool power = 0;
+	float servoAngles[18] = { 0, 0, 0,
+														0, 0, 0,
+														0, 0, 0,
+														0, 0, 0,
+														0, 0, 0,
+														0, 0, 0 };
+	bool mode = SERVO_WALKING_MODE;
+	int8_t calibrationOffsetBytes[18] = { 0, 0, 0, //TODO rename to calibrationPoints or similar - to be [-100,100] of general unit
+																				0, 0, 0,
+																				0, 0, 0,
+																				0, 0, 0,
+																				0, 0, 0,
+																				0, 0, 0 };
+	bool store = 0;
+	int8_t nudge = -1;
+};
+
+struct LedCtrl
+{
+	float direction = 0;// [0, 2pi]
+	float spreadRatio = 1; // [0, 1] -spatial radio between primar and secondar color
+	uint8_t primarClr[3] = { 0,0,0 };
+	uint8_t secondarClr[3] = { 0,0,0 };
+	float rotationSpeed = 0; // [-100, 100] ~degrees / sec
+	float blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
+	uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
+	uint8_t manualClr[6][3];
+	uint8_t finalClr[6][3];
+	int8_t mode = LED_PARAMETRIC_MODE;
+};
+
+struct BatteryState
+{
+	float voltage = 0;
+	uint8_t percentage = 0;
+};
+
+struct TouchState
+{
+	uint8_t state = TOUCH_000;
+};
+
+//movement constants
+static const MoveCtrl FORWARD =  { 5, PI / 2,			0,	{ 4,0,STRETCH_AMMOUNT,0,-TILT_AMMOUNT,0 },	-1 };
+static const MoveCtrl BACKWARD = { 5, 3 * PI / 2, 0,	{ 4,0,-STRETCH_AMMOUNT,0,TILT_AMMOUNT,0 },	-1 };
 static const MoveCtrl LEFT =		 { 5, PI, 0.2,				{ 4,-STRETCH_AMMOUNT,0,0,0,-TILT_AMMOUNT }, -1 };
-static const MoveCtrl RIGHT =		 { 5, 0, -0.2,				{ 4,STRETCH_AMMOUNT,0,0,0,TILT_AMMOUNT }, -1 };
-static const MoveCtrl RESET =		 { 0, PI/2, 0,				{ 4,0,0,0,0,0 }, -1 };
+static const MoveCtrl RIGHT =		 { 5, 0, -0.2,				{ 4,STRETCH_AMMOUNT,0,0,0,TILT_AMMOUNT },		-1 };
+static const MoveCtrl RESET =		 { 0, PI/2, 0,				{ 4,0,0,0,0,0 },														-1 };
 
 class SharedData {
 public:
 	SharedData();
-	void writeServoAngles(float servoAnglesNew[18]);
-	void writeBtCtrlToMoveCtrl();
 	
 	//LED
 	void setLed(Color color);
@@ -153,104 +237,37 @@ public:
 	void stretch(MoveCtrl stretchment);
 	void setHeight(float height);
 
-	void setMode(int8_t modeNew);
-	int8_t getMode();
-
+	//Servo functions
+	void writeServoAngles(float servoAnglesNew[18]);
 	void storeServoCalibrationData();
-
 	void setServoPower(bool power);
 
+	//touch functions
 	uint8_t getTouchPattern();
 	void setTouchPattern(uint8_t touchState);
+
+	//Battery functions
 	float getBatteryVoltage();
 
+	//Robot modes functions
+	void setMode(int8_t modeNew);
+	int8_t getMode();
 	void enterUserMode();
 	void exitUserMode();
 
+	//BT functions
+	void writeBtInputToMoveCtrl();
+
 	MoveCtrl moveCtrl;
-
-	struct BtCtrl
-	{	
-		//Movement Service
-		uint8_t linearVelocity = 0;
-		int16_t direction = 0;
-		int8_t  angularVelocity = 0;
-		//Pose Service
-		int8_t translationX = 0;
-		int8_t translationY = 0;
-		int8_t translationZ = 0;
-		int8_t rotationX = 0;
-		int8_t rotationY = 0;
-		int8_t rotationZ = 0;
-		//Led Service
-		int16_t ledDiretion = 0;
-		uint8_t spreadRatio = 0;
-		uint8_t primaryClr[3] = { 0,0,0 };
-		uint8_t secundaryClr[3] = { 0,0,0 };
-		int16_t rotationSpeed = 0;
-		uint8_t blinkingSpeed = 0;
-
-		double poseVector[6] = { 1, 0, 0, 0, 0, 0 }; //initial translation and rotation vector of roots pose
-		uint timer = 0;
-		uint8_t connectedCount = 0;
-	} btCtrl;
-
-	struct Parameters
-	{
-		double a[3] = { 1.11,4.82,6.04 }; //dimensions of one leg
-		double dim[3] = { 3, 5.4, 7.2 }; //coordinates of the robots hips
-		double freq = 50; //frequency of the algorithm
-		double ts = 1.0 / freq;
-		int8_t gaitID = 1;
-		float stepHeight = 2;
-	} param;
-
-	struct ServoCtrl
-	{
-		bool power = 0;
-		float servoAngles[18] = { 0, 0, 0,
-								  0, 0, 0,
-								  0, 0, 0,
-								  0, 0, 0,
-								  0, 0, 0,
-								  0, 0, 0 };
-		bool mode = SERVO_WALKING_MODE;
-		int8_t calibrationOffsetBytes[18] = {0, 0, 0, //TODO rename to calibrationPoints or similar - to be [-100,100] of general unit
-										   	0, 0, 0,
-											0, 0, 0,
-											0, 0, 0,
-											0, 0, 0,
-											0, 0, 0 };
-		bool store = 0;
-		int8_t nudge = -1;
-	} servoCtrl;
-
-	struct LedCtrl
-	{
-		float direction = 0;// [0, 2pi]
-		float spreadRatio = 1; // [0, 1] -spatial radio between primar and secondar color
-		uint8_t primarClr[3] = { 0,0,0 };
-		uint8_t secondarClr[3] = { 0,0,0 };
-		float rotationSpeed = 0; // [-100, 100] ~degrees / sec
-		float blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
-		uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
-		uint8_t manualClr[6][3];
-		uint8_t finalClr[6][3];
-		int8_t mode = LED_PARAMETRIC_MODE;
-	} ledCtrl, userLedCtrl;
+	InputData btInputData, userInputData;
+	PhisicsAndMoveParameters PMParam;
+	ServoCtrl servoCtrl;
+	LedCtrl ledCtrl;
+	BatteryState batteryState;
+	TouchState touch;
 
 	int8_t mode = ROBOT_USER_MODE;
-
-	struct BatteryState
-	{
-		float voltage = 0;
-		uint8_t percentage = 0;
-	} batteryState;
-
-	struct TouchState
-	{
-		uint8_t state = TOUCH_000;
-	} touch;
+	uint8_t BTConnectedCount = 0;
 };
 
 extern SharedData robot;

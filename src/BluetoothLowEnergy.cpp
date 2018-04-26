@@ -121,9 +121,9 @@ void BluetoothLowEnergy::createMovementServiceWithCharacteristics() {
 	angularVelocityCharacteristic->setValue(&init_data[0], 1);
 
 
-	linearVelocityCharacteristic->setCallbacks(new uint8Callback(&robot.btCtrl.linearVelocity));
-	directionCharacteristic->setCallbacks(new int16Callback(&robot.btCtrl.direction));
-	angularVelocityCharacteristic->setCallbacks(new int8Callback(&robot.btCtrl.angularVelocity));
+	linearVelocityCharacteristic->setCallbacks(new uint8Callback(&robot.btInputData.linearVelocity));
+	directionCharacteristic->setCallbacks(new int16Callback(&robot.btInputData.direction));
+	angularVelocityCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.angularVelocity));
 	
 	movementService->start();
 };
@@ -182,12 +182,12 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 	rotationYCharacteristic->setValue(&init_data[0], 1);
 	rotationZCharacteristic->setValue(&init_data[0], 1);
 
-	translationXCharacteristic->setCallbacks(new int8Callback(&robot.btCtrl.translationX));
-	translationYCharacteristic->setCallbacks(new int8Callback(&robot.btCtrl.translationY));
-	translationZCharacteristic->setCallbacks(new int8Callback(&robot.btCtrl.translationZ));
-	rotationXCharacteristic->setCallbacks(new int8Callback(&robot.btCtrl.rotationX));
-	rotationYCharacteristic->setCallbacks(new int8Callback(&robot.btCtrl.rotationY));
-	rotationZCharacteristic->setCallbacks(new int8Callback(&robot.btCtrl.rotationZ));
+	translationXCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.translationX));
+	translationYCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.translationY));
+	translationZCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.translationZ));
+	rotationXCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.rotationX));
+	rotationYCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.rotationY));
+	rotationZCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.rotationZ));
 
 	poseService->start();
 };
@@ -245,12 +245,12 @@ void BluetoothLowEnergy::createLEDServiceWithCharacteristics() {
 	blinkingSpeedCharacteristic->setValue(&init_data[0], 1);
 
 
-	directionCharacteristic->setCallbacks(new int16Callback(&robot.btCtrl.ledDiretion));
-	spreadRatioCharacteristic->setCallbacks(new uint8Callback(&robot.btCtrl.spreadRatio));
-	primatyClrCharacteristic->setCallbacks(new uint8ArrayCallback(robot.btCtrl.primaryClr, 3));
-	secundaryClrCharacteristic->setCallbacks(new uint8ArrayCallback(robot.btCtrl.secundaryClr, 3));
-	rotaiotnSpeedCharacteristic->setCallbacks(new int16Callback(&robot.btCtrl.rotationSpeed));
-	blinkingSpeedCharacteristic->setCallbacks(new uint8Callback(&robot.btCtrl.blinkingSpeed));
+	directionCharacteristic->setCallbacks(new int16Callback(&robot.btInputData.ledDiretion));
+	spreadRatioCharacteristic->setCallbacks(new uint8Callback(&robot.btInputData.spreadRatio));
+	primatyClrCharacteristic->setCallbacks(new uint8ArrayCallback(robot.btInputData.primaryClr, 3));
+	secundaryClrCharacteristic->setCallbacks(new uint8ArrayCallback(robot.btInputData.secundaryClr, 3));
+	rotaiotnSpeedCharacteristic->setCallbacks(new int16Callback(&robot.btInputData.rotationSpeed));
+	blinkingSpeedCharacteristic->setCallbacks(new uint8Callback(&robot.btInputData.blinkingSpeed));
 
 	LEDService->start();
 };
