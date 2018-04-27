@@ -47,5 +47,7 @@ class BatteryDriver
 public:
 	BatteryDriver();
 	void checkState();
+	float readBatteryVoltage();
+	float LPFvoltage(float valueNew);
 };
 #endif

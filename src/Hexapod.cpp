@@ -41,8 +41,10 @@ void batteryDriver(void *sharedDataNew)
 	BatteryDriver battery;
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 200;
+	const TickType_t xFrequency = TASK_PERIOD_BATT;
 	xLastWakeTime = xTaskGetTickCount();
+
+	robot.batteryState.voltage =  battery.readBatteryVoltage();
 	
 	battery.checkState();
 	vTaskPrioritySet(NULL, 2);
@@ -59,7 +61,7 @@ void robotEngine(void *sharedDataNew)
   RobotEngine robotEngine;
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 20;
+	const TickType_t xFrequency = TASK_PERIOD_ROBOT;
 	xLastWakeTime = xTaskGetTickCount();
 
 	while (1)
@@ -75,7 +77,7 @@ void walkingEngine(void *sharedDataNew)
 	Body body;
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 20;
+	const TickType_t xFrequency = TASK_PERIOD_WALK;
 	xLastWakeTime = xTaskGetTickCount();
 
 	while (1)
@@ -90,7 +92,7 @@ void servoDriver(void *sharedDataNew)
 	ServoDriver servoDriver;
 	
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 20;
+	const TickType_t xFrequency = TASK_PERIOD_SERVO;
 	xLastWakeTime = xTaskGetTickCount();
 
 	while(1)
@@ -111,7 +113,7 @@ void ledDriver(void *sharedDataNew)
 	LedDriver ledDriver;
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 10;
+	const TickType_t xFrequency = TASK_PERIOD_LED;
 	xLastWakeTime = xTaskGetTickCount();
 
 	while (1)
@@ -132,7 +134,7 @@ void btEngine(void *sharedDataNew)
 	delay(2000);
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 200;
+	const TickType_t xFrequency = TASK_PERIOD_BT;
 	xLastWakeTime = xTaskGetTickCount();
 
 	while (1)
@@ -147,7 +149,7 @@ void touchDriver(void *sharedDataNew)
 	Touch touch(50, 40, 5);
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 20;
+	const TickType_t xFrequency = TASK_PERIOD_TOUCH;
 	xLastWakeTime = xTaskGetTickCount();
 
 	while (1)
@@ -156,7 +158,7 @@ void touchDriver(void *sharedDataNew)
 		touch.checkTouch();
 		if (touch.isTouchDetected())
 		{
-			robot.setTouchPattern(touch.getTouchPattern(true));
+			robot._setTouchPattern(touch.getTouchPattern(true));
 		}
 	}
 }

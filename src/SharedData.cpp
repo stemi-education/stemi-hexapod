@@ -48,6 +48,14 @@ SharedData:: SharedData()
 	moveCtrl.poseVector[6] = 0; 
 	moveCtrl.poseVector[6] = 0; 
 	moveCtrl.timeout = -1;
+	
+	//init for move()
+
+	userInputData.robotMode = ROBOT_USER_MODE;
+	userInputData.translationZ = 50;
+	btInputData.robotMode = ROBOT_STANDBY_MODE;
+	btInputData.translationZ = 50;
+	
 }
 
 void SharedData::writeServoAngles(float servoAnglesNew[18])
@@ -56,14 +64,61 @@ void SharedData::writeServoAngles(float servoAnglesNew[18])
 		servoCtrl.servoAngles[i] = servoAnglesNew[i];
 }
 
-void SharedData::writeBtInputToMoveCtrl()
-{
-	moveCtrl.linearVelocity = btInputData.linearVelocity/100.0 * 10; //[0,100]% -> [0, 10]cm/s
-	moveCtrl.direction = btInputData.direction * PI / 180.0 + PI/2 ; //[-180,180]degree -> [-PI,PI]rad
-	moveCtrl.angularVelocity = btInputData.angularVelocity / 100.0 * 0.5; //[-100,100]% -> [-0.5, 0.5]rad/s
+//use input from pointed structure [bluetooth,user]
+void SharedData::useGeneralInputData(InputData *data)
+{//TODO sperate this to multiple functions
+	mode = data->robotMode;
+	moveCtrl.timeout = data->moveTimeout;
+	PMParam.gaitID = data->gaitID;
+	PMParam.stepHeight = data->stepHeight / 100.0 * 4;
+	servoCtrl.power = data->servoPower;
 }
 
+void SharedData::useMoveInputData(InputData *data)
+{
+	//move
+	moveCtrl.linearVelocity = data->linearVelocity / 100.0 * 10; //[0,100]% -> [0, 10]cm/s
+	moveCtrl.direction = data->direction * PI / 180.0 + PI / 2; //[-180,180]degree -> [-PI,PI]rad
+	moveCtrl.angularVelocity = data->angularVelocity / 100.0 * 0.5; //[-100,100]% -> [-0.5, 0.5]rad/s
+
+	moveCtrl.poseVector[0] = data->translationZ / 100.0 * 8;
+	moveCtrl.poseVector[1] = data->translationX / 100.0 * 3;
+	moveCtrl.poseVector[2] = data->translationY / 100.0 * 3;
+	moveCtrl.poseVector[3] = data->rotationZ / 100.0 * 0.3;
+	moveCtrl.poseVector[4] = data->rotationX / 100.0 * 0.3;
+	moveCtrl.poseVector[5] = data->rotationY / 100.0 * 0.3;
+}
+
+void SharedData::useLedInputData(InputData *data)
+{
+	//led
+	Color primarClr = { data->ledPrimarClr[0] , data->ledPrimarClr[1] , data->ledPrimarClr[2] };
+	Color secondarClr = { data->ledSecondarClr[0] , data->ledSecondarClr[1] , data->ledSecondarClr[2] };
+	_setLed(primarClr, secondarClr,
+		data->ledSpreadRatio / 100.0 * 10,
+		data->ledDiretion * PI / 180 + PI / 2);
+	_setLedRotationSpeed(data->ledRotationSpeed / 100.0 * PI / 180 * 10);
+	_setLedBlinkingSpeed(data->ledBlinkingSpeed / 100.0 * 10);
+	ledCtrl.mode = data->ledMode;
+	for (int i = 0; i < LED_COUNT; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			ledCtrl.manualClr[i][j] = data->ledManualClr[i][j];
+		}
+	}
+}
+
+//seting user data [public]
 void SharedData::setLed(uint8_t ledNo, Color color)
+{
+	userInputData.ledMode = LED_MANUAL_MODE;
+	userInputData.ledManualClr[ledNo][0] = color.r;
+	userInputData.ledManualClr[ledNo][1] = color.g;
+	userInputData.ledManualClr[ledNo][2] = color.b;
+}
+
+void SharedData::_setLed(uint8_t ledNo, Color color)
 {
 	ledCtrl.mode = LED_MANUAL_MODE;
 	ledCtrl.manualClr[ledNo][0] = color.r;
@@ -73,15 +128,41 @@ void SharedData::setLed(uint8_t ledNo, Color color)
 
 void SharedData::setLed(Color color)
 {
-	ledCtrl.mode = LED_MANUAL_MODE;
+	userInputData.ledMode = LED_MANUAL_MODE;
 	for (int i = 0; i < LED_COUNT; i++) 
 	{
-			ledCtrl.manualClr[i][0] = color.r;
-			ledCtrl.manualClr[i][1] = color.g;
-			ledCtrl.manualClr[i][2] = color.b;
+		userInputData.ledManualClr[i][0] = color.r;
+		userInputData.ledManualClr[i][1] = color.g;
+		userInputData.ledManualClr[i][2] = color.b;
 	}
 }
-void SharedData::setLed(Color primarClr, Color secondarClr, float spreadRatio, float direction)
+
+void SharedData::_setLed(Color color)
+{
+	ledCtrl.mode = LED_MANUAL_MODE;
+	for (int i = 0; i < LED_COUNT; i++)
+	{
+		ledCtrl.manualClr[i][0] = color.r;
+		ledCtrl.manualClr[i][1] = color.g;
+		ledCtrl.manualClr[i][2] = color.b;
+	}
+}
+
+void SharedData::setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio, int8_t direction)
+{
+	userInputData.ledMode = LED_PARAMETRIC_MODE;
+	userInputData.ledPrimarClr[0] = primarClr.r;
+	userInputData.ledPrimarClr[1] = primarClr.g;
+	userInputData.ledPrimarClr[2] = primarClr.b;
+
+	userInputData.ledSecondarClr[0] = secondarClr.r;
+	userInputData.ledSecondarClr[1] = secondarClr.g;
+	userInputData.ledSecondarClr[2] = secondarClr.b;
+	userInputData.ledSpreadRatio = spreadRatio;
+	userInputData.direction = direction;// *PI / 180 - PI / 2;
+}
+
+void SharedData::_setLed(Color primarClr, Color secondarClr, float spreadRatio, float direction)
 {
 	ledCtrl.mode = LED_PARAMETRIC_MODE;
 	ledCtrl.primarClr[0] = primarClr.r;
@@ -92,60 +173,109 @@ void SharedData::setLed(Color primarClr, Color secondarClr, float spreadRatio, f
 	ledCtrl.secondarClr[1] = secondarClr.g;
 	ledCtrl.secondarClr[2] = secondarClr.b;
 	ledCtrl.spreadRatio = spreadRatio;
-	ledCtrl.direction = direction * PI / 180 - PI / 2;
+	ledCtrl.direction = direction;// *PI / 180 - PI / 2;
 }
 
-void SharedData::setLedRotationSpeed(float rotationSpeed)
+void SharedData::setLedRotationSpeed(int8_t rotationSpeed)
+{
+	userInputData.ledMode = LED_PARAMETRIC_MODE;
+	userInputData.ledRotationSpeed = rotationSpeed;
+}
+
+void SharedData::_setLedRotationSpeed(float rotationSpeed)
 {
 	ledCtrl.mode = LED_PARAMETRIC_MODE;
-	ledCtrl.rotationSpeed = rotationSpeed/10;
+	ledCtrl.rotationSpeed = rotationSpeed;
 }
 
-void SharedData::setLedBlinkingSpeed(float blinkingSpeed)
+void SharedData::setLedBlinkingSpeed(uint8_t blinkingSpeed)
+{
+	userInputData.ledMode = LED_PARAMETRIC_MODE;
+	userInputData.ledBlinkingSpeed = blinkingSpeed;
+}
+
+void SharedData::_setLedBlinkingSpeed(float blinkingSpeed)
 {
 	ledCtrl.mode = LED_PARAMETRIC_MODE;
-	ledCtrl.blinkingSpeed = blinkingSpeed/10;
+	ledCtrl.blinkingSpeed = blinkingSpeed;
 }
 
-void SharedData::move(MoveCtrl movement)
+void SharedData::move(userPresetInputData movement)
 {
-	moveCtrl.linearVelocity = movement.linearVelocity;
-	moveCtrl.direction = movement.direction;
+	userInputData.linearVelocity = movement.linearVelocity;
+	userInputData.direction = movement.direction;
 }
 
-void SharedData::move(float linearVelocity, float direction, float angularVelocity)
+/*void SharedData::move(userPresetInputData movement, int8_t duration)
+{
+	userInputData.linearVelocity = movement.linearVelocity;
+	userInputData.direction = movement.direction;
+
+	userInputData.moveTimeout = duration;
+}*/
+
+void SharedData::_move(float linearVelocity, float direction, float angularVelocity, int timeoutNew)
 {
 	moveCtrl.linearVelocity = linearVelocity;
 	moveCtrl.direction = direction * PI / 180;
 	moveCtrl.angularVelocity = angularVelocity * PI / 180;
+	moveCtrl.timeout = timeoutNew;
 }
 
-void SharedData::rotate(MoveCtrl rotation)
+void SharedData::move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity)
 {
-	moveCtrl.angularVelocity = rotation.angularVelocity;
+	userInputData.linearVelocity = linearVelocity;
+	userInputData.direction = direction * PI / 180;
+	userInputData.angularVelocity = angularVelocity * PI / 180;
 }
 
-void SharedData::tilt(MoveCtrl tiltation)
+void SharedData::rotate(userPresetInputData rotation)
 {
-	moveCtrl.poseVector[4] = tiltation.poseVector[4];
-	moveCtrl.poseVector[5] = tiltation.poseVector[5];
-
+	userInputData.angularVelocity = rotation.angularVelocity;
 }
 
-void SharedData::stretch(MoveCtrl stretchment)
+void SharedData::tilt(userPresetInputData tiltation)
 {
-	moveCtrl.poseVector[1] = stretchment.poseVector[1];
-	moveCtrl.poseVector[2] = stretchment.poseVector[2];
+	userInputData.rotationX = tiltation.rotationX;
+	userInputData.rotationY = tiltation.rotationY;
 }
 
-void SharedData::setHeight(float height)
+void SharedData::stretch(userPresetInputData stretchment)
+{
+	userInputData.translationX = stretchment.translationX;
+	userInputData.translationY = stretchment.translationY;
+}
+
+void SharedData::setHeight(uint8_t height)
+{
+	userInputData.translationZ = height;
+}
+
+void SharedData::_setHeight(float height)
 {
 	moveCtrl.poseVector[0] = height;
 }
 
+void SharedData::_setPose(float poseVectorNew[6])
+{
+	moveCtrl.poseVector[0] = poseVectorNew[0];
+	moveCtrl.poseVector[1] = poseVectorNew[1];
+	moveCtrl.poseVector[2] = poseVectorNew[2];
+	moveCtrl.poseVector[3] = poseVectorNew[3];
+	moveCtrl.poseVector[4] = poseVectorNew[4];
+	moveCtrl.poseVector[5] = poseVectorNew[5];
+}
+
 void SharedData::setMode(int8_t modeNew)
 {
+	userInputData.robotMode = modeNew;
+}
+
+void SharedData::_setMode(int8_t modeNew)
+{
 	mode = modeNew;
+	Serial.print("mode set to: ");
+	Serial.println(mode);
 }
 
 int8_t SharedData::getMode()
@@ -160,17 +290,43 @@ void SharedData::storeServoCalibrationData()
 
 void SharedData::setServoPower(bool power)
 {
+	userInputData.servoPower = power;
+}
+
+void SharedData::_setServoPower(bool power)
+{
 	servoCtrl.power = power;
 }
 
 uint8_t SharedData::getTouchPattern()
 {
+	if (mode != ROBOT_USER_MODE)
+		return 0; //not allowd to use while not in ROBOT_USER_MODE
 	uint8_t touchState = touch.state;
 	touch.state = TOUCH_000; //reset the touch once it has been used
+	if (touchState != 0)
+	{
+		Serial.print("t: ");
+		Serial.println(touchState);
+	}
 	return touchState;
 }
 
-void SharedData::setTouchPattern(uint8_t touchState)
+uint8_t SharedData::_getTouchPattern()
+{
+	if (mode == ROBOT_USER_MODE)
+		return 0; //not allowd to use while in ROBOT_USER_MODE
+	uint8_t touchState = touch.state;
+	touch.state = TOUCH_000; //reset the touch once it has been used
+	if (touchState != 0)
+	{
+		Serial.print("t: ");
+		Serial.println(touchState);
+	}
+	return touchState;
+}
+
+void SharedData::_setTouchPattern(uint8_t touchState)
 {
 	touch.state = touchState;
 }
@@ -182,12 +338,11 @@ float SharedData::getBatteryVoltage()
 
 void SharedData::enterUserMode()
 {
-	robot.setMode(ROBOT_USER_MODE);
+	robot._setMode(ROBOT_USER_MODE);
 }
 
 void SharedData::exitUserMode()
 {
-	robot.setMode(ROBOT_WALK_MODE);
-	vTaskSuspend(NULL);
+	robot._setMode(ROBOT_WALK_MODE);
 }
 

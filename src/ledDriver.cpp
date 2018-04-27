@@ -76,13 +76,8 @@ void LedDriver::setColorParametric()
 			robot.ledCtrl.finalClr[i][j] = robot.ledCtrl.primarClr[j] > robot.ledCtrl.secondarClr[j] ? 
 																			blinkSpeedResult * max(gauss0, max(gauss1, gauss2)) :
 																			blinkSpeedResult * min(gauss0, min(gauss1, gauss2));
-
-			//Serial.print(" ");
-			//Serial.print(robot.ledCtrl.finalClr[i][j]);
 		}
-		//Serial.print("    ");
 	}
-	//Serial.println();
 }
 void LedDriver::setColorManual()
 {
@@ -102,7 +97,7 @@ float LedDriver::applyDirectionSpeed()
 	else
 	{
 
-		rotationSpeedDirection += robot.ledCtrl.rotationSpeed;
+		rotationSpeedDirection += robot.ledCtrl.rotationSpeed * 2 * PI * TASK_PERIOD_LED / 1000;
 		//wrap to +-PI
 		if (rotationSpeedDirection > PI)
 			rotationSpeedDirection = rotationSpeedDirection - 2 * PI* ceil(rotationSpeedDirection / (2 * PI));
@@ -119,7 +114,7 @@ float LedDriver::applyBlinkingSpeed()
 	}
 	else
 	{
-		blinkingSpeedPhase += robot.ledCtrl.blinkingSpeed;
+		blinkingSpeedPhase += robot.ledCtrl.blinkingSpeed * 2 * PI * TASK_PERIOD_LED / 1000;
 		if (blinkingSpeedPhase > PI)
 			blinkingSpeedPhase = blinkingSpeedPhase - 2 * PI* ceil(blinkingSpeedPhase / (2 * PI));
 		else if (blinkingSpeedPhase < -PI)

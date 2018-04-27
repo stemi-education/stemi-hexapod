@@ -43,8 +43,23 @@ BatteryDriver::BatteryDriver()
 
 void BatteryDriver::checkState()
 {
-	float senVal = (float)(analogRead(BATTERY_STATUS_PIN));
-	float minVoltage = 3.5, maxVoltage = 4.1;
-	robot.batteryState.voltage = (-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
+	robot.batteryState.voltage = LPFvoltage(readBatteryVoltage());
+	float minVoltage = 3.45, maxVoltage = 3.85;
+	
 	robot.batteryState.percentage = min(max(robot.batteryState.voltage - minVoltage, 0), maxVoltage-minVoltage)/(maxVoltage-minVoltage)*100;
+	Serial.print(robot.batteryState.voltage);
+	Serial.print(" ");
+	Serial.println(robot.batteryState.percentage);
+}
+
+float BatteryDriver::readBatteryVoltage()
+{
+	float senVal = (float)(analogRead(BATTERY_STATUS_PIN));
+	return  (-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
+}
+
+float BatteryDriver::LPFvoltage(float valueNew)
+{
+	float alpha = 0.99;
+	return alpha * robot.batteryState.voltage + (1 - alpha)*(valueNew);
 }

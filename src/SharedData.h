@@ -47,6 +47,15 @@ For additional information please check http://www.stemi.education.
 #define LED_PIN 19 //Neopixel RGB LED strip pin
 #define SERVO_POWER_PIN 33
 
+//task frequencies
+#define TASK_PERIOD_WALK 20
+#define TASK_PERIOD_LED 10
+#define TASK_PERIOD_BT 200
+#define TASK_PERIOD_TOUCH 20
+#define TASK_PERIOD_SERVO 20
+#define TASK_PERIOD_ROBOT 20
+#define TASK_PERIOD_BATT 200
+
 //servo modes
 #define SERVO_WALKING_MODE 0 //mode for walking
 #define SERVO_CALIBRATION_MODE 1 //mode for servo calibration
@@ -88,10 +97,10 @@ For additional information please check http://www.stemi.education.
 
 //movement parameters
 #define MOVE_CTRL_TIMER_MAX 200; //iterations
-#define MOVE_SPEED 5 //cm/s
-#define TURN_SPEED 0.4 //radians/s
-#define TILT_AMMOUNT 0.2 //radians
-#define STRETCH_AMMOUNT 2 //cm
+#define MOVE_SPEED 30 //%
+#define TURN_SPEED 50 //%
+#define TILT_AMMOUNT 70 //%
+#define STRETCH_AMMOUNT 70 //%
 
 //touch parameters
 #define TOUCH_000 0
@@ -117,34 +126,44 @@ static Color const PURPLE = { 255, 0, 255 };
 static Color const WHITE = { 255, 255, 255 };
 static Color const BLACK = { 0, 0, 0 };
 
-struct InputData
+struct MovementData
 {
-	//Movement
-	uint8_t linearVelocity = 0;
-	int16_t direction = 0;
-	int8_t  angularVelocity = 0;
-	//Pose
-	int8_t translationX = 0;
-	int8_t translationY = 0;
-	int8_t translationZ = 0;
-	int8_t rotationX = 0;
-	int8_t rotationY = 0;
-	int8_t rotationZ = 0;
+	uint8_t linearVelocity = 0; // [0,100]%
+	int16_t direction = 0; // [-180,180]degree
+	int8_t  angularVelocity = 0; // [-100,100]%
+};
+
+struct PoseData
+{
+	int8_t translationX = 0; // [-100,100]%
+	int8_t translationY = 0; // [-100,100]%
+	int8_t translationZ = 50; // [-100,100]%
+	int8_t rotationX = 0; // [-100,100]%
+	int8_t rotationY = 0; // [-100,100]%
+	int8_t rotationZ = 0; // [-100,100]%
+};
+
+struct InputData : MovementData, PoseData
+{
+	//Movement - inherited from MovementData
+
+	//Pose - inherited from PoseData
+	
 	//Led
-	int16_t ledDiretion = 0;
-	uint8_t spreadRatio = 0;
-	uint8_t primaryClr[3] = { 0,0,0 };
-	uint8_t secundaryClr[3] = { 0,0,0 };
-	int16_t rotationSpeed = 0;
-	uint8_t blinkingSpeed = 0;
-	uint8_t manualClr[6][3];
-	int8_t ledMode = LED_PARAMETRIC_MODE;
+	int16_t ledDiretion = 0; // [-180,180]degree
+	uint8_t ledSpreadRatio = 0; // [0,100]%
+	uint8_t ledPrimarClr[3] = { 0,0,0 }; // [255]r, [255]g, [255]b
+	uint8_t ledSecondarClr[3] = { 0,0,0 }; // [255]r, [255]g, [255]b
+	int16_t ledRotationSpeed = 0; // [-100,100]%
+	uint8_t ledBlinkingSpeed = 0; // [0,100]%
+	uint8_t ledManualClr[6][3]; // 6x [255]r, [255]g, [255]b
+	int8_t ledMode = LED_PARAMETRIC_MODE; // [manual, parametric]mode
 	//Misc
-	int8_t robotMode = ROBOT_STANDBY_MODE;
-	uint timer = 0;
-	int8_t gaitID = 1;
-	uint8_t stepHeight = 2;
-	bool servoPower = 1;
+	int8_t robotMode = ROBOT_STANDBY_MODE; //[check ROBOT_XX_MODE macros]mode
+	int8_t moveTimeout = 0; // seconds of current command execution [-2 = already written, -1 = inf, 0 = go home, 1-100 = seconds to move]
+	int8_t gaitID = 1; //[0,5]gait
+	uint8_t stepHeight = 50; // [0,100]%
+	bool servoPower = 1; // [on,off]power
 };
 
 struct PhisicsAndMoveParameters
@@ -192,8 +211,8 @@ struct LedCtrl
 	float spreadRatio = 1; // [0, 1] -spatial radio between primar and secondar color
 	uint8_t primarClr[3] = { 0,0,0 };
 	uint8_t secondarClr[3] = { 0,0,0 };
-	float rotationSpeed = 0; // [-100, 100] ~degrees / sec
-	float blinkingSpeed = 0; // [0=off, 10] ~blinks/sec
+	float rotationSpeed = 0; // [-10, 0=off, 10] ~ rotations / s
+	float blinkingSpeed = 0; // [0=off, 10] ~ blinks / s
 	uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
 	uint8_t manualClr[6][3];
 	uint8_t finalClr[6][3];
@@ -211,12 +230,25 @@ struct TouchState
 	uint8_t state = TOUCH_000;
 };
 
+struct userPresetInputData 
+{
+	uint8_t linearVelocity; // [0,100]%
+	int16_t direction; // [-180,180]degree
+	int8_t  angularVelocity; // [-100,100]%
+	int8_t translationX; // [-100,100]%
+	int8_t translationY; // [-100,100]%
+	int8_t translationZ; // [-100,100]%
+	int8_t rotationX; // [-100,100]%
+	int8_t rotationY; // [-100,100]%
+	int8_t rotationZ; // [-100,100]%
+};
+
 //movement constants
-static const MoveCtrl FORWARD =  { 5, PI / 2,			0,	{ 4,0,STRETCH_AMMOUNT,0,-TILT_AMMOUNT,0 },	-1 };
-static const MoveCtrl BACKWARD = { 5, 3 * PI / 2, 0,	{ 4,0,-STRETCH_AMMOUNT,0,TILT_AMMOUNT,0 },	-1 };
-static const MoveCtrl LEFT =		 { 5, PI, 0.2,				{ 4,-STRETCH_AMMOUNT,0,0,0,-TILT_AMMOUNT }, -1 };
-static const MoveCtrl RIGHT =		 { 5, 0, -0.2,				{ 4,STRETCH_AMMOUNT,0,0,0,TILT_AMMOUNT },		-1 };
-static const MoveCtrl RESET =		 { 0, PI/2, 0,				{ 4,0,0,0,0,0 },														-1 };
+static const userPresetInputData FORWARD = { MOVE_SPEED, 0,0   ,0,STRETCH_AMMOUNT,0,   0,-TILT_AMMOUNT,0 };
+static const userPresetInputData BACKWARD = { MOVE_SPEED, 180,0   ,0,-STRETCH_AMMOUNT,0,   0,TILT_AMMOUNT,0 };
+static const userPresetInputData LEFT = { MOVE_SPEED, 90, MOVE_SPEED   ,-STRETCH_AMMOUNT,0,0,   -TILT_AMMOUNT,0,0 };
+static const userPresetInputData RIGHT = { MOVE_SPEED, -90, -MOVE_SPEED   ,STRETCH_AMMOUNT,0,0,   TILT_AMMOUNT,0,0 };
+static const userPresetInputData RESET = { 0,0,0, 0,0,0, 0,0,0 };
 
 class SharedData {
 public:
@@ -224,39 +256,52 @@ public:
 	
 	//LED
 	void setLed(Color color);
-	void setLed(Color primarClr, Color secondarClr, float spreadRatio = 2, float direction = 0);
+	void _setLed(Color color);
+	void setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio, int8_t direction);
+	void _setLed(Color primarClr, Color secondarClr, float spreadRatio, float direction);
+	void setLedRotationSpeed(int8_t rotationSpeed);
+	void _setLedRotationSpeed(float rotationSpeed);
+	void setLedBlinkingSpeed(uint8_t blinkingSpeed);
+	void _setLedBlinkingSpeed(float blinkingSpeed);
 	void setLed(uint8_t ledNo, Color color);
-	void setLedRotationSpeed(float rotationSpeed);
-	void setLedBlinkingSpeed(float blinkingSpeed);
+	void _setLed(uint8_t ledNo, Color color);
 
 	//Movement
-	void move(MoveCtrl movement);
-	void move(float linearVelocity, float direction, float angularVelocity);
-	void rotate(MoveCtrl rotation);
-	void tilt(MoveCtrl tiltation);
-	void stretch(MoveCtrl stretchment);
-	void setHeight(float height);
+	void move(userPresetInputData movement);
+	void move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity);
+	void rotate(userPresetInputData rotation);
+	void _move(float linearVelocity, float direction, float angularVelocity, int timeoutNew = -1);
+	void tilt(userPresetInputData tiltation);
+	void stretch(userPresetInputData stretchment);
+	void setHeight(uint8_t height);
+	void _setHeight(float height);
+	void _setPose(float poseVectorNew[6]);
 
 	//Servo functions
 	void writeServoAngles(float servoAnglesNew[18]);
 	void storeServoCalibrationData();
 	void setServoPower(bool power);
+	void _setServoPower(bool power);
 
 	//touch functions
 	uint8_t getTouchPattern();
-	void setTouchPattern(uint8_t touchState);
+	uint8_t _getTouchPattern();
+	void _setTouchPattern(uint8_t touchState);
 
 	//Battery functions
 	float getBatteryVoltage();
 
 	//Robot modes functions
 	void setMode(int8_t modeNew);
+	void _setMode(int8_t modeNew);
 	int8_t getMode();
 	void enterUserMode();
 	void exitUserMode();
 
-	//BT functions
-	void writeBtInputToMoveCtrl();
+	//choose what input data to use [BT, user]
+	void useGeneralInputData(InputData * data);
+	void useMoveInputData(InputData * data);
+	void useLedInputData(InputData * data);
 
 	MoveCtrl moveCtrl;
 	InputData btInputData, userInputData;
@@ -266,7 +311,7 @@ public:
 	BatteryState batteryState;
 	TouchState touch;
 
-	int8_t mode = ROBOT_USER_MODE;
+	int8_t mode = ROBOT_STANDBY_MODE;
 	uint8_t BTConnectedCount = 0;
 };
 

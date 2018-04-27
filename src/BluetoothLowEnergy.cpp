@@ -246,11 +246,11 @@ void BluetoothLowEnergy::createLEDServiceWithCharacteristics() {
 
 
 	directionCharacteristic->setCallbacks(new int16Callback(&robot.btInputData.ledDiretion));
-	spreadRatioCharacteristic->setCallbacks(new uint8Callback(&robot.btInputData.spreadRatio));
-	primatyClrCharacteristic->setCallbacks(new uint8ArrayCallback(robot.btInputData.primaryClr, 3));
-	secundaryClrCharacteristic->setCallbacks(new uint8ArrayCallback(robot.btInputData.secundaryClr, 3));
-	rotaiotnSpeedCharacteristic->setCallbacks(new int16Callback(&robot.btInputData.rotationSpeed));
-	blinkingSpeedCharacteristic->setCallbacks(new uint8Callback(&robot.btInputData.blinkingSpeed));
+	spreadRatioCharacteristic->setCallbacks(new uint8Callback(&robot.btInputData.ledSpreadRatio));
+	primatyClrCharacteristic->setCallbacks(new uint8ArrayCallback(robot.btInputData.ledPrimarClr, 3));
+	secundaryClrCharacteristic->setCallbacks(new uint8ArrayCallback(robot.btInputData.ledSecondarClr, 3));
+	rotaiotnSpeedCharacteristic->setCallbacks(new int16Callback(&robot.btInputData.ledRotationSpeed));
+	blinkingSpeedCharacteristic->setCallbacks(new uint8Callback(&robot.btInputData.ledBlinkingSpeed));
 
 	LEDService->start();
 };
