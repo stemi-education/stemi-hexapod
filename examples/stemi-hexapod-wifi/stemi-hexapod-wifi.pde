@@ -101,7 +101,19 @@ void loop()
 	else if (touchPattern == TOUCH_0X0)
 	{
 		robot.setLed(BLACK);
-		delay(2000);
+		delay(3000);
+		robot.setLed(WHITE);
+		delay(100);
+		robot.setLed(BLACK);
+		delay(1000);
+		robot.setLed(WHITE);
+		delay(100);
+		robot.setLed(BLACK);
+		delay(300);
+		robot.setLed(WHITE);
+		delay(100);
+		robot.setLed(BLACK);
+		delay(1500);
 		robot.setLed(0,BLUE);
 		delay(300);
 		robot.setLed(1, YELLOW);
@@ -126,14 +138,14 @@ void loop()
 		setLEDrandomDelay(50);
 		setLEDrandomDelay(50);
 		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
+		setLEDrandomDelay(20);
+		setLEDrandomDelay(20);
+		setLEDrandomDelay(20);
+		setLEDrandomDelay(20);
+		setLEDrandomDelay(20);
+		setLEDrandomDelay(20);
+		setLEDrandomDelay(10);
+		setLEDrandomDelay(10);
 	}
 	else if (touchPattern == TOUCH_0XX)
 	{
