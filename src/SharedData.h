@@ -123,6 +123,7 @@ static Color const GREEN = { 0, 255, 0 };
 static Color const BLUE = { 0, 0, 255 };
 static Color const YELLOW = { 255, 242, 0 };
 static Color const PURPLE = { 255, 0, 255 };
+static Color const CYAN = { 0, 255, 255 };
 static Color const WHITE = { 255, 255, 255 };
 static Color const BLACK = { 0, 0, 0 };
 
@@ -161,7 +162,7 @@ struct InputData : MovementData, PoseData
 	//Misc
 	int8_t robotMode = ROBOT_STANDBY_MODE; //[check ROBOT_XX_MODE macros]mode
 	int8_t moveTimeout = 0; // seconds of current command execution [-2 = already written, -1 = inf, 0 = go home, 1-100 = seconds to move]
-	int8_t gaitID = 1; //[0,5]gait
+	int8_t gaitID = 3; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
 	bool servoPower = 1; // [on,off]power
 };
@@ -172,8 +173,9 @@ struct PhisicsAndMoveParameters
 	double dim[3] = { 3, 5.4, 7.2 }; //coordinates of the robots hips
 	double freq = 50; //frequency of the algorithm
 	double ts = 1.0 / freq;
-	int8_t gaitID = 1;
+	int8_t gaitID = 3;
 	float stepHeight = 2;
+	float poseChangeSpeed = 0.5; //parameter for PT1 filter
 };
 
 struct MoveCtrl
@@ -272,7 +274,9 @@ public:
 	void rotate(userPresetInputData rotation);
 	void _move(float linearVelocity, float direction, float angularVelocity, int timeoutNew = -1);
 	void tilt(userPresetInputData tiltation);
+	void tilt(int8_t rotationXNew, int8_t rotationYNew, int8_t rotationZNew);
 	void stretch(userPresetInputData stretchment);
+	void stretch(int8_t translationXNew, int8_t treanslationYNew);
 	void setHeight(uint8_t height);
 	void _setHeight(float height);
 	void _setPose(float poseVectorNew[6]);

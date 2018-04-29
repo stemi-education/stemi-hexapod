@@ -89,7 +89,6 @@ public:
 	// parameters
 	//double tr[6]; //temporary saves the commands for further procesing. Exists because of timing problems.
 	double trCurrent[6] = { 0,0,0,0,0,0 }; //real tr after applying PT1 filter
-	double alpha_tr; //parametar for PT1 filter
 	double speed;
 	double maxAllowedSpeed;
 

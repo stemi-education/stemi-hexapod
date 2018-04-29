@@ -80,8 +80,6 @@ Body::Body()
 
 	setStepHight(robot.PMParam.stepHeight);
 
-	alpha_tr = 0.95;
-
 	//setMoveParam(0, PI / 2, 0, 0);
 
 	maxAllowedSpeed = 30;
@@ -318,12 +316,12 @@ float PT1(float input, float valuePrev, float alpha) {
 	return alpha*valuePrev + (1 - alpha)*(input);
 }
 void Body::trPT1() {
-	trCurrent[0] = PT1(robot.moveCtrl.poseVector[0], trCurrent[0], alpha_tr - 0.02);
-	trCurrent[1] = PT1(robot.moveCtrl.poseVector[1], trCurrent[1], alpha_tr - 0.02);
-	trCurrent[2] = PT1(robot.moveCtrl.poseVector[2], trCurrent[2], alpha_tr - 0.02);
-	trCurrent[3] = PT1(robot.moveCtrl.poseVector[3], trCurrent[3], alpha_tr);
-	trCurrent[4] = PT1(robot.moveCtrl.poseVector[4], trCurrent[4], alpha_tr);
-	trCurrent[5] = PT1(robot.moveCtrl.poseVector[5], trCurrent[5], alpha_tr);
+	trCurrent[0] = PT1(robot.moveCtrl.poseVector[0], trCurrent[0], robot.PMParam.poseChangeSpeed - 0.02);
+	trCurrent[1] = PT1(robot.moveCtrl.poseVector[1], trCurrent[1], robot.PMParam.poseChangeSpeed - 0.02);
+	trCurrent[2] = PT1(robot.moveCtrl.poseVector[2], trCurrent[2], robot.PMParam.poseChangeSpeed - 0.02);
+	trCurrent[3] = PT1(robot.moveCtrl.poseVector[3], trCurrent[3], robot.PMParam.poseChangeSpeed);
+	trCurrent[4] = PT1(robot.moveCtrl.poseVector[4], trCurrent[4], robot.PMParam.poseChangeSpeed);
+	trCurrent[5] = PT1(robot.moveCtrl.poseVector[5], trCurrent[5], robot.PMParam.poseChangeSpeed);
 }
 //-------------------------BT
 

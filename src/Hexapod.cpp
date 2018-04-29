@@ -101,7 +101,7 @@ void servoDriver(void *sharedDataNew)
 		if (robot.servoCtrl.store)
 		{
 			Serial.println("Storing calibration data ...");
-			//servoDriver.storeCalibrationData();
+			servoDriver.storeCalibrationData();
 			robot.servoCtrl.store = 0;
 		}
 		servoDriver.servoWrite();
@@ -171,7 +171,7 @@ Hexapod::Hexapod()
 	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
 	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(btEngine, "BtEngine", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(touchDriver, "touchDriver", 2*4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);

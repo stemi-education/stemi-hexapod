@@ -69,8 +69,6 @@ void SharedData::useGeneralInputData(InputData *data)
 {//TODO sperate this to multiple functions
 	mode = data->robotMode;
 	moveCtrl.timeout = data->moveTimeout;
-	PMParam.gaitID = data->gaitID;
-	PMParam.stepHeight = data->stepHeight / 100.0 * 4;
 	servoCtrl.power = data->servoPower;
 }
 
@@ -87,6 +85,9 @@ void SharedData::useMoveInputData(InputData *data)
 	moveCtrl.poseVector[3] = data->rotationZ / 100.0 * 0.3;
 	moveCtrl.poseVector[4] = data->rotationX / 100.0 * 0.3;
 	moveCtrl.poseVector[5] = data->rotationY / 100.0 * 0.3;
+
+	PMParam.gaitID = data->gaitID;
+	PMParam.stepHeight = data->stepHeight / 100.0 * 4;
 }
 
 void SharedData::useLedInputData(InputData *data)
@@ -240,10 +241,23 @@ void SharedData::tilt(userPresetInputData tiltation)
 	userInputData.rotationY = tiltation.rotationY;
 }
 
+void SharedData::tilt(int8_t rotationXNew, int8_t rotationYNew, int8_t rotationZNew)
+{
+	userInputData.rotationX = rotationXNew;
+	userInputData.rotationY = rotationYNew;
+	userInputData.rotationY = rotationZNew;
+}
+
 void SharedData::stretch(userPresetInputData stretchment)
 {
 	userInputData.translationX = stretchment.translationX;
 	userInputData.translationY = stretchment.translationY;
+}
+
+void SharedData::stretch(int8_t translationXNew, int8_t treanslationYNew)
+{
+	userInputData.translationX = translationXNew;
+	userInputData.translationY = treanslationYNew;
 }
 
 void SharedData::setHeight(uint8_t height)

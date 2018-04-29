@@ -56,11 +56,7 @@ int ServoDriver::servoWrite()
 {
 	//Serial.print(" ");
 	//Serial.println(robot.servoCtrl.power);
-
-	if (!robot.servoCtrl.power)
-	{
-		servoPower(0);
-	}
+	servoPower(robot.servoCtrl.power);
 	
 	//SERVO MODES
 	float calibratedServos[18];
