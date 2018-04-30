@@ -153,9 +153,9 @@ struct InputData : MovementData, PoseData
 	//Led
 	int16_t ledDiretion = 0; // [-180,180]degree
 	uint8_t ledSpreadRatio = 0; // [0,100]%
-	uint8_t ledPrimarClr[3] = { 0,0,0 }; // [255]r, [255]g, [255]b
+	uint8_t ledPrimarClr[3] = { 0,0,255 }; // [255]r, [255]g, [255]b
 	uint8_t ledSecondarClr[3] = { 0,0,0 }; // [255]r, [255]g, [255]b
-	int16_t ledRotationSpeed = 0; // [-100,100]%
+	int8_t ledRotationSpeed = 0; // [-100,100]%
 	uint8_t ledBlinkingSpeed = 0; // [0,100]%
 	uint8_t ledManualClr[6][3]; // 6x [255]r, [255]g, [255]b
 	int8_t ledMode = LED_PARAMETRIC_MODE; // [manual, parametric]mode
@@ -175,7 +175,7 @@ struct PhisicsAndMoveParameters
 	double ts = 1.0 / freq;
 	int8_t gaitID = 3;
 	float stepHeight = 2;
-	float poseChangeSpeed = 0.5; //parameter for PT1 filter
+	float poseChangeSpeed = 0.95; //parameter for PT1 filter
 };
 
 struct MoveCtrl

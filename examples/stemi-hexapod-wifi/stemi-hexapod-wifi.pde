@@ -41,7 +41,7 @@ void setup()
 	Serial.begin(115200);
 	hexapod = new Hexapod();
 	
-	robot.enterUserMode();
+	//robot.enterUserMode();
 	robot.setHeight(20);
 	robot.setLed(BLACK);
 	}

@@ -169,7 +169,7 @@ void RobotEngine::modesGO()
 	case ROBOT_STANDBY_MODE:
 		robot._setLed(BLUE, GREEN, 2, 1);
 		robot._setLedBlinkingSpeed(0);
-		robot._setLedRotationSpeed(PI);
+		robot._setLedRotationSpeed(1);
 		robot._move(0,0,0);
 		robot._setHeight(1);
 		break;
@@ -177,16 +177,20 @@ void RobotEngine::modesGO()
 		//set up walking parameters
 		robot._setLedBlinkingSpeed(1);
 		robot._setLedRotationSpeed(0);
-		robot._setLed(BLUE, RED, 2, PI/2);
 		robot.useMoveInputData(&robot.btInputData);
+		robot.ledCtrl.primarClr[0] = robot.btInputData.ledPrimarClr[0];
+		robot.ledCtrl.primarClr[1] = robot.btInputData.ledPrimarClr[1];
+		robot.ledCtrl.primarClr[2] = robot.btInputData.ledPrimarClr[2];
 		break;
 	case ROBOT_WALK_N_TILT_MODE:
 		//set up walking parameters
 		robot._setLedBlinkingSpeed(0);
 		robot._setLedRotationSpeed(1);
-		robot._setLed(YELLOW, BLUE, 2, 0);
 		robot.useMoveInputData(&robot.btInputData);
-		break;
+		robot.ledCtrl.primarClr[0] = robot.btInputData.ledPrimarClr[0];
+		robot.ledCtrl.primarClr[1] = robot.btInputData.ledPrimarClr[1];
+		robot.ledCtrl.primarClr[2] = robot.btInputData.ledPrimarClr[2];
+			break;
 	case ROBOT_DANCE_MODE:
 		robot._setLedBlinkingSpeed(2);
 		robot._setLedRotationSpeed(1);
