@@ -55,6 +55,7 @@ For additional information please check http://www.stemi.education.
 #define TASK_PERIOD_SERVO 20
 #define TASK_PERIOD_ROBOT 20
 #define TASK_PERIOD_BATT 200
+#define TASK_PERIOD_DANCE 276 //half of a songs beat
 
 //servo modes
 #define SERVO_WALKING_MODE 0 //mode for walking
@@ -129,38 +130,44 @@ static Color const BLACK = { 0, 0, 0 };
 
 struct MovementData
 {
-	uint8_t linearVelocity = 0; // [0,100]%
-	int16_t direction = 0; // [-180,180]degree
-	int8_t  angularVelocity = 0; // [-100,100]%
+	uint8_t linearVelocity; // [0,100]%
+	int16_t direction; // [-180,180]degree
+	int8_t  angularVelocity; // [-100,100]%
 };
 
 struct PoseData
 {
-	int8_t translationX = 0; // [-100,100]%
-	int8_t translationY = 0; // [-100,100]%
-	int8_t translationZ = 50; // [-100,100]%
-	int8_t rotationX = 0; // [-100,100]%
-	int8_t rotationY = 0; // [-100,100]%
-	int8_t rotationZ = 0; // [-100,100]%
+	int8_t translationX; // [-100,100]%
+	int8_t translationY; // [-100,100]%
+	int8_t translationZ; // [-100,100]%
+	int8_t rotationX; // [-100,100]%
+	int8_t rotationY; // [-100,100]%
+	int8_t rotationZ; // [-100,100]%
+	int8_t poseSpeed; // [0,100]% - temporary [99,30]
 };
 
-struct InputData : MovementData, PoseData
+struct LedData
+{
+	uint8_t ledPrimarClr[3]; // [255]r, [255]g, [255]b
+	uint8_t ledSecondarClr[3]; // [255]r, [255]g, [255]b
+	int16_t ledDiretion; // [-180,180]degree
+	uint8_t ledSpreadRatio; // [0,100]%
+	int8_t ledRotationSpeed; // [-100,100]%
+	uint8_t ledBlinkingSpeed; // [0,100]%
+	uint8_t ledManualClr[6][3]; // 6x [255]r, [255]g, [255]b
+	int8_t ledMode; // [manual, parametric]mode
+};
+
+struct InputData : MovementData, PoseData, LedData
 {
 	//Movement - inherited from MovementData
 
 	//Pose - inherited from PoseData
 	
-	//Led
-	int16_t ledDiretion = 0; // [-180,180]degree
-	uint8_t ledSpreadRatio = 0; // [0,100]%
-	uint8_t ledPrimarClr[3] = { 0,0,255 }; // [255]r, [255]g, [255]b
-	uint8_t ledSecondarClr[3] = { 0,0,0 }; // [255]r, [255]g, [255]b
-	int8_t ledRotationSpeed = 0; // [-100,100]%
-	uint8_t ledBlinkingSpeed = 0; // [0,100]%
-	uint8_t ledManualClr[6][3]; // 6x [255]r, [255]g, [255]b
-	int8_t ledMode = LED_PARAMETRIC_MODE; // [manual, parametric]mode
-	//Misc
-	int8_t robotMode = ROBOT_STANDBY_MODE; //[check ROBOT_XX_MODE macros]mode
+	//Led - inherited from LedData
+
+	//Misc - additional data
+	//int8_t robotMode; //[check ROBOT_XX_MODE macros]mode
 	int8_t moveTimeout = 0; // seconds of current command execution [-2 = already written, -1 = inf, 0 = go home, 1-100 = seconds to move]
 	int8_t gaitID = 3; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
@@ -175,7 +182,7 @@ struct PhisicsAndMoveParameters
 	double ts = 1.0 / freq;
 	int8_t gaitID = 3;
 	float stepHeight = 2;
-	float poseChangeSpeed = 0.95; //parameter for PT1 filter
+	float poseChangeSpeed = 0.80; //parameter for PT1 filter
 };
 
 struct MoveCtrl
@@ -296,7 +303,6 @@ public:
 	float getBatteryVoltage();
 
 	//Robot modes functions
-	void setMode(int8_t modeNew);
 	void _setMode(int8_t modeNew);
 	int8_t getMode();
 	void enterUserMode();
@@ -308,7 +314,7 @@ public:
 	void useLedInputData(InputData * data);
 
 	MoveCtrl moveCtrl;
-	InputData btInputData, userInputData;
+	InputData btInputData, userInputData, danceInputData;
 	PhisicsAndMoveParameters PMParam;
 	ServoCtrl servoCtrl;
 	LedCtrl ledCtrl;
@@ -317,6 +323,7 @@ public:
 
 	int8_t mode = ROBOT_STANDBY_MODE;
 	uint8_t BTConnectedCount = 0;
+	uint danceCount = 456;
 };
 
 extern SharedData robot;

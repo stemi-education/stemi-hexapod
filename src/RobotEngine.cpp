@@ -81,17 +81,6 @@ void RobotEngine::checkState()
 			robot._setMode(ROBOT_PRE_CALIBRATION_MODE);
 			break;
 		case TOUCH_0X0:
-			robot._setMode(ROBOT_WALK_N_TILT_MODE);
-			break;
-		}
-		break;
-	case ROBOT_WALK_N_TILT_MODE:
-		switch (touchState)
-		{
-		case TOUCH_X0X:
-			robot._setMode(ROBOT_PRE_CALIBRATION_MODE);
-			break;
-		case TOUCH_0X0:
 			robot._setMode(ROBOT_DANCE_MODE);
 			break;
 		}
@@ -161,57 +150,68 @@ void RobotEngine::checkState()
 void RobotEngine::modesGO()
 {
 	uint8_t randomDummy = random(0, 255);
-	Color randomColor = { randomDummy, 255 - randomDummy, randomDummy/2};
 
 	int8_t robotMode = robot.getMode();
 	switch (robotMode)
 	{
 	case ROBOT_STANDBY_MODE:
-		robot._setLed(BLUE, GREEN, 2, 1);
+		if (robot.BTConnectedCount)
+		{
+			robot._setLed(BLUE, GREEN, 2, 1);
+		}
+		else
+		{
+			robot._setLed(BLUE, BLACK, 2, 1);
+		}
 		robot._setLedBlinkingSpeed(0);
 		robot._setLedRotationSpeed(1);
 		robot._move(0,0,0);
 		robot._setHeight(1);
 		break;
+
 	case ROBOT_WALK_MODE:
-		//set up walking parameters
-		robot._setLedBlinkingSpeed(1);
-		robot._setLedRotationSpeed(0);
-		robot.useMoveInputData(&robot.btInputData);
-		robot.ledCtrl.primarClr[0] = robot.btInputData.ledPrimarClr[0];
-		robot.ledCtrl.primarClr[1] = robot.btInputData.ledPrimarClr[1];
-		robot.ledCtrl.primarClr[2] = robot.btInputData.ledPrimarClr[2];
-		break;
-	case ROBOT_WALK_N_TILT_MODE:
 		//set up walking parameters
 		robot._setLedBlinkingSpeed(0);
 		robot._setLedRotationSpeed(1);
-		robot.useMoveInputData(&robot.btInputData);
-		robot.ledCtrl.primarClr[0] = robot.btInputData.ledPrimarClr[0];
-		robot.ledCtrl.primarClr[1] = robot.btInputData.ledPrimarClr[1];
-		robot.ledCtrl.primarClr[2] = robot.btInputData.ledPrimarClr[2];
-			break;
-	case ROBOT_DANCE_MODE:
-		robot._setLedBlinkingSpeed(2);
-		robot._setLedRotationSpeed(1);
-		robot._setLed(randomColor);
-		robot._setHeight(4);
+		if (robot.BTConnectedCount)
+		{
+			robot.useMoveInputData(&robot.btInputData);
+			robot.useLedInputData(&robot.btInputData);
+		}
+		else
+		{
+			robot._setLed(BLUE, RED, 6, PI / 2);
+			robot._move(0, 0, 0);
+			robot._setHeight(4);
+		}
 		break;
+
+	case ROBOT_DANCE_MODE:
+		robot._setLedBlinkingSpeed(0.5);
+		robot._setLedRotationSpeed(0.5);
+		robot._setLed(BLUE, GREEN, 2, 1);
+		robot.useMoveInputData(&robot.danceInputData);
+		robot.useLedInputData(&robot.danceInputData);
+		break;
+
 	case ROBOT_USER_MODE:
 		robot.useMoveInputData(&robot.userInputData);
 		robot.useLedInputData(&robot.userInputData);
 		break;
+
 	case ROBOT_PRE_CALIBRATION_MODE:
 		robot._setLedBlinkingSpeed(0);
 		robot._setLedRotationSpeed(0);
 		robot._setLed(RED);
 		break;
+
 	case ROBOT_CALIBRATION_MODE:
 		robot._setLedBlinkingSpeed(0);
 		robot._setLedRotationSpeed(0);
 		robot._setLed(BLACK);
 		robot._setLed(calibrationLegSelectedCounter, calibrationServoLayerColors[calibrationServoLayerSelected]);// calibrationServoLayerColors[calibrationServoLayerSelected]);
 		break;
+
 	case ROBOT_BATTERY_EMPTY_MODE:
 		//LEDS blinking
 		robot._setLedBlinkingSpeed(0.5);

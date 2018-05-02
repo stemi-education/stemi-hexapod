@@ -42,8 +42,8 @@ void setup()
 	hexapod = new Hexapod();
 	
 	//robot.enterUserMode();
-	robot.setHeight(20);
-	robot.setLed(BLACK);
+	robot.setHeight(50);
+	robot.setLed(GREEN);
 	}
 
 Color clrArray[6] = {BLUE, YELLOW, GREEN, CYAN, PURPLE, RED};
@@ -52,102 +52,18 @@ void loop()
 {
 	
 	int touchPattern = robot.getTouchPattern();
-	if (touchPattern == TOUCH_X0X)
-	{
-		Color randomColor = { random(0,255), random(0,255),  random(0,255) };
-		robot.setLed(randomColor);
-	}
-	else if (touchPattern == TOUCH_00X)
+	if (touchPattern == TOUCH_00X)
 	{
 		robot.move(FORWARD);
-		delay(2000);
+		delay(1000);
 		robot.move(RESET);
 	}
 	else if (touchPattern == TOUCH_X00)
 	{
-		robot.setLed(BLACK);
-		robot.PMParam.poseChangeSpeed = 0.2;
-		robot.setHeight(20);
-		delay(2000);
-		robot.setHeight(30);
-		delay(100);
-		robot.setHeight(20);
-		delay(700);
-		robot.setHeight(30);
-		delay(100);
-		robot.setHeight(20);
-		delay(400);
-		robot.setHeight(30);
-		delay(100);
-		robot.setHeight(20);
-		delay(1500);
-		robot.PMParam.poseChangeSpeed = 0.95;
-		robot.setHeight(50);
-		delay(800);
-		robot.PMParam.poseChangeSpeed = 0.8;
-		robot.tilt(0, 0, 80);
-		robot.stretch(-50, 0);
-		delay(800);
-		robot.tilt(0, 0, -80);
-		robot.stretch(50, 0);
-		delay(800);
-		robot.PMParam.poseChangeSpeed = 0.95;
-		robot.tilt(0, -80, 0);
-		robot.stretch(0,-80);
-		delay(800);
-		robot.tilt(0, 0, 0);
-		robot.stretch(0, 0);
+		Color randomColor = { random(0,255), random(0,255),  random(0,255) };
+		robot.setLed(randomColor);
 	}
 	else if (touchPattern == TOUCH_0X0)
-	{
-		robot.setLed(BLACK);
-		delay(3000);
-		robot.setLed(WHITE);
-		delay(100);
-		robot.setLed(BLACK);
-		delay(1000);
-		robot.setLed(WHITE);
-		delay(100);
-		robot.setLed(BLACK);
-		delay(300);
-		robot.setLed(WHITE);
-		delay(100);
-		robot.setLed(BLACK);
-		delay(1500);
-		robot.setLed(0,BLUE);
-		delay(300);
-		robot.setLed(1, YELLOW);
-		delay(300);
-		robot.setLed(2, GREEN);
-		delay(300);
-		robot.setLed(3, RED);
-		delay(300);
-		robot.setLed(4, PURPLE);
-		delay(300);
-		robot.setLed(5, CYAN);
-		delay(300);
-		setLEDrandom();
-		delay(300);
-		setLEDrandom();
-		delay(300); 
-		setLEDrandom();
-		delay(300);
-		setLEDrandomDelay(100);
-		setLEDrandomDelay(100);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(50);
-		setLEDrandomDelay(20);
-		setLEDrandomDelay(20);
-		setLEDrandomDelay(20);
-		setLEDrandomDelay(20);
-		setLEDrandomDelay(20);
-		setLEDrandomDelay(20);
-		setLEDrandomDelay(10);
-		setLEDrandomDelay(10);
-	}
-	else if (touchPattern == TOUCH_0XX)
 	{
 		robot.exitUserMode();
 	}

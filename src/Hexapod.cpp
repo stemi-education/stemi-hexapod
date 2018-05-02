@@ -163,6 +163,39 @@ void touchDriver(void *sharedDataNew)
 	}
 }
 
+void dancingEngine(void *sharedDataNew)
+{
+	Dance dance;
+
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = TASK_PERIOD_DANCE;
+	
+	xLastWakeTime = xTaskGetTickCount();
+
+	while (1)
+	{
+		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		if (robot.mode == ROBOT_DANCE_MODE)
+		{
+			dance.tickStart();
+			xLastWakeTime = xTaskGetTickCount();
+		}
+		else
+		{
+			robot.danceCount = 0;
+		}
+
+		
+
+		while (robot.mode == ROBOT_DANCE_MODE)
+		{
+			vTaskDelayUntil(&xLastWakeTime, xFrequency);
+			dance.setRobot(robot.danceCount);
+			robot.danceCount++;
+		}
+	}
+}
+
 Hexapod::Hexapod()
 {
 	Serial.begin(115200);
@@ -174,6 +207,7 @@ Hexapod::Hexapod()
 	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(btEngine, "BtEngine", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(touchDriver, "touchDriver", 2*4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(touchDriver, "touchDriver", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(dancingEngine, "dancingEngine", 2*4096, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
 
 }

@@ -51,11 +51,22 @@ SharedData:: SharedData()
 	
 	//init for move()
 
-	userInputData.robotMode = ROBOT_USER_MODE;
 	userInputData.translationZ = 50;
-	btInputData.robotMode = ROBOT_STANDBY_MODE;
+	userInputData.ledMode = LED_PARAMETRIC_MODE;
+	userInputData.ledSpreadRatio = 100;
+	userInputData.poseSpeed = 50;
+
 	btInputData.translationZ = 50;
-	
+	btInputData.ledMode = LED_PARAMETRIC_MODE;
+	btInputData.ledPrimarClr[2] = 255; //set initial color to blue
+	btInputData.ledSpreadRatio = 100;
+	btInputData.poseSpeed = 50;
+
+	danceInputData.translationZ = 50;
+	danceInputData.ledMode = LED_PARAMETRIC_MODE;
+	danceInputData.ledSpreadRatio = 100;
+	danceInputData.poseSpeed = 80;
+
 }
 
 void SharedData::writeServoAngles(float servoAnglesNew[18])
@@ -67,7 +78,6 @@ void SharedData::writeServoAngles(float servoAnglesNew[18])
 //use input from pointed structure [bluetooth,user]
 void SharedData::useGeneralInputData(InputData *data)
 {//TODO sperate this to multiple functions
-	mode = data->robotMode;
 	moveCtrl.timeout = data->moveTimeout;
 	servoCtrl.power = data->servoPower;
 }
@@ -88,6 +98,7 @@ void SharedData::useMoveInputData(InputData *data)
 
 	PMParam.gaitID = data->gaitID;
 	PMParam.stepHeight = data->stepHeight / 100.0 * 4;
+	PMParam.poseChangeSpeed = 0.99 - (0.00014 / -0.055)*(1 - exp(0.055*data->poseSpeed));
 }
 
 void SharedData::useLedInputData(InputData *data)
@@ -98,7 +109,7 @@ void SharedData::useLedInputData(InputData *data)
 	_setLed(primarClr, secondarClr,
 		data->ledSpreadRatio / 100.0 * 10,
 		data->ledDiretion * PI / 180 + PI / 2);
-	_setLedRotationSpeed(data->ledRotationSpeed / 100.0 * PI / 180 * 10);
+	_setLedRotationSpeed(data->ledRotationSpeed / 100.0 * 10);
 	_setLedBlinkingSpeed(data->ledBlinkingSpeed / 100.0 * 10);
 	ledCtrl.mode = data->ledMode;
 	for (int i = 0; i < LED_COUNT; i++)
@@ -108,6 +119,12 @@ void SharedData::useLedInputData(InputData *data)
 			ledCtrl.manualClr[i][j] = data->ledManualClr[i][j];
 		}
 	}
+	/*Serial.println(data->ledDiretion * PI / 180 + PI / 2);
+	Serial.println(data->ledDiretion);
+	Serial.println(robot.ledCtrl.direction);
+	Serial.println(robot.ledCtrl.primarClr[0]);
+	Serial.println(robot.ledCtrl.secondarClr[0]);*/
+
 }
 
 //seting user data [public]
@@ -160,7 +177,7 @@ void SharedData::setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio,
 	userInputData.ledSecondarClr[1] = secondarClr.g;
 	userInputData.ledSecondarClr[2] = secondarClr.b;
 	userInputData.ledSpreadRatio = spreadRatio;
-	userInputData.direction = direction;// *PI / 180 - PI / 2;
+	userInputData.ledDiretion = direction;
 }
 
 void SharedData::_setLed(Color primarClr, Color secondarClr, float spreadRatio, float direction)
@@ -174,7 +191,7 @@ void SharedData::_setLed(Color primarClr, Color secondarClr, float spreadRatio, 
 	ledCtrl.secondarClr[1] = secondarClr.g;
 	ledCtrl.secondarClr[2] = secondarClr.b;
 	ledCtrl.spreadRatio = spreadRatio;
-	ledCtrl.direction = direction;// *PI / 180 - PI / 2;
+	ledCtrl.direction = direction;
 }
 
 void SharedData::setLedRotationSpeed(int8_t rotationSpeed)
@@ -278,11 +295,6 @@ void SharedData::_setPose(float poseVectorNew[6])
 	moveCtrl.poseVector[3] = poseVectorNew[3];
 	moveCtrl.poseVector[4] = poseVectorNew[4];
 	moveCtrl.poseVector[5] = poseVectorNew[5];
-}
-
-void SharedData::setMode(int8_t modeNew)
-{
-	userInputData.robotMode = modeNew;
 }
 
 void SharedData::_setMode(int8_t modeNew)
