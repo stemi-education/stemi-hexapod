@@ -185,11 +185,12 @@ void dancingEngine(void *sharedDataNew)
 			robot.danceCount = 0;
 		}
 
-		
-
 		while (robot.mode == ROBOT_DANCE_MODE)
 		{
 			vTaskDelayUntil(&xLastWakeTime, xFrequency);
+			delayMicroseconds(220);
+			xLastWakeTime = xTaskGetTickCount();
+
 			dance.setRobot(robot.danceCount);
 			robot.danceCount++;
 		}

@@ -55,7 +55,7 @@ For additional information please check http://www.stemi.education.
 #define TASK_PERIOD_SERVO 20
 #define TASK_PERIOD_ROBOT 20
 #define TASK_PERIOD_BATT 200
-#define TASK_PERIOD_DANCE 276 //half of a songs beat
+#define TASK_PERIOD_DANCE 275 //half of a songs beat
 
 //servo modes
 #define SERVO_WALKING_MODE 0 //mode for walking
