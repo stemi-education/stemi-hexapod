@@ -169,12 +169,13 @@ void dancingEngine(void *sharedDataNew)
 
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = TASK_PERIOD_DANCE;
+	const TickType_t xFrequency2 = 20;
 	
 	xLastWakeTime = xTaskGetTickCount();
 
 	while (1)
 	{
-		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		vTaskDelayUntil(&xLastWakeTime, xFrequency2);
 		if (robot.mode == ROBOT_DANCE_MODE)
 		{
 			dance.tickStart();
@@ -183,12 +184,14 @@ void dancingEngine(void *sharedDataNew)
 		else
 		{
 			robot.danceCount = 0;
+			dance.setRobot(robot.danceCount);
+			robot.danceCount = 0;
 		}
 
 		while (robot.mode == ROBOT_DANCE_MODE)
 		{
 			vTaskDelayUntil(&xLastWakeTime, xFrequency);
-			delayMicroseconds(220);
+			delayMicroseconds(655);
 			xLastWakeTime = xTaskGetTickCount();
 
 			dance.setRobot(robot.danceCount);

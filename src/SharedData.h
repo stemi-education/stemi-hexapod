@@ -323,7 +323,7 @@ public:
 
 	int8_t mode = ROBOT_STANDBY_MODE;
 	uint8_t BTConnectedCount = 0;
-	uint danceCount = 456;
+	uint danceCount = 0;
 };
 
 extern SharedData robot;

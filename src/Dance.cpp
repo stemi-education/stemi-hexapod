@@ -44,10 +44,11 @@ Dance::Dance()
 
 void Dance::setRobot(uint j)
 {
+	j = j<920 ? j : 919;
 	int i = j/2;
 	//if (i > 427) 
-	i = i%428;
-	j = j % 856;
+	i = i%460;
+	
 	
 	//height
 	if (heightArray[i] == HC)
@@ -88,7 +89,7 @@ void Dance::setRobot(uint j)
 }
 void Dance::tickStart()
 {
-	delay(3000);
+	delay(5000);
 	robot.danceInputData.ledPrimarClr[0] = ledColors[CR].ledPrimarClr[0];
 	robot.danceInputData.ledPrimarClr[1] = ledColors[CR].ledPrimarClr[1];
 	robot.danceInputData.ledPrimarClr[2] = ledColors[CR].ledPrimarClr[2];
