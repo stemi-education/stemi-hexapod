@@ -157,7 +157,7 @@ void RobotEngine::modesGO()
 	case ROBOT_STANDBY_MODE:
 		if (robot.BTConnectedCount)
 		{
-			robot._setLed(BLUE, GREEN, 2, 1);
+			robot._setLed(BLUE, BLUE, 2, 1);
 		}
 		else
 		{
@@ -180,7 +180,7 @@ void RobotEngine::modesGO()
 		}
 		else
 		{
-			robot._setLed(BLUE, RED, 6, PI / 2);
+			robot._setLed(BLUE, WHITE, 6, PI / 2);
 			robot._move(0, 0, 0);
 			robot._setHeight(4);
 		}
