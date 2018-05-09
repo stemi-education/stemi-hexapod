@@ -131,6 +131,9 @@ void ledDriver(void *sharedDataNew)
 void btEngine(void *sharedDataNew)
 {
 	BluetoothLowEnergy BLE(std::string("STEMIHexapod"));
+	
+
+
 	delay(2000);
 
 	TickType_t xLastWakeTime;
@@ -141,6 +144,7 @@ void btEngine(void *sharedDataNew)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		robot.BTConnectedCount = BLE.server->getConnectedCount();
+		BLE.batteryService->getCharacteristic(BATTERYLEVEL_CHARACTERISTIC_UUID)->setValue(&robot.batteryState.percentage, 1);
 	}
 }
 

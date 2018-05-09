@@ -308,7 +308,7 @@ public:
 	void enterUserMode();
 	void exitUserMode();
 
-	//choose what input data to use [BT, user]
+	//choose what input data to use [BT, user, dance]
 	void useGeneralInputData(InputData * data);
 	void useMoveInputData(InputData * data);
 	void useLedInputData(InputData * data);

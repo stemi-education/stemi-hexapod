@@ -47,6 +47,9 @@ void BatteryDriver::checkState()
 	float minVoltage = 3.45, maxVoltage = 3.85;
 	
 	robot.batteryState.percentage = min(max(robot.batteryState.voltage - minVoltage, 0), maxVoltage-minVoltage)/(maxVoltage-minVoltage)*100;
+	Serial.print(robot.batteryState.voltage);
+	Serial.print(" ");
+	Serial.println(robot.batteryState.percentage);
 }
 
 float BatteryDriver::readBatteryVoltage()

@@ -82,10 +82,6 @@ void Dance::setRobot(uint j)
 
 	robot.danceInputData.ledRotationSpeed = ledAnimations[ledAnimationArray[i]].ledRotationSpeed;
 	robot.danceInputData.ledBlinkingSpeed = ledAnimations[ledAnimationArray[i]].ledBlinkingSpeed;
-
-	Serial.print(i);
-	Serial.print(": ");
-	Serial.println(robot.danceInputData.ledBlinkingSpeed);
 }
 void Dance::tickStart()
 {
@@ -95,7 +91,6 @@ void Dance::tickStart()
 	robot.danceInputData.ledPrimarClr[2] = ledColors[CR].ledPrimarClr[2];
 	robot.danceInputData.ledDiretion = ledColors[CR].ledDiretion;
 	robot.danceInputData.ledSpreadRatio = ledColors[CR].ledSpreadRatio;
-	Serial.println(robot.ledCtrl.primarClr[0]);
 
 	delay(549);
 	robot.danceInputData.ledPrimarClr[0] = ledColors[CB].ledPrimarClr[0];
@@ -103,7 +98,6 @@ void Dance::tickStart()
 	robot.danceInputData.ledPrimarClr[2] = ledColors[CB].ledPrimarClr[2];
 	robot.danceInputData.ledDiretion = ledColors[CB].ledDiretion;
 	robot.danceInputData.ledSpreadRatio = ledColors[CB].ledSpreadRatio;
-	Serial.println(robot.ledCtrl.primarClr[0]);
 
 	delay(549);
 	robot.danceInputData.ledPrimarClr[0] = ledColors[CY].ledPrimarClr[0];
@@ -111,7 +105,6 @@ void Dance::tickStart()
 	robot.danceInputData.ledPrimarClr[2] = ledColors[CY].ledPrimarClr[2];
 	robot.danceInputData.ledDiretion = ledColors[CY].ledDiretion;
 	robot.danceInputData.ledSpreadRatio = ledColors[CY].ledSpreadRatio;
-	Serial.println(robot.ledCtrl.primarClr[0]);
 
 	delay(549);
 	robot.danceInputData.ledPrimarClr[0] = ledColors[CG].ledPrimarClr[0];
@@ -119,7 +112,6 @@ void Dance::tickStart()
 	robot.danceInputData.ledPrimarClr[2] = ledColors[CG].ledPrimarClr[2];
 	robot.danceInputData.ledDiretion = ledColors[CG].ledDiretion;
 	robot.danceInputData.ledSpreadRatio = ledColors[CG].ledSpreadRatio;
-	Serial.println(robot.ledCtrl.primarClr[0]);
 	delay(550);
 
 }
