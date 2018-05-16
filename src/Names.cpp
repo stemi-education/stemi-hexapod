@@ -34,29 +34,25 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#include "BatteryDriver.h"
+#include "Names.h"
 
-
-BatteryDriver::BatteryDriver()
+Names::Names()
 {
+
 }
 
-void BatteryDriver::checkState()
+std::string Names::generateName(uint number)
 {
-	robot.batteryState.voltage = LPFvoltage(readBatteryVoltage());
-	float minVoltage = 3.45, maxVoltage = 3.85;
-	
-	robot.batteryState.percentage = min(max(robot.batteryState.voltage - minVoltage, 0), maxVoltage-minVoltage)/(maxVoltage-minVoltage)*100;
+	return names[number%NUMBER_OF_NAMES];
 }
 
-float BatteryDriver::readBatteryVoltage()
+uint Names::sumStringMemberValues(uint8_t str[6])
 {
-	float senVal = (float)(analogRead(BATTERY_STATUS_PIN));
-	return  (-0.000000000023926 * pow(senVal, 3) + 0.000000094746 * pow(senVal, 2) + 0.00074539 * senVal + 0.14925) * 2.0;
+	uint sum = 0;
+	for (unsigned i = 0; i<6; ++i)
+	{
+		sum += str[i];
+	}
+	return sum;
 }
 
-float BatteryDriver::LPFvoltage(float valueNew)
-{
-	float alpha = 0.99;
-	return alpha * robot.batteryState.voltage + (1 - alpha)*(valueNew);
-}

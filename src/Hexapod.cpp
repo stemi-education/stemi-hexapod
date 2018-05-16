@@ -130,10 +130,14 @@ void ledDriver(void *sharedDataNew)
 
 void btEngine(void *sharedDataNew)
 {
-	BluetoothLowEnergy BLE(std::string("STEMIHexapod"));
+	Names names;
+
+	uint8_t mac[6];
+
+	esp_efuse_mac_get_default(mac);
+		
+	BluetoothLowEnergy BLE("STEMI " + names.generateName(names.sumStringMemberValues(mac)));
 	
-
-
 	delay(2000);
 
 	TickType_t xLastWakeTime;

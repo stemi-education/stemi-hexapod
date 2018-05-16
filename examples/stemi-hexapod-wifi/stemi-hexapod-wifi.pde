@@ -54,9 +54,7 @@ void loop()
 	int touchPattern = robot.getTouchPattern();
 	if (touchPattern == TOUCH_00X)
 	{
-		robot.move(FORWARD);
-		delay(1000);
-		robot.move(RESET);
+		setLEDrandom();
 	}
 	else if (touchPattern == TOUCH_X00)
 	{

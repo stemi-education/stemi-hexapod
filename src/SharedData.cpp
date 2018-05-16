@@ -87,7 +87,7 @@ void SharedData::useMoveInputData(InputData *data)
 	//move
 	moveCtrl.linearVelocity = data->linearVelocity / 100.0 * 10; //[0,100]% -> [0, 10]cm/s
 	moveCtrl.direction = data->direction * PI / 180.0 + PI / 2; //[-180,180]degree -> [-PI,PI]rad
-	moveCtrl.angularVelocity = data->angularVelocity / 100.0 * 0.5; //[-100,100]% -> [-0.5, 0.5]rad/s
+	moveCtrl.angularVelocity = data->angularVelocity / 100.0 * 0.7; //[-100,100]% -> [-0.7, 0.7]rad/s
 
 	moveCtrl.poseVector[0] = data->translationZ / 100.0 * 8;
 	moveCtrl.poseVector[1] = data->translationX / 100.0 * 3;

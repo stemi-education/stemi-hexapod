@@ -182,7 +182,7 @@ struct PhisicsAndMoveParameters
 	double ts = 1.0 / freq;
 	int8_t gaitID = 3;
 	float stepHeight = 2;
-	float poseChangeSpeed = 0.80; //parameter for PT1 filter
+	float poseChangeSpeed = 0.93; //parameter for PT1 filter recomended [0.90,0.98]
 };
 
 struct MoveCtrl

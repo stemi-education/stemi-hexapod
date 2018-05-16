@@ -52,6 +52,7 @@ For additional information please check http://www.stemi.education.
 #include "BluetoothLowEnergy.h"
 #include "touchDriver.h"
 #include "Dance.h"
+#include "Names.h"
 
 #include <BLEDevice.h>
 #include <BLEUtils.h>
