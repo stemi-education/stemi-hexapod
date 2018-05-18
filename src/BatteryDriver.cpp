@@ -136,7 +136,7 @@ void BatteryDriver::calibrateBatteryPin()
 	for(int i = 0; i < 10; i++)
 		batteryPinCalibrationValueSum += BATTERY_PIN_CALIBRATION_REF_V - readBatteryVoltage();
 	batteryPinCalibrationValue += batteryPinCalibrationValueSum / 10;
-	//preferences.putFloat("batCalibVal", batteryPinCalibrationValue);
+	preferences.putFloat("batCalibVal", batteryPinCalibrationValue);
 	Serial.print("Stored battery calibration value: ");
 	Serial.println(batteryPinCalibrationValue);
 	Serial.print(" measured: ");
