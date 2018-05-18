@@ -143,7 +143,7 @@ void ServoDriver::storeCalibrationData()
 
 void ServoDriver::loadCalibrationData()
 {
-	Serial.println("loading calibration data");
+	Serial.println("Loading servo calibration data");
 	/*Serial.println("array before reading: ");
 	for (int i = 0; i < 18; i++)
 	{
@@ -156,7 +156,7 @@ void ServoDriver::loadCalibrationData()
 
 	if (!len)
 	{
-		Serial.println("Data not stored...");
+		Serial.println("Data not stored");
 		Serial.println("Loading default numbers");
 		for (int i = 0; i < 18; i++)
 		{

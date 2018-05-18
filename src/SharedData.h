@@ -43,6 +43,11 @@ For additional information please check http://www.stemi.education.
 #include "WProgram.h"
 #endif
 
+#define HEXAPOD_VERSION 200
+#define ENABLE_VERSION_BURNING
+#define DEBUG 
+//#define DEBUG_VOLTAGES
+
 #define LED_COUNT 6
 #define LED_PIN 19 //Neopixel RGB LED strip pin
 #define SERVO_POWER_PIN 33

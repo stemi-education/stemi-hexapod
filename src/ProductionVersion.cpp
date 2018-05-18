@@ -34,39 +34,28 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef HEXAPOD_H
-#define HEXAPOD_H
-
-#if CONFIG_FREERTOS_UNICORE
-#define ARDUINO_RUNNING_CORE 0
-#else
-#define ARDUINO_RUNNING_CORE 1
-#endif
-
-#include "SharedData.h"
-#include "ServoDriver.h"
-#include "BatteryDriver.h"
-#include "LedDriver.h"
-#include "Body.h"
-#include "RobotEngine.h"
-#include "BluetoothLowEnergy.h"
-#include "touchDriver.h"
-#include "Dance.h"
-#include "Names.h"
-
 #include "ProductionVersion.h"
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
 
-class Hexapod
+ProductionVersion::ProductionVersion()
 {
-public:
-	Hexapod();
+	preferences.begin("my-app", false);
+	version = preferences.getUInt("hexapodVersion", 0);
+}
 
-	Preferences preferences;
-};
-
-#endif
-
+void ProductionVersion::check()
+{
+	if (version == 0)
+	{
+		
+		Serial.printf("Version not burned\n");
+#ifdef ENABLE_VERSION_BURNING
+		Serial.printf("Burning v%d.%02d\n", HEXAPOD_VERSION / 100, HEXAPOD_VERSION % 100);
+		preferences.putUInt("hexapodVersion", HEXAPOD_VERSION);
+#endif // ENABLE_VERSION_BURNING
+	}
+	else
+	{
+		Serial.printf("STEMI Hexapod v%d.%02d\n", HEXAPOD_VERSION / 100, HEXAPOD_VERSION % 100);
+	}
+}

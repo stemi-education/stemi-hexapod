@@ -34,39 +34,20 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef HEXAPOD_H
-#define HEXAPOD_H
+#ifndef PRODUCTIONVERSION_H
+#define PRODUCTIONVERSION_H
 
-#if CONFIG_FREERTOS_UNICORE
-#define ARDUINO_RUNNING_CORE 0
-#else
-#define ARDUINO_RUNNING_CORE 1
-#endif
-
+#include "Preferences.h"
 #include "SharedData.h"
-#include "ServoDriver.h"
-#include "BatteryDriver.h"
-#include "LedDriver.h"
-#include "Body.h"
-#include "RobotEngine.h"
-#include "BluetoothLowEnergy.h"
-#include "touchDriver.h"
-#include "Dance.h"
-#include "Names.h"
 
-#include "ProductionVersion.h"
-
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
-
-class Hexapod
+class ProductionVersion
 {
 public:
-	Hexapod();
+	ProductionVersion();
+	void check();
 
 	Preferences preferences;
+	uint version;
+
 };
-
 #endif
-
