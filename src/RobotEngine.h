@@ -46,12 +46,13 @@ public:
 	void checkState();
 	void modesGO();
 	void batteryCheck();
+	void calibrateBattery(uint8_t touchID, int8_t exitMode);
 
-	//calibration mode bariables
-	//calibrationMode variables
+	//calibration mode variables
 	int calibrationLegSelected = 0, calibrationLegSelectedCounter = 0, calibrationServoLayerSelected = 0;// , calibrationValue = 0;
 	uint8_t calibrationLegSelectedMap[6] = { 0, 1, 2, 5, 4, 3 };
 	Color calibrationServoLayerColors[3] = {RED, BLUE, YELLOW};
-
+	uint8_t batteryCalibrationTouchPassword[5] = { TOUCH_0XX, TOUCH_XX0, TOUCH_0XX, TOUCH_XX0, TOUCH_0XX};
+	uint8_t batteryCalibrationTouchPasswordCounter = 0;
 };
 #endif

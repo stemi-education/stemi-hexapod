@@ -46,7 +46,8 @@ void setup()
 	robot.setLed(GREEN);
 	}
 
-Color clrArray[6] = {BLUE, YELLOW, GREEN, CYAN, PURPLE, RED};
+Color clrArray[7] = {BLUE, YELLOW, GREEN, CYAN, PURPLE, RED, ORANGE};
+uint8_t clrCount = 0;
 
 void loop()
 {
@@ -58,8 +59,7 @@ void loop()
 	}
 	else if (touchPattern == TOUCH_X00)
 	{
-		Color randomColor = { random(0,255), random(0,255),  random(0,255) };
-		robot.setLed(randomColor);
+		setLEDSequence();
 	}
 	else if (touchPattern == TOUCH_0X0)
 	{
@@ -71,26 +71,21 @@ void loop()
 
 void setLEDrandom()
 {
-	robot.setLed(0, clrArray[random(0, 5)]);
-	robot.setLed(1, clrArray[random(0, 5)]);
-	robot.setLed(2, clrArray[random(0, 5)]);
-	robot.setLed(3, clrArray[random(0, 5)]);
-	robot.setLed(4, clrArray[random(0, 5)]);
-	robot.setLed(5, clrArray[random(0, 5)]);
+	robot.setLed(0, clrArray[random(0, 6)]);
+	robot.setLed(1, clrArray[random(0, 6)]);
+	robot.setLed(2, clrArray[random(0, 6)]);
+	robot.setLed(3, clrArray[random(0, 6)]);
+	robot.setLed(4, clrArray[random(0, 6)]);
+	robot.setLed(5, clrArray[random(0, 6)]);
 }
 
-void setLEDrandomDelay(int delayTime)
+void setLEDSequence()
 {
-	robot.setLed(0, clrArray[random(0, 5)]);
-	delay(delayTime);
-	robot.setLed(1, clrArray[random(0, 5)]);
-	delay(delayTime);
-	robot.setLed(2, clrArray[random(0, 5)]);
-	delay(delayTime);
-	robot.setLed(3, clrArray[random(0, 5)]);
-	delay(delayTime);
-	robot.setLed(4, clrArray[random(0, 5)]);
-	delay(delayTime);
-	robot.setLed(5, clrArray[random(0, 5)]);
-	delay(delayTime);
+	robot.setLed(0, clrArray[clrCount]);
+	robot.setLed(1, clrArray[clrCount]);
+	robot.setLed(2, clrArray[clrCount]);
+	robot.setLed(3, clrArray[clrCount]);
+	robot.setLed(4, clrArray[clrCount]);
+	robot.setLed(5, clrArray[clrCount]);
+	clrCount = (clrCount + 1) % 7;
 }

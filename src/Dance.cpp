@@ -44,11 +44,8 @@ Dance::Dance()
 
 void Dance::setRobot(uint j)
 {
-	j = j<920 ? j : 919;
-	int i = j/2;
-	//if (i > 427) 
-	i = i%460;
-	
+	j = j % ( NUMBER_OF_MOVES * 2 );
+	int i = j / 2;
 	
 	//height
 	if (heightArray[i] == HC)

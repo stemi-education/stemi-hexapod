@@ -38,8 +38,8 @@ For additional information please check http://www.stemi.education.
 #define SERVODRIVER_H
 
 #include "SharedData.h"
-#include <Preferences.h>
 #include "ServoController.h"
+#include "Preferences.h"
 
 class ServoDriver
 {
@@ -50,17 +50,16 @@ public:
 	void servoPower(bool power); //turn the servos on = 1 or off =0
 
 	int servoWrite();
-	
-	//Permanent storage
-	Preferences preferences;
-
-	void storageInit();
-	void storeCalibrationData();
-	void loadCalibrationData();
 
 	hw_timer_t * timer = NULL;
 
 	//Servos
 	ServoController sc;
+
+	//Permanent storage
+	Preferences preferences;
+	void storageInit();
+	void storeCalibrationData();
+	void loadCalibrationData();
 };
 #endif

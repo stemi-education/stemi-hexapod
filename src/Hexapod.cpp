@@ -52,6 +52,11 @@ void batteryDriver(void *sharedDataNew)
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		if (robot.batteryState.store == 1)
+		{
+			battery.calibrateBatteryPin();
+			robot.batteryState.store = 0;
+		}
 		battery.checkState();
 	}
 }
@@ -186,7 +191,7 @@ void dancingEngine(void *sharedDataNew)
 		vTaskDelayUntil(&xLastWakeTime, xFrequency2);
 		if (robot.mode == ROBOT_DANCE_MODE)
 		{
-			dance.tickStart();
+			//dance.tickStart();
 			xLastWakeTime = xTaskGetTickCount();
 		}
 		else
@@ -210,10 +215,7 @@ void dancingEngine(void *sharedDataNew)
 
 Hexapod::Hexapod()
 {
-	Serial.begin(115200);
-	Serial.println("Hexapod init");
-
-	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
+	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 4*1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
 	xTaskCreatePinnedToCore(walkingEngine, "walkingEngine", 3*4096, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
@@ -222,4 +224,5 @@ Hexapod::Hexapod()
 	xTaskCreatePinnedToCore(touchDriver, "touchDriver", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(dancingEngine, "dancingEngine", 2*4096, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
 
+	Serial.println("Hexapod initialized :)");
 }

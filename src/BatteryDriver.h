@@ -38,9 +38,15 @@ For additional information please check http://www.stemi.education.
 #define BATTERYDRIVER_H
 
 #define BATTERY_STATUS_PIN 35 //voltage is scaled to fit 3V max - see documentation
+#define BATTERY_PIN_CALIBRATION_REF_V 3.691 //referent voltage to calibrate battery pin
 
 #include "Arduino.h"
 #include "SharedData.h"
+
+#include <Preferences.h>
+
+#include "driver/adc.h"
+#include "esp_adc_cal.h"
 
 class BatteryDriver
 {
@@ -49,5 +55,10 @@ public:
 	void checkState();
 	float readBatteryVoltage();
 	float LPFvoltage(float valueNew);
+	void calibrateBatteryPin();
+
+	Preferences preferences;
+
+	float batteryPinCalibrationValue = 0;
 };
 #endif

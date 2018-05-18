@@ -74,7 +74,7 @@ For additional information please check http://www.stemi.education.
 #define ROBOT_DANCE_MODE 4
 #define ROBOT_EMPTY_MODE 10 //Custom mode for users to program
 
-#define ROBOT_PRE_CALIBRATION_MODE 21
+#define ROBOT_SETUP_MODE 21
 #define ROBOT_CALIBRATION_MODE 22
 #define ROBOT_BATTERY_EMPTY_MODE 23
 
@@ -126,6 +126,7 @@ static Color const YELLOW = { 255, 242, 0 };
 static Color const PURPLE = { 255, 0, 255 };
 static Color const CYAN = { 0, 255, 255 };
 static Color const WHITE = { 255, 255, 255 };
+static Color const ORANGE = { 255, 60, 0 };
 static Color const BLACK = { 0, 0, 0 };
 
 struct MovementData
@@ -232,6 +233,7 @@ struct BatteryState
 {
 	float voltage = 0;
 	uint8_t percentage = 0;
+	bool store = 0;
 };
 
 struct TouchState

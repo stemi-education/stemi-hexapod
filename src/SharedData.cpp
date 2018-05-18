@@ -38,6 +38,8 @@ For additional information please check http://www.stemi.education.
 
 SharedData:: SharedData()
 {
+	Serial.begin(115200);
+
 	moveCtrl.linearVelocity = 0;
 	moveCtrl.direction = PI / 2;
 	moveCtrl.angularVelocity = 0;
@@ -300,8 +302,8 @@ void SharedData::_setPose(float poseVectorNew[6])
 void SharedData::_setMode(int8_t modeNew)
 {
 	mode = modeNew;
-	Serial.print("mode set to: ");
-	Serial.println(mode);
+	//Serial.print("mode set to: ");
+	//Serial.println(mode);
 }
 
 int8_t SharedData::getMode()

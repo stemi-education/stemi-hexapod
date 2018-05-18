@@ -62,15 +62,26 @@ void RobotEngine::checkState()
 		break;
 	case ROBOT_BATTERY_EMPTY_MODE:
 		//rebooting the robot is the only way out of this mode
+		switch (touchState)
+		{
+		case TOUCH_0XX:
+			calibrateBattery(touchState, ROBOT_BATTERY_EMPTY_MODE);
+			break;
+		case TOUCH_XX0:
+			calibrateBattery(touchState, ROBOT_BATTERY_EMPTY_MODE);
+			break;
+		}
 		break;
 	case ROBOT_STANDBY_MODE:
 		switch (touchState)
 		{
 		case TOUCH_X0X:
-			robot._setMode(ROBOT_PRE_CALIBRATION_MODE);
+			robot._setMode(ROBOT_SETUP_MODE);
 			break;
 		case TOUCH_0X0:
 			robot._setMode(ROBOT_WALK_MODE);
+		case TOUCH_0XX:
+			robot.batteryState.store = 1;
 			break;
 		}
 		break;
@@ -78,7 +89,7 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case TOUCH_X0X:
-			robot._setMode(ROBOT_PRE_CALIBRATION_MODE);
+			robot._setMode(ROBOT_SETUP_MODE);
 			break;
 		case TOUCH_0X0:
 			robot._setMode(ROBOT_DANCE_MODE);
@@ -89,14 +100,14 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case TOUCH_X0X:
-			robot._setMode(ROBOT_PRE_CALIBRATION_MODE);
+			robot._setMode(ROBOT_SETUP_MODE);
 			break;
 		case TOUCH_0X0:
 			robot._setMode(ROBOT_USER_MODE);
 			break;
 		}
 		break;
-	case ROBOT_PRE_CALIBRATION_MODE:
+	case ROBOT_SETUP_MODE:
 		switch (touchState)
 		{
 		case TOUCH_000: //nothing is pressed - needed for default case
@@ -104,6 +115,12 @@ void RobotEngine::checkState()
 		case TOUCH_X0X:
 			robot._setMode(ROBOT_CALIBRATION_MODE);
 			robot.servoCtrl.mode = SERVO_CALIBRATION_MODE;
+			break;
+		case TOUCH_0XX:
+			calibrateBattery(touchState,ROBOT_WALK_MODE);
+			break;
+		case TOUCH_XX0:
+			calibrateBattery(touchState, ROBOT_WALK_MODE);
 			break;
 		default:
 			robot._setMode(ROBOT_WALK_MODE);
@@ -157,7 +174,7 @@ void RobotEngine::modesGO()
 	case ROBOT_STANDBY_MODE:
 		if (robot.BTConnectedCount)
 		{
-			robot._setLed(BLUE, BLUE, 2, 1);
+			robot.useLedInputData(&robot.btInputData);
 		}
 		else
 		{
@@ -199,7 +216,7 @@ void RobotEngine::modesGO()
 		robot.useLedInputData(&robot.userInputData);
 		break;
 
-	case ROBOT_PRE_CALIBRATION_MODE:
+	case ROBOT_SETUP_MODE:
 		robot._setLedBlinkingSpeed(0);
 		robot._setLedRotationSpeed(0);
 		robot._setLed(RED);
@@ -235,4 +252,33 @@ void RobotEngine::batteryCheck()
 	}
 }
 
+void RobotEngine::calibrateBattery(uint8_t touchID, int8_t exitMode)
+{
+	Serial.print("t: ");
+	Serial.print(touchID);
+	Serial.print(" key: ");
+	Serial.print(batteryCalibrationTouchPassword[batteryCalibrationTouchPasswordCounter]);
+	Serial.print(" c: ");
+	if (touchID == batteryCalibrationTouchPassword[batteryCalibrationTouchPasswordCounter])
+	{
+		batteryCalibrationTouchPasswordCounter++;
+		if (batteryCalibrationTouchPasswordCounter == 5)
+		{
+			Serial.println("calibrating battery");
+			robot.batteryState.store = 1;
+			batteryCalibrationTouchPasswordCounter = 0;
+			robot._setLed(YELLOW, BLACK, 2, 0);
+			robot._setLedRotationSpeed(5);
+			delay(500);
+			robot._setMode(exitMode);
+		}
+	}
+	else
+	{
+		//false key, exit
+		batteryCalibrationTouchPasswordCounter = 0;
+		robot._setMode(exitMode);
+	}
+	Serial.println(batteryCalibrationTouchPasswordCounter);
+}
 

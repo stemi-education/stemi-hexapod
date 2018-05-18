@@ -39,9 +39,10 @@ For additional information please check http://www.stemi.education.
 
 ServoDriver::ServoDriver()
 {
-	delay(200);
 	storageInit();
 	loadCalibrationData();
+
+	delay(200);
 	servoPower(1);
 	robot.servoCtrl.power = 1;
 }
@@ -129,28 +130,30 @@ void ServoDriver::storageInit()
 
 void ServoDriver::storeCalibrationData()
 {
-	Serial.println("writing byte data: ");
+	/*Serial.println("writing byte data: ");
 	for (int i = 0; i < 18; i++)
 	{
-		Serial.print(robot.servoCtrl.calibrationOffsetBytes[i]);
-		Serial.print(" ");
+	Serial.print(robot.servoCtrl.calibrationOffsetBytes[i]);
+	Serial.print(" ");
 	}
-	Serial.println();
+	Serial.println();*/
+	//int8_t dummyArray[18] = { 100, 0, 10, 0, 20, 10, 0, -70, -100, 0, 80, 50, -80, 0, 50, 0, -30, 70 };
 	preferences.putBytes("calibData", robot.servoCtrl.calibrationOffsetBytes, 18);
 }
 
 void ServoDriver::loadCalibrationData()
 {
+	Serial.println("loading calibration data");
 	/*Serial.println("array before reading: ");
 	for (int i = 0; i < 18; i++)
 	{
-		Serial.print((float)linData[i]);
-		Serial.print(" ");
+	Serial.print((float)linData[i]);
+	Serial.print(" ");
 	}
 	Serial.println();*/
 
 	size_t len = preferences.getBytes("calibData", robot.servoCtrl.calibrationOffsetBytes, 18);
-	
+
 	if (!len)
 	{
 		Serial.println("Data not stored...");
@@ -165,24 +168,24 @@ void ServoDriver::loadCalibrationData()
 	}
 	else
 	{
-		Serial.print("number of bytes read: ");
-		Serial.println(len);
+		//Serial.print("number of bytes read: ");
+		//Serial.println(len);
 	}
-	Serial.println("float array loaded: ");
+	/*Serial.println("float array loaded: ");
 
 	//converting form bytes [from -100 to 100] to radians
 	for (int i = 0; i < 18; i++)
 	{
-		
-		Serial.print(((int8_t)robot.servoCtrl.calibrationOffsetBytes[i]) / 100.0 * 0.2);
-		Serial.print(" ");
+
+	Serial.print(((int8_t)robot.servoCtrl.calibrationOffsetBytes[i]) / 100.0 * 0.2);
+	Serial.print(" ");
 	}
 	Serial.println();
 	Serial.println("byte array loaded: ");
 	for (int i = 0; i < 18; i++)
 	{
-		Serial.print(robot.servoCtrl.calibrationOffsetBytes[i]);
-		Serial.print(" ");
+	Serial.print(robot.servoCtrl.calibrationOffsetBytes[i]);
+	Serial.print(" ");
 	}
-	Serial.println();
+	Serial.println();*/
 }
