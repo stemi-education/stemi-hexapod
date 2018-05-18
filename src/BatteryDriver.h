@@ -40,6 +40,18 @@ For additional information please check http://www.stemi.education.
 #define BATTERY_STATUS_PIN 35 //voltage is scaled to fit 3V max - see documentation
 #define BATTERY_PIN_CALIBRATION_REF_V 3.691 //referent voltage to calibrate battery pin
 
+#define BATTERY_LOW_V 3.55
+#define BATTERY_MID1_V 3.65
+#define BATTERY_MID2_V 3.75
+#define BATTERY_HIGH_V 3.85
+
+#define BATTERY_EMPTY_P 0
+#define BATTERY_LOW_P 15
+#define BATTERY_MID_P 50
+#define BATTERY_HIGH_P 100
+
+#define BATTERY_HYSTERESIS 0.1
+
 #include "Arduino.h"
 #include "SharedData.h"
 

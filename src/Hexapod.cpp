@@ -44,7 +44,7 @@ void batteryDriver(void *sharedDataNew)
 	const TickType_t xFrequency = TASK_PERIOD_BATT;
 	xLastWakeTime = xTaskGetTickCount();
 
-	robot.batteryState.voltage =  battery.readBatteryVoltage();
+	robot.battery.voltage =  battery.readBatteryVoltage();
 	
 	battery.checkState();
 	vTaskPrioritySet(NULL, 2);
@@ -52,10 +52,10 @@ void batteryDriver(void *sharedDataNew)
 	while (1)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
-		if (robot.batteryState.store == 1)
+		if (robot.battery.store == 1)
 		{
 			battery.calibrateBatteryPin();
-			robot.batteryState.store = 0;
+			robot.battery.store = 0;
 		}
 		battery.checkState();
 	}
@@ -153,7 +153,7 @@ void btEngine(void *sharedDataNew)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		robot.BTConnectedCount = BLE.server->getConnectedCount();
-		BLE.batteryService->getCharacteristic(BATTERYLEVEL_CHARACTERISTIC_UUID)->setValue(&robot.batteryState.percentage, 1);
+		BLE.batteryService->getCharacteristic(BATTERYLEVEL_CHARACTERISTIC_UUID)->setValue(&robot.battery.percentage, 1);
 	}
 }
 
@@ -213,6 +213,8 @@ void dancingEngine(void *sharedDataNew)
 	}
 }
 
+
+
 Hexapod::Hexapod()
 {
 	xTaskCreatePinnedToCore(batteryDriver, "batteryDriver", 4*1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE); //temporarily high priority, just for the first run
@@ -222,7 +224,7 @@ Hexapod::Hexapod()
 	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(btEngine, "BtEngine", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(touchDriver, "touchDriver", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(dancingEngine, "dancingEngine", 2*4096, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
-
+	xTaskCreatePinnedToCore(dancingEngine, "dancingEngine", 2 * 4096, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
+	
 	Serial.println("Hexapod initialized :)");
 }

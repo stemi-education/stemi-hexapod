@@ -361,7 +361,7 @@ void SharedData::_setTouchPattern(uint8_t touchState)
 
 float SharedData::getBatteryVoltage()
 {
-	return robot.batteryState.voltage;
+	return robot.battery.voltage;
 }
 
 void SharedData::enterUserMode()

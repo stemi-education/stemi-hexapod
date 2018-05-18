@@ -50,7 +50,7 @@ void RobotEngine::checkState()
 	int touchState = 0;
 	if (robot.getMode() != ROBOT_USER_MODE) // if in user mode do nothing
 	{
-		batteryCheck();
+		//batteryCheck();
 		touchState = robot._getTouchPattern();
 	}
 	//make changes based on input and current robotMode
@@ -80,8 +80,9 @@ void RobotEngine::checkState()
 			break;
 		case TOUCH_0X0:
 			robot._setMode(ROBOT_WALK_MODE);
+			break;
 		case TOUCH_0XX:
-			robot.batteryState.store = 1;
+			robot.battery.store = 1;
 			break;
 		}
 		break;
@@ -241,16 +242,16 @@ void RobotEngine::modesGO()
 	}
 }
 
-void RobotEngine::batteryCheck()
+/*void RobotEngine::batteryCheck()
 {
-	//Serial.println(robot.batteryState.voltage);
+	//Serial.println(robot.battery.voltage);
 	if (robot.getBatteryVoltage() < ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD)
 	{
 		//shut down servos and put to battery empty mode
 		robot._setServoPower(0);
 		robot._setMode(ROBOT_BATTERY_EMPTY_MODE);
 	}
-}
+}*/
 
 void RobotEngine::calibrateBattery(uint8_t touchID, int8_t exitMode)
 {
@@ -265,7 +266,7 @@ void RobotEngine::calibrateBattery(uint8_t touchID, int8_t exitMode)
 		if (batteryCalibrationTouchPasswordCounter == 5)
 		{
 			Serial.println("calibrating battery");
-			robot.batteryState.store = 1;
+			robot.battery.store = 1;
 			batteryCalibrationTouchPasswordCounter = 0;
 			robot._setLed(YELLOW, BLACK, 2, 0);
 			robot._setLedRotationSpeed(5);

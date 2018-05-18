@@ -82,6 +82,11 @@ For additional information please check http://www.stemi.education.
 #define LED_PARAMETRIC_MODE 1
 #define LED_CUSTOM_MODE 2
 
+#define BATTERY_EMPTY_STATE 0
+#define BATTERY_LOW_STATE 1
+#define BATTERY_MID_STATE 2
+#define BATTERY_HIGH_STATE 3
+
 #define LED_R1 0
 #define LED_R2 1
 #define LED_R3 2
@@ -232,7 +237,8 @@ struct LedCtrl
 struct BatteryState
 {
 	float voltage = 0;
-	uint8_t percentage = 0;
+	uint8_t percentage = 50;
+	uint8_t state = BATTERY_MID_STATE;
 	bool store = 0;
 };
 
@@ -320,7 +326,7 @@ public:
 	PhisicsAndMoveParameters PMParam;
 	ServoCtrl servoCtrl;
 	LedCtrl ledCtrl;
-	BatteryState batteryState;
+	BatteryState battery;
 	TouchState touch;
 
 	int8_t mode = ROBOT_STANDBY_MODE;

@@ -55,17 +55,60 @@ BatteryDriver::BatteryDriver()
 
 void BatteryDriver::checkState()
 {
-	robot.batteryState.voltage = LPFvoltage(readBatteryVoltage());
-	float minVoltage = 3.6, maxVoltage = 3.85;
-	
-	robot.batteryState.percentage = min(max(robot.batteryState.voltage - minVoltage, 0), maxVoltage-minVoltage)/(maxVoltage-minVoltage)*100;
+	robot.battery.voltage = readBatteryVoltage();// LPFvoltage(readBatteryVoltage());
+
+	switch (robot.battery.state)
+	{
+	case BATTERY_LOW_STATE:
+		//from low to mid
+		if (robot.battery.voltage > BATTERY_MID1_V + BATTERY_HYSTERESIS)
+		{
+			robot.battery.state = BATTERY_MID_STATE;
+			robot.battery.percentage = BATTERY_MID_P;
+		}
+		//from mid to low
+		if (robot.battery.voltage < BATTERY_LOW_V - BATTERY_HYSTERESIS/2)
+		{
+			robot.battery.state = BATTERY_EMPTY_STATE;
+			robot.battery.percentage = BATTERY_EMPTY_P;
+			//shut down servos and put to battery empty mode
+			robot._setServoPower(0);
+			robot._setMode(ROBOT_BATTERY_EMPTY_MODE);
+		}
+		break;
+	case BATTERY_MID_STATE:
+		//from mid to high
+		if (robot.battery.voltage > BATTERY_MID2_V + BATTERY_HYSTERESIS)
+		{
+			robot.battery.state = BATTERY_HIGH_STATE;
+			robot.battery.percentage = BATTERY_HIGH_P;
+		}
+		//from mid to low
+		if (robot.battery.voltage < BATTERY_MID1_V - BATTERY_HYSTERESIS)
+		{
+			robot.battery.state = BATTERY_LOW_STATE;
+			robot.battery.percentage = BATTERY_LOW_P;
+		}
+		break;
+	case BATTERY_HIGH_STATE:
+		//from high to mid
+		if (robot.battery.voltage < BATTERY_MID2_V - BATTERY_HYSTERESIS)
+		{
+			robot.battery.state = BATTERY_MID_STATE;
+			robot.battery.percentage = BATTERY_MID_P;
+		}
+		break;
+	}
+
 	Serial.print(batteryPinCalibrationValue);
 	Serial.print(" ");
 	Serial.print(readBatteryVoltage());
 	Serial.print(" ");
-	Serial.print(robot.batteryState.voltage);
+	Serial.print(robot.battery.voltage);
 	Serial.print(" ");
-	Serial.println(robot.batteryState.percentage);
+	Serial.print(robot.battery.state);
+	Serial.print(" ");
+	Serial.println(robot.battery.percentage);
 }
 
 float BatteryDriver::readBatteryVoltage()
@@ -77,7 +120,7 @@ float BatteryDriver::readBatteryVoltage()
 float BatteryDriver::LPFvoltage(float valueNew)
 {
 	float alpha = 0.99;
-	return alpha * robot.batteryState.voltage + (1 - alpha)*(valueNew);
+	return alpha * robot.battery.voltage + (1 - alpha)*(valueNew);
 }
 
 void BatteryDriver::calibrateBatteryPin()

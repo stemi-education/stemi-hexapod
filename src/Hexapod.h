@@ -53,7 +53,6 @@ For additional information please check http://www.stemi.education.
 #include "touchDriver.h"
 #include "Dance.h"
 #include "Names.h"
-
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
@@ -62,6 +61,8 @@ class Hexapod
 {
 public:
 	Hexapod();
+
+	Preferences preferences;
 };
 
 #endif
