@@ -40,7 +40,7 @@ For additional information please check http://www.stemi.education.
 ProductionVersion::ProductionVersion()
 {
 	preferences.begin("my-app", false);
-	version = preferences.getUInt("hexapodVersion", 0);
+	version = preferences.getUInt("hexVersionMajor", 0);
 }
 
 void ProductionVersion::check()
@@ -50,12 +50,14 @@ void ProductionVersion::check()
 		
 		Serial.printf("Version not burned\n");
 #ifdef ENABLE_VERSION_BURNING
-		Serial.printf("Burning v%d.%02d\n", HEXAPOD_VERSION / 100, HEXAPOD_VERSION % 100);
-		preferences.putUInt("hexapodVersion", HEXAPOD_VERSION);
+		Serial.printf("Burning STEMI Hexapod v%d.%d.%d\n", HEXAPOD_VERSION_MAJOR, HEXAPOD_VERSION_MINOR, HEXAPOD_VERSION_PATCH);
+		preferences.putUInt("hexVersionMajor", HEXAPOD_VERSION_MAJOR);
+		preferences.putUInt("hexVersionMinor", HEXAPOD_VERSION_MINOR);
+		preferences.putUInt("hexVersionPatch", HEXAPOD_VERSION_PATCH);
 #endif // ENABLE_VERSION_BURNING
 	}
 	else
 	{
-		Serial.printf("STEMI Hexapod v%d.%02d\n", HEXAPOD_VERSION / 100, HEXAPOD_VERSION % 100);
+		Serial.printf("\n***STEMI Hexapod v%d.%d.%d***\n\n", HEXAPOD_VERSION_MAJOR, HEXAPOD_VERSION_MINOR, HEXAPOD_VERSION_PATCH);
 	}
 }

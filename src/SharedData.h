@@ -43,7 +43,9 @@ For additional information please check http://www.stemi.education.
 #include "WProgram.h"
 #endif
 
-#define HEXAPOD_VERSION 200
+#define HEXAPOD_VERSION_MAJOR 2
+#define HEXAPOD_VERSION_MINOR 0
+#define HEXAPOD_VERSION_PATCH 0
 #define ENABLE_VERSION_BURNING
 #define DEBUG 
 //#define DEBUG_VOLTAGES

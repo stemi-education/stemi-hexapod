@@ -41,12 +41,12 @@ LedDriver::LedDriver(): strip(LED_COUNT, LED_PIN)
 {
 	strip.Begin();
 	strip.SetBrightness(255);
-	strip.SetPixelColor(0, RgbColor(255, 0, 0));
-	strip.SetPixelColor(1, RgbColor(100, 100, 0));
-	strip.SetPixelColor(2, RgbColor(0, 255, 0));
-	strip.SetPixelColor(3, RgbColor(0, 100, 100));
-	strip.SetPixelColor(4, RgbColor(0, 0, 255));
-	strip.SetPixelColor(5, RgbColor(100, 0, 100));
+	strip.SetPixelColor(0, RgbColor(0, 0, 0));
+	strip.SetPixelColor(1, RgbColor(0, 0, 0));
+	strip.SetPixelColor(2, RgbColor(0, 0, 0));
+	strip.SetPixelColor(3, RgbColor(0, 0, 0));
+	strip.SetPixelColor(4, RgbColor(0, 0, 0));
+	strip.SetPixelColor(5, RgbColor(0, 0, 0));
 	delay(1);
 	strip.Show();
 }

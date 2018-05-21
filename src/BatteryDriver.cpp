@@ -50,14 +50,14 @@ BatteryDriver::BatteryDriver()
 	preferences.begin("my-app", false);
 	batteryPinCalibrationValue = preferences.getFloat("batCalibVal",0);
 #ifdef DEBUG
-	Serial.print("batPinCalibVal loaded: ");
+	Serial.println("Battery sense calibration data loaded: ");
 	Serial.println(batteryPinCalibrationValue);
 #endif // DEBUG
 }
 
 void BatteryDriver::checkState()
 {
-	robot.battery.voltage = readBatteryVoltage();// LPFvoltage(readBatteryVoltage());
+	robot.battery.voltage = LPFvoltage(readBatteryVoltage());
 
 	switch (robot.battery.state)
 	{
@@ -125,7 +125,7 @@ float BatteryDriver::readBatteryVoltage()
 
 float BatteryDriver::LPFvoltage(float valueNew)
 {
-	float alpha = 0.99;
+	float alpha = 0.3;
 	return alpha * robot.battery.voltage + (1 - alpha)*(valueNew);
 }
 

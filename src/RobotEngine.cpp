@@ -235,23 +235,12 @@ void RobotEngine::modesGO()
 		robot._setLedBlinkingSpeed(0.5);
 		robot._setLedRotationSpeed(0);
 
-		robot._setLed(RED);
+		robot._setLed(RED, RED ,10, 0);
 		//turn off the servos
 		robot._setServoPower(0);
 		break;
 	}
 }
-
-/*void RobotEngine::batteryCheck()
-{
-	//Serial.println(robot.battery.voltage);
-	if (robot.getBatteryVoltage() < ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD)
-	{
-		//shut down servos and put to battery empty mode
-		robot._setServoPower(0);
-		robot._setMode(ROBOT_BATTERY_EMPTY_MODE);
-	}
-}*/
 
 void RobotEngine::calibrateBattery(uint8_t touchID, int8_t exitMode)
 {
