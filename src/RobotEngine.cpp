@@ -47,6 +47,9 @@ RobotEngine::RobotEngine()
 
 void RobotEngine::checkState()
 {
+	Serial.print(robot.moveCtrl.timeout);
+	Serial.print(" ");
+	Serial.println(robot.btInputData.moveDuration);
 	int touchState = 0;
 	if (robot.getMode() != ROBOT_USER_MODE) // if in user mode do nothing
 	{
@@ -94,6 +97,14 @@ void RobotEngine::checkState()
 			break;
 		case TOUCH_0X0:
 			robot._setMode(ROBOT_DANCE_MODE);
+			break;
+		case TOUCH_00X:
+			if (!robot.BTConnectedCount)
+				robot._move(5, PI / 2, 0, 2);
+			break;
+		case TOUCH_X00:
+			if (!robot.BTConnectedCount)
+				robot._move(5, -PI / 2, 0, 2);
 			break;
 		}
 		break;
@@ -199,7 +210,6 @@ void RobotEngine::modesGO()
 		else
 		{
 			robot._setLed(BLUE, WHITE, 6, PI / 2);
-			robot._move(0, 0, 0);
 			robot._setHeight(4);
 		}
 		break;

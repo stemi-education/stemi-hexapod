@@ -43,8 +43,6 @@ void batteryDriver(void *sharedDataNew)
 	TickType_t xLastWakeTime;
 	const TickType_t xFrequency = TASK_PERIOD_BATT;
 	xLastWakeTime = xTaskGetTickCount();
-
-	robot.battery.voltage =  battery.readBatteryVoltage();
 	
 	battery.checkState();
 	vTaskPrioritySet(NULL, 2);
@@ -141,7 +139,7 @@ void btEngine(void *sharedDataNew)
 
 	esp_efuse_mac_get_default(mac);
 		
-	BluetoothLowEnergy BLE("STEMI " + names.generateName(names.sumStringMemberValues(mac)));
+	BluetoothLowEnergy BLE("STEMI Hexapod " + names.generateName(names.sumStringMemberValues(mac)));
 	
 	delay(2000);
 
@@ -225,9 +223,9 @@ Hexapod::Hexapod()
 	xTaskCreatePinnedToCore(servoDriver, "servoDriver", 2*4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(ledDriver, "ledDriver", 1024, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(robotEngine, "robotEngine", 1024, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(btEngine, "BtEngine", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(btEngine, "btEngine", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(touchDriver, "touchDriver", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
-	xTaskCreatePinnedToCore(dancingEngine, "dancingEngine", 2 * 4096, NULL, 5, NULL, ARDUINO_RUNNING_CORE);
+	xTaskCreatePinnedToCore(dancingEngine, "dancingEngine", 2 * 4096, NULL, 4, NULL, ARDUINO_RUNNING_CORE);
 	
 	Serial.printf("\nSTEMI Hexapod initialized :)\n\n");
 }

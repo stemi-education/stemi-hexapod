@@ -159,7 +159,7 @@ void Body::setGaitCurFi(double gaitCurFiNew)
 	}
 }
 
-void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew) {
+void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew) {
 	speed = speedNew;
 	double moveCenterNew[2];
 	moveDeltaFi = deltaFiNew == 0 ? speed / robot.PMParam.freq / 100000 : deltaFiNew / robot.PMParam.freq;
@@ -169,8 +169,6 @@ void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nM
 	moveCenterNew[1] = r*sin(fiNew - PI / 2);
 
 	for (int i = 0; i < nWalkingLegs; i++) legs[walkingLegsMap[i]].setMoveParam(moveCenterNew, moveDeltaFi); //TODO wrapper
-
-	robot.moveCtrl.timeout = nMoveNew;
 }
 
 void Body::setHomeParam(double moveDeltaNew) {
@@ -271,12 +269,12 @@ void Body::home(float moveDeltaNew) {
 void Body::run() 
 {
 
-	setMoveParam(robot.moveCtrl.linearVelocity, robot.moveCtrl.direction, robot.moveCtrl.angularVelocity, robot.moveCtrl.timeout);
+	setMoveParam(robot.moveCtrl.linearVelocity, robot.moveCtrl.direction, robot.moveCtrl.angularVelocity);
 
 	if (robot.moveCtrl.timeout > 0) robot.moveCtrl.timeout--; //check the duration of the command and reduce nMove
 	else if (robot.moveCtrl.timeout == 0)
 	{
-		setMoveParam(0, PI / 2, 0, robot.moveCtrl.timeout); //if nMove == 0 go to home ... no command present
+		setMoveParam(0, PI / 2, 0); //if nMove == 0 go to home ... no command present
 		//robot.moveCtrl.poseVector[0];
 		//robot.moveCtrl.poseVector[1] = 0;
 		//robot.moveCtrl.poseVector[2] = 0; STAVITI DA BUDE U CTRL
@@ -316,7 +314,8 @@ float PT1(float input, float valuePrev, float alpha) {
 	return alpha*valuePrev + (1 - alpha)*(input);
 }
 void Body::trPT1() {
-	trCurrent[0] = PT1(robot.moveCtrl.poseVector[0], trCurrent[0], robot.PMParam.poseChangeSpeed - 0.02);
+	Serial.println();
+	trCurrent[0] = PT1(robot.moveCtrl.poseVector[0], trCurrent[0], robot.PMParam.poseChangeSpeed);
 	trCurrent[1] = PT1(robot.moveCtrl.poseVector[1], trCurrent[1], robot.PMParam.poseChangeSpeed - 0.02);
 	trCurrent[2] = PT1(robot.moveCtrl.poseVector[2], trCurrent[2], robot.PMParam.poseChangeSpeed - 0.02);
 	trCurrent[3] = PT1(robot.moveCtrl.poseVector[3], trCurrent[3], robot.PMParam.poseChangeSpeed);

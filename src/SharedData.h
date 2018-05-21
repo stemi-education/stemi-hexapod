@@ -64,6 +64,9 @@ For additional information please check http://www.stemi.education.
 #define TASK_PERIOD_BATT 200
 #define TASK_PERIOD_DANCE 275 //half of a songs beat
 
+//movement duration
+#define MOVE_DURATION_DEFAULT 10
+
 //servo modes
 #define SERVO_WALKING_MODE 0 //mode for walking
 #define SERVO_CALIBRATION_MODE 1 //mode for servo calibration
@@ -94,6 +97,8 @@ For additional information please check http://www.stemi.education.
 #define BATTERY_MID_STATE 2
 #define BATTERY_HIGH_STATE 3
 
+#define MIN_TURN_ON_VOLTAGE 3.65
+
 #define LED_R1 0
 #define LED_R2 1
 #define LED_R3 2
@@ -109,7 +114,6 @@ For additional information please check http://www.stemi.education.
 #define LED_L3_ANGLE 120
 
 //movement parameters
-#define MOVE_CTRL_TIMER_MAX 200; //iterations
 #define MOVE_SPEED 30 //%
 #define TURN_SPEED 50 //%
 #define TILT_AMMOUNT 70 //%
@@ -181,7 +185,7 @@ struct InputData : MovementData, PoseData, LedData
 
 	//Misc - additional data
 	//int8_t robotMode; //[check ROBOT_XX_MODE macros]mode
-	int8_t moveTimeout = 0; // seconds of current command execution [-2 = already written, -1 = inf, 0 = go home, 1-100 = seconds to move]
+	int8_t moveDuration = 0; // seconds of current command execution [-2 = already written, -1 = inf, 0 = go home, 1-100 = seconds to move]
 	int8_t gaitID = 3; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
 	bool servoPower = 1; // [on,off]power
@@ -291,10 +295,10 @@ public:
 	void _setLed(uint8_t ledNo, Color color);
 
 	//Movement
-	void move(userPresetInputData movement);
-	void move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity);
-	void rotate(userPresetInputData rotation);
-	void _move(float linearVelocity, float direction, float angularVelocity, int timeoutNew = -1);
+	void move(userPresetInputData movement, float duration = MOVE_DURATION_DEFAULT);
+	void move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity, float duration = MOVE_DURATION_DEFAULT);
+	void rotate(userPresetInputData rotation, float duration = MOVE_DURATION_DEFAULT);
+	void _move(float linearVelocity, float direction, float angularVelocity, float duration = MOVE_DURATION_DEFAULT);
 	void tilt(userPresetInputData tiltation);
 	void tilt(int8_t rotationXNew, int8_t rotationYNew, int8_t rotationZNew);
 	void stretch(userPresetInputData stretchment);

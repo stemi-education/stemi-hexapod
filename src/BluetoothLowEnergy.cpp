@@ -62,6 +62,8 @@ public:
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
 		*data = uint8_t(pCharacteristic->getValue().c_str()[0]);
+		//duration of the command
+		robot.btInputData.moveDuration = INT8_MAX;
 	}
 };
 

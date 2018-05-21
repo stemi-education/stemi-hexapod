@@ -61,7 +61,7 @@ public:
 	void incGaitFi(double gaitStep);
 	void setGaitUpDown(double gaitArray[12]);
 	void setGaitCurFi(double gaitCurFiNew);
-	void setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew);
+	void setMoveParam(double speedNew, double fiNew, double deltaFiNew);
 	void setHomeParam(double moveDeltaNew);
 	void setStepHight(double stepHightNew);
 	void scaleStepFi();

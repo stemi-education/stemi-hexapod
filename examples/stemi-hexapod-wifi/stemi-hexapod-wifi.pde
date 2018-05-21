@@ -65,6 +65,14 @@ void loop()
 	{
 		robot.exitUserMode();
 	}
+	else if (touchPattern == TOUCH_0XX)
+	{
+		robot.move(FORWARD,2);
+	}
+	else if (touchPattern == TOUCH_XX0)
+	{
+		robot.move(BACKWARD,2);
+	}
 	delay(20);
 }
 

@@ -56,18 +56,21 @@ SharedData:: SharedData()
 	userInputData.translationZ = 50;
 	userInputData.ledMode = LED_PARAMETRIC_MODE;
 	userInputData.ledSpreadRatio = 100;
-	userInputData.poseSpeed = 50;
+	userInputData.poseSpeed = 60;
+	userInputData.moveDuration = -1;
 
 	btInputData.translationZ = 50;
 	btInputData.ledMode = LED_PARAMETRIC_MODE;
 	btInputData.ledPrimarClr[2] = 255; //set initial color to blue
 	btInputData.ledSpreadRatio = 100;
-	btInputData.poseSpeed = 50;
+	btInputData.poseSpeed = 60;
+	btInputData.moveDuration = -1;
 
 	danceInputData.translationZ = 50;
 	danceInputData.ledMode = LED_PARAMETRIC_MODE;
 	danceInputData.ledSpreadRatio = 100;
 	danceInputData.poseSpeed = 80;
+	danceInputData.moveDuration = -1;
 
 }
 
@@ -80,7 +83,7 @@ void SharedData::writeServoAngles(float servoAnglesNew[18])
 //use input from pointed structure [bluetooth,user]
 void SharedData::useGeneralInputData(InputData *data)
 {//TODO sperate this to multiple functions
-	moveCtrl.timeout = data->moveTimeout;
+	//moveCtrl.timeout = data->moveTimeout;
 	servoCtrl.power = data->servoPower;
 }
 
@@ -101,6 +104,14 @@ void SharedData::useMoveInputData(InputData *data)
 	PMParam.gaitID = data->gaitID;
 	PMParam.stepHeight = data->stepHeight / 100.0 * 4;
 	PMParam.poseChangeSpeed = 0.99 - (0.00014 / -0.055)*(1 - exp(0.055*data->poseSpeed));
+	
+	if (data->moveDuration > 0)
+	{
+		moveCtrl.timeout = data->moveDuration * PMParam.freq;
+		data->moveDuration = 0;
+	}
+	else if (data->moveDuration == -1)
+		moveCtrl.timeout = -1;
 }
 
 void SharedData::useLedInputData(InputData *data)
@@ -220,10 +231,13 @@ void SharedData::_setLedBlinkingSpeed(float blinkingSpeed)
 	ledCtrl.blinkingSpeed = blinkingSpeed;
 }
 
-void SharedData::move(userPresetInputData movement)
+void SharedData::move(userPresetInputData movement, float duration)
 {
 	userInputData.linearVelocity = movement.linearVelocity;
 	userInputData.direction = movement.direction;
+	userInputData.moveDuration = duration;
+
+
 }
 
 /*void SharedData::move(userPresetInputData movement, int8_t duration)
@@ -234,24 +248,26 @@ void SharedData::move(userPresetInputData movement)
 	userInputData.moveTimeout = duration;
 }*/
 
-void SharedData::_move(float linearVelocity, float direction, float angularVelocity, int timeoutNew)
+void SharedData::_move(float linearVelocity, float direction, float angularVelocity, float duration)
 {
 	moveCtrl.linearVelocity = linearVelocity;
-	moveCtrl.direction = direction * PI / 180;
+	moveCtrl.direction = direction;
 	moveCtrl.angularVelocity = angularVelocity * PI / 180;
-	moveCtrl.timeout = timeoutNew;
+	moveCtrl.timeout = duration * PMParam.freq;
 }
 
-void SharedData::move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity)
+void SharedData::move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity, float duration)
 {
 	userInputData.linearVelocity = linearVelocity;
 	userInputData.direction = direction * PI / 180;
 	userInputData.angularVelocity = angularVelocity * PI / 180;
+	userInputData.moveDuration = duration;
 }
 
-void SharedData::rotate(userPresetInputData rotation)
+void SharedData::rotate(userPresetInputData rotation, float duration)
 {
 	userInputData.angularVelocity = rotation.angularVelocity;
+	userInputData.moveDuration = duration;
 }
 
 void SharedData::tilt(userPresetInputData tiltation)
@@ -302,6 +318,7 @@ void SharedData::_setPose(float poseVectorNew[6])
 void SharedData::_setMode(int8_t modeNew)
 {
 	mode = modeNew;
+	moveCtrl.timeout = 0;
 	//Serial.print("mode set to: ");
 	//Serial.println(mode);
 }
@@ -367,10 +384,12 @@ float SharedData::getBatteryVoltage()
 void SharedData::enterUserMode()
 {
 	robot._setMode(ROBOT_USER_MODE);
+	moveCtrl.timeout = 0;
 }
 
 void SharedData::exitUserMode()
 {
 	robot._setMode(ROBOT_WALK_MODE);
+	moveCtrl.timeout = 0;
 }
 

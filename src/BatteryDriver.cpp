@@ -53,6 +53,22 @@ BatteryDriver::BatteryDriver()
 	Serial.println("Battery sense calibration data loaded: ");
 	Serial.println(batteryPinCalibrationValue);
 #endif // DEBUG
+
+	robot.battery.voltage = readBatteryVoltage();
+	for (uint8_t i = 0; i < 10; i++)
+	{
+		checkState();
+		Serial.println(robot.battery.voltage);
+		delay(2);
+	}
+	//scheck bat state
+	if (robot.battery.voltage > MIN_TURN_ON_VOLTAGE)
+		robot._setServoPower(1);
+	else
+	{
+		robot._setServoPower(0);
+		robot._setMode(ROBOT_BATTERY_EMPTY_MODE);
+	}
 }
 
 void BatteryDriver::checkState()
@@ -133,8 +149,11 @@ void BatteryDriver::calibrateBatteryPin()
 {
 	batteryPinCalibrationValue = 0;
 	float batteryPinCalibrationValueSum = 0;
-	for(int i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
+	{
 		batteryPinCalibrationValueSum += BATTERY_PIN_CALIBRATION_REF_V - readBatteryVoltage();
+		delay(2);
+	}
 	batteryPinCalibrationValue += batteryPinCalibrationValueSum / 10;
 	preferences.putFloat("batCalibVal", batteryPinCalibrationValue);
 	Serial.print("Stored battery calibration value: ");

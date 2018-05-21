@@ -57,6 +57,7 @@ void Dance::setRobot(uint j)
 	robot.danceInputData.linearVelocity = movements[movesArray[i]].linearVelocity;
 	robot.danceInputData.direction = movements[movesArray[i]].direction;
 	robot.danceInputData.angularVelocity = movements[movesArray[i]].angularVelocity;
+	robot.danceInputData.moveDuration = MOVE_DURATION_DEFAULT;
 
 	//pose
 	robot.danceInputData.translationX = poses[poseArray[i]].translationX;

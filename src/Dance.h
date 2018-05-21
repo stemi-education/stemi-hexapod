@@ -127,7 +127,7 @@ public:
 	uint8_t heightArray[NUMBER_OF_MOVES] =
 	{
 		//first  72
-		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,
+		0,  0,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,
 		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HL,  HM,	HL,	HM,	0,	0,	0,	0,
 
 		//solo 228
@@ -222,8 +222,8 @@ public:
 		{ 30,		180,		0 }, //MB 2
 		{ 30,		90,				0 }, //ML 3
 		{ 30,		-90,		0 },	 //Mr 4
-		{ 0,		90,				100 }, //RL 5
-		{ 0,		90,				-100 } //RR 6
+		{ 0,		90,				50 }, //RL 5
+		{ 0,		90,				-50 } //RR 6
 	};
 	uint8_t heights[5] = { 50, 40, 65, 100, 20};
 	PoseData poses[17] = 

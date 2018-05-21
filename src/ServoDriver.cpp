@@ -39,12 +39,9 @@ For additional information please check http://www.stemi.education.
 
 ServoDriver::ServoDriver()
 {
+	delay(50);
 	storageInit();
 	loadCalibrationData();
-
-	delay(200);
-	servoPower(1);
-	robot.servoCtrl.power = 1;
 }
 
 void ServoDriver::servoPower(bool power)
@@ -55,8 +52,6 @@ void ServoDriver::servoPower(bool power)
 
 int ServoDriver::servoWrite()
 {
-	//Serial.print(" ");
-	//Serial.println(robot.servoCtrl.power);
 	servoPower(robot.servoCtrl.power);
 	
 	//SERVO MODES
