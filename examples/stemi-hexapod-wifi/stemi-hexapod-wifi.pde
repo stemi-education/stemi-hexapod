@@ -50,7 +50,7 @@ uint8_t clrCount = 0;
 
 void loop()
 {
-	
+
 	int touchPattern = robot.getTouchPattern();
 	if (touchPattern == TOUCH_00X)
 	{

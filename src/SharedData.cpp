@@ -120,7 +120,7 @@ void SharedData::useLedInputData(InputData *data)
 	Color primarClr = { data->ledPrimarClr[0] , data->ledPrimarClr[1] , data->ledPrimarClr[2] };
 	Color secondarClr = { data->ledSecondarClr[0] , data->ledSecondarClr[1] , data->ledSecondarClr[2] };
 	_setLed(primarClr, secondarClr,
-		data->ledSpreadRatio / 100.0 * 10,
+		0.000121716*pow(data->ledSpreadRatio, 2.584963),
 		data->ledDiretion * PI / 180 + PI / 2);
 	_setLedRotationSpeed(data->ledRotationSpeed / 100.0 * 10);
 	_setLedBlinkingSpeed(data->ledBlinkingSpeed / 100.0 * 10);

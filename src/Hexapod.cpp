@@ -227,5 +227,6 @@ Hexapod::Hexapod()
 	xTaskCreatePinnedToCore(touchDriver, "touchDriver", 2 * 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 	xTaskCreatePinnedToCore(dancingEngine, "dancingEngine", 2 * 4096, NULL, 4, NULL, ARDUINO_RUNNING_CORE);
 	
+	delay(200);
 	Serial.printf("\nSTEMI Hexapod initialized :)\n\n");
 }
