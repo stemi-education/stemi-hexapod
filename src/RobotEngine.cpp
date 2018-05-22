@@ -76,10 +76,10 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case TOUCH_X0X:
-			robot._setMode(ROBOT_SETUP_MODE);
+			robot.setMode(ROBOT_SETUP_MODE);
 			break;
 		case TOUCH_0X0:
-			robot._setMode(ROBOT_WALK_MODE);
+			robot.setMode(ROBOT_WALK_MODE);
 			break;
 		case TOUCH_0XX:
 			robot.battery.store = 1;
@@ -90,10 +90,10 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case TOUCH_X0X:
-			robot._setMode(ROBOT_SETUP_MODE);
+			robot.setMode(ROBOT_SETUP_MODE);
 			break;
 		case TOUCH_0X0:
-			robot._setMode(ROBOT_DANCE_MODE);
+			robot.setMode(ROBOT_DANCE_MODE);
 			break;
 		case TOUCH_00X:
 			if (!robot.BTConnectedCount)
@@ -109,10 +109,10 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case TOUCH_X0X:
-			robot._setMode(ROBOT_SETUP_MODE);
+			robot.setMode(ROBOT_SETUP_MODE);
 			break;
 		case TOUCH_0X0:
-			robot._setMode(ROBOT_USER_MODE);
+			robot.setMode(ROBOT_USER_MODE);
 			break;
 		}
 		break;
@@ -122,7 +122,7 @@ void RobotEngine::checkState()
 		case TOUCH_000: //nothing is pressed - needed for default case
 			break;
 		case TOUCH_X0X:
-			robot._setMode(ROBOT_CALIBRATION_MODE);
+			robot.setMode(ROBOT_CALIBRATION_MODE);
 			robot.servoCtrl.mode = SERVO_CALIBRATION_MODE;
 			batteryCalibrationTouchPasswordCounter = 0; //reset the counter for battery calibration password
 			break;
@@ -133,7 +133,7 @@ void RobotEngine::checkState()
 			calibrateBattery(touchState, ROBOT_WALK_MODE);
 			break;
 		default:
-			robot._setMode(ROBOT_WALK_MODE);
+			robot.setMode(ROBOT_WALK_MODE);
 			batteryCalibrationTouchPasswordCounter = 0; //reset the counter for battery calibration password
 			break;
 		}
@@ -142,7 +142,7 @@ void RobotEngine::checkState()
 		switch (touchState)
 		{
 		case TOUCH_X0X: //save and exit
-			robot._setMode(ROBOT_WALK_MODE);
+			robot.setMode(ROBOT_WALK_MODE);
 			robot.storeServoCalibrationData();
 			robot.servoCtrl.mode = SERVO_WALKING_MODE;
 			break;
@@ -272,14 +272,14 @@ void RobotEngine::calibrateBattery(uint8_t touchID, int8_t exitMode)
 			robot._setLed(YELLOW, BLACK, 2, 0);
 			robot._setLedRotationSpeed(5);
 			delay(500);
-			robot._setMode(exitMode);
+			robot.setMode(exitMode);
 		}
 	}
 	else
 	{
 		//false key, exit
 		batteryCalibrationTouchPasswordCounter = 0;
-		robot._setMode(exitMode);
+		robot.setMode(exitMode);
 	}
 	Serial.println(batteryCalibrationTouchPasswordCounter);
 }

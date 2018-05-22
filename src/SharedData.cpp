@@ -315,7 +315,7 @@ void SharedData::_setPose(float poseVectorNew[6])
 	moveCtrl.poseVector[5] = poseVectorNew[5];
 }
 
-void SharedData::_setMode(int8_t modeNew)
+void SharedData::setMode(int8_t modeNew)
 {
 	mode = modeNew;
 	moveCtrl.timeout = 0;
@@ -383,13 +383,13 @@ float SharedData::getBatteryVoltage()
 
 void SharedData::enterUserMode()
 {
-	robot._setMode(ROBOT_USER_MODE);
+	robot.setMode(ROBOT_USER_MODE);
 	moveCtrl.timeout = 0;
 }
 
 void SharedData::exitUserMode()
 {
-	robot._setMode(ROBOT_WALK_MODE);
+	robot.setMode(ROBOT_WALK_MODE);
 	moveCtrl.timeout = 0;
 }
 

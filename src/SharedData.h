@@ -322,7 +322,7 @@ public:
 	float getBatteryVoltage();
 
 	//Robot modes functions
-	void _setMode(int8_t modeNew);
+	void setMode(int8_t modeNew);
 	int8_t getMode();
 	void enterUserMode();
 	void exitUserMode();

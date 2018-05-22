@@ -67,7 +67,7 @@ BatteryDriver::BatteryDriver()
 	{
 		Serial.println("Battery too low on startup");
 		robot._setServoPower(0);
-		robot._setMode(ROBOT_BATTERY_EMPTY_MODE);
+		robot.setMode(ROBOT_BATTERY_EMPTY_MODE);
 	}
 }
 
@@ -91,7 +91,7 @@ void BatteryDriver::checkState()
 			robot.battery.percentage = BATTERY_EMPTY_P;
 			//shut down servos and put to battery empty mode
 			robot._setServoPower(0);
-			robot._setMode(ROBOT_BATTERY_EMPTY_MODE);
+			robot.setMode(ROBOT_BATTERY_EMPTY_MODE);
 		}
 		break;
 	case BATTERY_MID_STATE:
