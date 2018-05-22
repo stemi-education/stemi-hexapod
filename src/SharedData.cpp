@@ -179,7 +179,7 @@ void SharedData::_setLed(Color color)
 	}
 }
 
-void SharedData::setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio, int8_t direction)
+void SharedData::setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio, int16_t direction)
 {
 	userInputData.ledMode = LED_PARAMETRIC_MODE;
 	userInputData.ledPrimarClr[0] = primarClr.r;

@@ -42,13 +42,15 @@ void setup()
 	hexapod = new Hexapod();
 	robot.setLed(GREEN);
 	robot.setHeight(50);
-	}
+	//robot.setMode(ROBOT_USER_MODE);
+}
 
 Color clrArray[7] = {BLUE, YELLOW, GREEN, CYAN, PURPLE, RED, ORANGE};
 uint8_t clrCount = 0;
 
 void loop()
 {
+	
 	int touchPattern = robot.getTouchPattern();
 	if (touchPattern == TOUCH_00X)
 	{

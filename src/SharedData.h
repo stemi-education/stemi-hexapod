@@ -285,7 +285,7 @@ public:
 	//LED
 	void setLed(Color color);
 	void _setLed(Color color);
-	void setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio, int8_t direction);
+	void setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio, int16_t direction);
 	void _setLed(Color primarClr, Color secondarClr, float spreadRatio, float direction);
 	void setLedRotationSpeed(int8_t rotationSpeed);
 	void _setLedRotationSpeed(float rotationSpeed);
