@@ -49,23 +49,23 @@ BatteryDriver::BatteryDriver()
 {
 	preferences.begin("my-app", false);
 	batteryPinCalibrationValue = preferences.getFloat("batCalibVal",0);
-#ifdef DEBUG
 	Serial.println("Battery sense calibration data loaded: ");
 	Serial.println(batteryPinCalibrationValue);
-#endif // DEBUG
 
 	robot.battery.voltage = readBatteryVoltage();
 	for (uint8_t i = 0; i < 10; i++)
 	{
 		checkState();
+#ifdef DEBUG_VOLTAGES
 		Serial.println(robot.battery.voltage);
-		delay(2);
+#endif // DEBUG_VOLTAGES	
 	}
 	//scheck bat state
 	if (robot.battery.voltage > MIN_TURN_ON_VOLTAGE)
 		robot._setServoPower(1);
 	else
 	{
+		Serial.println("Battery too low on startup");
 		robot._setServoPower(0);
 		robot._setMode(ROBOT_BATTERY_EMPTY_MODE);
 	}
@@ -141,7 +141,7 @@ float BatteryDriver::readBatteryVoltage()
 
 float BatteryDriver::LPFvoltage(float valueNew)
 {
-	float alpha = 0.3;
+	float alpha = 0.5;
 	return alpha * robot.battery.voltage + (1 - alpha)*(valueNew);
 }
 

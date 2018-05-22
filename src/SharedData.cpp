@@ -43,12 +43,12 @@ SharedData:: SharedData()
 	moveCtrl.linearVelocity = 0;
 	moveCtrl.direction = PI / 2;
 	moveCtrl.angularVelocity = 0;
-	moveCtrl.poseVector[6] = 1;
-	moveCtrl.poseVector[6] = 0; 
-	moveCtrl.poseVector[6] = 0; 
-	moveCtrl.poseVector[6] = 0; 
-	moveCtrl.poseVector[6] = 0; 
-	moveCtrl.poseVector[6] = 0; 
+	moveCtrl.poseVector[0] = 1;
+	moveCtrl.poseVector[1] = 0; 
+	moveCtrl.poseVector[2] = 0; 
+	moveCtrl.poseVector[3] = 0; 
+	moveCtrl.poseVector[4] = 0; 
+	moveCtrl.poseVector[5] = 0; 
 	moveCtrl.timeout = -1;
 	
 	//init for move()

@@ -47,9 +47,6 @@ RobotEngine::RobotEngine()
 
 void RobotEngine::checkState()
 {
-	Serial.print(robot.moveCtrl.timeout);
-	Serial.print(" ");
-	Serial.println(robot.btInputData.moveDuration);
 	int touchState = 0;
 	if (robot.getMode() != ROBOT_USER_MODE) // if in user mode do nothing
 	{
@@ -100,11 +97,11 @@ void RobotEngine::checkState()
 			break;
 		case TOUCH_00X:
 			if (!robot.BTConnectedCount)
-				robot._move(5, PI / 2, 0, 2);
+				robot._move(3, PI / 2, 0, 2);
 			break;
 		case TOUCH_X00:
 			if (!robot.BTConnectedCount)
-				robot._move(5, -PI / 2, 0, 2);
+				robot._move(3, -PI / 2, 0, 2);
 			break;
 		}
 		break;
@@ -127,6 +124,7 @@ void RobotEngine::checkState()
 		case TOUCH_X0X:
 			robot._setMode(ROBOT_CALIBRATION_MODE);
 			robot.servoCtrl.mode = SERVO_CALIBRATION_MODE;
+			batteryCalibrationTouchPasswordCounter = 0; //reset the counter for battery calibration password
 			break;
 		case TOUCH_0XX:
 			calibrateBattery(touchState,ROBOT_WALK_MODE);
@@ -136,6 +134,7 @@ void RobotEngine::checkState()
 			break;
 		default:
 			robot._setMode(ROBOT_WALK_MODE);
+			batteryCalibrationTouchPasswordCounter = 0; //reset the counter for battery calibration password
 			break;
 		}
 		break;
@@ -254,11 +253,14 @@ void RobotEngine::modesGO()
 
 void RobotEngine::calibrateBattery(uint8_t touchID, int8_t exitMode)
 {
+#ifdef DEBUG
 	Serial.print("t: ");
 	Serial.print(touchID);
 	Serial.print(" key: ");
 	Serial.print(batteryCalibrationTouchPassword[batteryCalibrationTouchPasswordCounter]);
 	Serial.print(" c: ");
+#endif // DEBUG
+
 	if (touchID == batteryCalibrationTouchPassword[batteryCalibrationTouchPasswordCounter])
 	{
 		batteryCalibrationTouchPasswordCounter++;

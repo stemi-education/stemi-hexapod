@@ -46,7 +46,7 @@ Body::Body()
 	
 	ts = 1.0 / robot.PMParam.freq;
 
-	trCurrent[0] = 0;//Start with legs rised up - simple standup routine
+	trCurrent[0] = robot.moveCtrl.poseVector[0];
 	trCurrent[1] = robot.moveCtrl.poseVector[1];
 	trCurrent[2] = robot.moveCtrl.poseVector[2];
 	trCurrent[3] = robot.moveCtrl.poseVector[3];
@@ -314,7 +314,6 @@ float PT1(float input, float valuePrev, float alpha) {
 	return alpha*valuePrev + (1 - alpha)*(input);
 }
 void Body::trPT1() {
-	Serial.println();
 	trCurrent[0] = PT1(robot.moveCtrl.poseVector[0], trCurrent[0], robot.PMParam.poseChangeSpeed);
 	trCurrent[1] = PT1(robot.moveCtrl.poseVector[1], trCurrent[1], robot.PMParam.poseChangeSpeed - 0.02);
 	trCurrent[2] = PT1(robot.moveCtrl.poseVector[2], trCurrent[2], robot.PMParam.poseChangeSpeed - 0.02);
