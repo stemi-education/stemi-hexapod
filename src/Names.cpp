@@ -41,14 +41,14 @@ Names::Names()
 
 }
 
-std::string Names::generateName(uint number)
+std::string Names::generateName(uint16_t number)
 {
 	return names[number%NUMBER_OF_NAMES];
 }
 
-uint Names::sumStringMemberValues(uint8_t str[6])
+uint16_t Names::sumStringMemberValues(uint8_t str[6])
 {
-	uint sum = 0;
+	uint16_t sum = 0;
 	for (unsigned i = 0; i<6; ++i)
 	{
 		sum += str[i];

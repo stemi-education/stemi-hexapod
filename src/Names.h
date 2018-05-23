@@ -45,8 +45,8 @@ class Names
 {
 public:
 	Names();
-	std::string generateName(uint number);
-	uint sumStringMemberValues(uint8_t str[6]);
+	std::string generateName(uint16_t number);
+	uint16_t sumStringMemberValues(uint8_t str[6]);
 private:
 	std::string names[NUMBER_OF_NAMES] =
 	{
