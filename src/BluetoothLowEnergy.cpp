@@ -231,7 +231,28 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 };
 
 void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
-	//TODO: Implement parameter service when ready
+	uint8_t init_data[2] = { 0, 0 };
+	parameterService = server->createService(LED_SERVICE);
+
+	BLECharacteristic* modeCharacteristic = parameterService->createCharacteristic(
+		MODE_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE
+	);
+
+	BLECharacteristic* gaitIDCharacteristic = parameterService->createCharacteristic(
+		GAITID_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE
+	);
+
+	modeCharacteristic->setValue(&init_data[0], 1);
+	gaitIDCharacteristic->setValue(&init_data[0], 1);
+
+	modeCharacteristic->setCallbacks(new int8Callback(&robot.mode));
+	gaitIDCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.gaitID));
+
+	parameterService->start();
 };
 
 void BluetoothLowEnergy::createLEDServiceWithCharacteristics() {
