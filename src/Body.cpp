@@ -268,7 +268,7 @@ void Body::home(float moveDeltaNew) {
 
 void Body::run() 
 {
-
+	setGaitUpDown(gait.selectSequence(robot.PMParam.gaitID));
 	setMoveParam(robot.moveCtrl.linearVelocity, robot.moveCtrl.direction, robot.moveCtrl.angularVelocity);
 
 	if (robot.moveCtrl.timeout > 0) robot.moveCtrl.timeout--; //check the duration of the command and reduce nMove

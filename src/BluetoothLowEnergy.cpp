@@ -232,7 +232,7 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 
 void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 	uint8_t init_data[2] = { 0, 0 };
-	parameterService = server->createService(LED_SERVICE);
+	parameterService = server->createService(PARAMETER_SERVICE);
 
 	BLECharacteristic* modeCharacteristic = parameterService->createCharacteristic(
 		MODE_CHARACTERISTIC_UUID,
