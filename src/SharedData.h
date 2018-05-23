@@ -72,8 +72,6 @@ For additional information please check http://www.stemi.education.
 #define SERVO_CALIBRATION_MODE 1 //mode for servo calibration
 #define ROBOT_BATTERY_EMPTY_MODE_VOLTAGE_TRESHOLD 3.6 //before shutting down
 
-//led modes
-
 //robot modes
 #define ROBOT_USER_MODE -1
 
@@ -85,10 +83,12 @@ For additional information please check http://www.stemi.education.
 #define ROBOT_CALIBRATION_MODE 11
 #define ROBOT_BATTERY_EMPTY_MODE 12
 
+//led modes
 #define LED_MANUAL_MODE 0
 #define LED_PARAMETRIC_MODE 1
 #define LED_CUSTOM_MODE 2
 
+//battery states
 #define BATTERY_EMPTY_STATE 0
 #define BATTERY_LOW_STATE 1
 #define BATTERY_MID_STATE 2
@@ -131,6 +131,7 @@ For additional information please check http://www.stemi.education.
 #define max(a,b) ((a)>(b)?(a):(b))
 #endif
 
+//color constants
 struct Color { uint8_t r; uint8_t g; uint8_t b; };
 static Color const RED = { 255, 0, 0 };
 static Color const GREEN = { 0, 255, 0 };
@@ -141,6 +142,26 @@ static Color const CYAN = { 0, 255, 255 };
 static Color const WHITE = { 255, 255, 255 };
 static Color const ORANGE = { 255, 60, 0 };
 static Color const BLACK = { 0, 0, 0 };
+
+struct userPresetInputData
+{
+	uint8_t linearVelocity; // [0,100]%
+	int16_t direction; // [-180,180]degree
+	int8_t  angularVelocity; // [-100,100]%
+	int8_t translationX; // [-100,100]%
+	int8_t translationY; // [-100,100]%
+	int8_t translationZ; // [-100,100]%
+	int8_t rotationX; // [-100,100]%
+	int8_t rotationY; // [-100,100]%
+	int8_t rotationZ; // [-100,100]%
+};
+
+//movement constants
+static const userPresetInputData FORWARD = { MOVE_SPEED, 0,0   ,0,STRETCH_AMMOUNT,0,   0,-TILT_AMMOUNT,0 };
+static const userPresetInputData BACKWARD = { MOVE_SPEED, 180,0   ,0,-STRETCH_AMMOUNT,0,   0,TILT_AMMOUNT,0 };
+static const userPresetInputData LEFT = { MOVE_SPEED, 90, MOVE_SPEED   ,-STRETCH_AMMOUNT,0,0,   -TILT_AMMOUNT,0,0 };
+static const userPresetInputData RIGHT = { MOVE_SPEED, -90, -MOVE_SPEED   ,STRETCH_AMMOUNT,0,0,   TILT_AMMOUNT,0,0 };
+static const userPresetInputData RESET = { 0,0,0, 0,0,0, 0,0,0 };
 
 struct MovementData
 {
@@ -254,26 +275,6 @@ struct TouchState
 {
 	uint8_t state = TOUCH_000;
 };
-
-struct userPresetInputData 
-{
-	uint8_t linearVelocity; // [0,100]%
-	int16_t direction; // [-180,180]degree
-	int8_t  angularVelocity; // [-100,100]%
-	int8_t translationX; // [-100,100]%
-	int8_t translationY; // [-100,100]%
-	int8_t translationZ; // [-100,100]%
-	int8_t rotationX; // [-100,100]%
-	int8_t rotationY; // [-100,100]%
-	int8_t rotationZ; // [-100,100]%
-};
-
-//movement constants
-static const userPresetInputData FORWARD = { MOVE_SPEED, 0,0   ,0,STRETCH_AMMOUNT,0,   0,-TILT_AMMOUNT,0 };
-static const userPresetInputData BACKWARD = { MOVE_SPEED, 180,0   ,0,-STRETCH_AMMOUNT,0,   0,TILT_AMMOUNT,0 };
-static const userPresetInputData LEFT = { MOVE_SPEED, 90, MOVE_SPEED   ,-STRETCH_AMMOUNT,0,0,   -TILT_AMMOUNT,0,0 };
-static const userPresetInputData RIGHT = { MOVE_SPEED, -90, -MOVE_SPEED   ,STRETCH_AMMOUNT,0,0,   TILT_AMMOUNT,0,0 };
-static const userPresetInputData RESET = { 0,0,0, 0,0,0, 0,0,0 };
 
 class SharedData {
 public:

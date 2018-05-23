@@ -1,5 +1,5 @@
 
-#include "touchDriver.h"
+#include "TouchDriver.h"
 #include "Arduino.h"
 
 Touch* Touch::instance;

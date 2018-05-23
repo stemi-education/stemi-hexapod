@@ -33,35 +33,19 @@ For additional information please check http://www.stemi.education.
 
 */
 
-
-#include "Robot.h"
-
-void setup() 
+#include "Hexapod.h"
+SharedData robot;
+Hexapod  *hexapod;
+void setup()
 {
+	// put your setup code here, to run once:
 	Serial.begin(115200);
-	Serial1.begin(115200);
+	hexapod = new Hexapod();
 }
 
 void loop()
 {
-	Robot robot; // initalise the robot
-  
-	robot.wakeUp(); //wake up the robot
+	// put your main code here, to run repeatedly:
 
-	while(1) //repeat following commands forever
-	{
-		robot.goHome();
-		robot.goForward(10);
-		robot.goHome();
-		robot.goBackwards(10);
-		robot.goHome();
-		robot.turnLeft(90);
-		robot.goHome();
-		robot.turnRight(90);
-
-		while (1)
-		{
-			robot.goHome();
-		}
-	}
+	delay(100);
 }
