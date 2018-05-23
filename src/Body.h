@@ -37,17 +37,15 @@ For additional information please check http://www.stemi.education.
 #ifndef BODY_H
 #define BODY_H
 
+#include "SharedData.h"
 #include "Gait.h"
 #include "Leg.h"
-#include "Hardware.h"
-#include "Data.h"
 
 class Body {
 public:
-	Body(Ctrl &ctrlNew, Parameters &parametersNew); // constructor
+	Body(); // constructor
 	void packQArray();
 	void IK(); // sets all q's from wanted coordinates of each leg ---> q[3] = joint angles
-	void setLinMode(); // set the robot in servo linearisation mode
 	void setTr(double trNew[6]); //sets the T and Tinv matrices acording to tr vector    
 	void trPT1(); //PT1 filter for translation and rotation
 	void printq(); // prints all joint angles
@@ -63,8 +61,7 @@ public:
 	void incGaitFi(double gaitStep);
 	void setGaitUpDown(double gaitArray[12]);
 	void setGaitCurFi(double gaitCurFiNew);
-	void setMoveParam(double speedNew, double fiNew, double deltaFiNew, int nMoveNew);
-	void setRotateParam(double  moveDeltaFiNew);
+	void setMoveParam(double speedNew, double fiNew, double deltaFiNew);
 	void setHomeParam(double moveDeltaNew);
 	void setStepHight(double stepHightNew);
 	void scaleStepFi();
@@ -77,36 +74,32 @@ public:
 	void run();
 
 	void setCground();
-	void setCommand();
-	void setLinMode(bool linModeNew);
 
-	void resetCommands();
+	void moveOneLegGlobal(uint8_t legNo, float pointNew[3]);
 
 	Leg legs[6] = { Leg() };
 
 	Gait gait;
 
-	Parameters *parameters;
-	Ctrl *ctrl;
-
 	//sampling time
 	double ts; //TODO move ts to ctrl in data.h
 
-	//limb angles:
-	float qAll[18];
-private:
+//private:
 
 	// parameters
-	double tr[6]; //temporary saves the commands for further procesing. Exists because of timing problems.
+	//double tr[6]; //temporary saves the commands for further procesing. Exists because of timing problems.
 	double trCurrent[6] = { 0,0,0,0,0,0 }; //real tr after applying PT1 filter
-	double alpha_tr; //parametar for PT1 filter
-	double baseHeight; //base height of the robot
 	double speed;
 	double maxAllowedSpeed;
+
+	uint8_t walkingLegsMap[6] = { 1,2,4,5, 0, 3 }; //what legs are used for walking
+	uint8_t nWalkingLegs = 6; //number of used legs for walking on the robot
+	uint8_t nLegs = 6; //all installed legs on robot - 6 for hexapod 8 for octopod
 
 	double moveDelta;  //delta body movement 
 	double moveDeltaFi; //delta fi for body movement
 	double gaitDeltaFi; //delta fi for gait sequence
+	double gaitCurFi;
 
 	double gaitUpTime; //phase length gaitstate 0 (in the air) 
 	double gaitDownTime;  //phase length gaitstate 1 (on the ground)

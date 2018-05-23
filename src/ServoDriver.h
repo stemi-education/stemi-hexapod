@@ -34,34 +34,32 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#include "Robot.h"
+#ifndef SERVODRIVER_H
+#define SERVODRIVER_H
 
-void setup() 
+#include "SharedData.h"
+#include "ServoController.h"
+#include "Preferences.h"
+
+class ServoDriver
 {
-	Serial.begin(115200);
-	Serial1.begin(115200);
-}
+public:
+	ServoDriver();
 
-void loop()
-{
-	Robot robot; // initalise the robot
-  
-	robot.wakeUp(); //wake up the robot
+	//Servo power
+	void servoPower(bool power); //turn the servos on = 1 or off =0
 
-	while(1) //repeat following commands forever
-	{
-		robot.goHome();
-		robot.goForward(10);
-		robot.goHome();
-		robot.goBackwards(10);
-		robot.goHome();
-		robot.turnLeft(90);
-		robot.goHome();
-		robot.turnRight(90);
+	int servoWrite();
 
-		while (1)
-		{
-			robot.goHome();
-		}
-	}
-}
+	hw_timer_t * timer = NULL;
+
+	//Servos
+	ServoController sc;
+
+	//Permanent storage
+	Preferences preferences;
+	void storageInit();
+	void storeCalibrationData();
+	void loadCalibrationData();
+};
+#endif

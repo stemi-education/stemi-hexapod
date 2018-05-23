@@ -34,36 +34,39 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef GAIT_H
-#define GIAT_H
+#ifndef HEXAPOD_H
+#define HEXAPOD_H
 
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
+#if CONFIG_FREERTOS_UNICORE
+#define ARDUINO_RUNNING_CORE 0
 #else
-#include "WProgram.h"
+#define ARDUINO_RUNNING_CORE 1
 #endif
 
+#include "SharedData.h"
+#include "ServoDriver.h"
+#include "BatteryDriver.h"
+#include "LedDriver.h"
+#include "Body.h"
+#include "RobotEngine.h"
+#include "BluetoothLowEnergy.h"
+#include "TouchDriver.h"
+#include "Dance.h"
+#include "Names.h"
 
-class GaitSequence
+#include "ProductionVersion.h"
+
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+
+class Hexapod
 {
 public:
-	GaitSequence();
-	void set(char* labelNew, double sequenceNew[12], double allDownTime, double offset[6], double startPositionNew);
+	Hexapod();
 
-	double sequence[12];
-	double startPosition;
-	char label[4];
-};
-
-class Gait
-{
-public:
-	Gait();
-
-	double * selectSequence(int index);
-	double selectStart(int index);
-
-	GaitSequence gaitSequence[5];
+	Preferences preferences;
 };
 
 #endif
+

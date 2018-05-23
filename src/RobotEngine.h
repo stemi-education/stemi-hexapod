@@ -34,49 +34,25 @@ For additional information please check http://www.stemi.education.
 */
 
 
-#ifndef ROBOT_H
-#define ROBOT_H
+#ifndef ROBOTENGINE_H
+#define ROBOTENGINE_H
 
-#define LIN_MODE_PERMANENT 0 //set this to 1 if you want your robot to stand still in linearisation pose permanently - all the servos in home position - used for robot assembly
+#include "SharedData.h"
 
-#include "Hardware.h"
-#include "Body.h"
-#include "Data.h"
-
-class Robot
+class RobotEngine
 {
 public:
-	Robot();
-	void wakeUp();
-	int go();
-	Hardware hardware;
-	Ctrl ctrl;
-	Parameters parameters;
-	Body body;
+	RobotEngine();
+	void checkState();
+	void modesGO();
+	void batteryCheck();
+	void calibrateBattery(uint8_t touchID, int8_t exitMode);
 
-	void measureTime();
-	void wait();
-
-	/* High level functions that are ment to be called once. They set the parameters and then loop so
-	* the robot will do some action like walk the given distance.
-	*/
-	void loopMove();
-	void loopHome();
-	void goHome();
-
-	void goForward(float distance);
-	void goBackwards(float distance);
-	void goLeft(float distance);
-	void goRight(float distance);
-	void turnLeft(float distance);
-	void turnRight(float distance);
-
-	long startTime;
-
-	//high level functions
-	float goSpeed = 5;
-	float turnSpeed = 0.4;
+	//calibration mode variables
+	int calibrationLegSelected = 0, calibrationLegSelectedCounter = 0, calibrationServoLayerSelected = 0;// , calibrationValue = 0;
+	uint8_t calibrationLegSelectedMap[6] = { 0, 1, 2, 5, 4, 3 };
+	Color calibrationServoLayerColors[3] = {RED, BLUE, YELLOW};
+	uint8_t batteryCalibrationTouchPassword[5] = { TOUCH_0XX, TOUCH_XX0, TOUCH_0XX, TOUCH_XX0, TOUCH_0XX};
+	uint8_t batteryCalibrationTouchPasswordCounter = 0;
 };
-
 #endif
-

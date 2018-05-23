@@ -53,12 +53,12 @@ public:
 	void init(char* labelNew, double offNew, double adNew[2], double aNew[3], double trNew[6], double freqNew);
 	MatrixMath Matrix;
 	void IK();
-	void setLinMode();
 	void setC(double cNew[3]); // cNew .. [1x3]
 	void setTr(double trNew[6]);
 	void setQ(double qNew[3]); // qNew .. [1x3]
 
 	void setWs(double wsScalar = 1); //set the workspace (circle)
+	void setCustomWs(float xOffset, float yOffset, double wsScalar, float wsRadiusScalar);
 
 	void setMoveParam(double moveCenterNew[2], double moveDeltaFiNew); // set the move center
 	void setHomeParam(double moveDeltaNew);
@@ -170,6 +170,6 @@ public:
 	bool actualState; // it coud be only: 0-in the air, 1-on the ground (so far...)
 	//it's the actual state of the leg. While "gaitState" is what the state should be.
 	//later more states should be implemented like: rising, lowering (and ofc:in the air, on the ground)
-
+	bool freeMode; //frees the leg from walking constranits - e.g. for maipulation mode
 };
 #endif

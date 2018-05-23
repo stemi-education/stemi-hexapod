@@ -2,6 +2,8 @@
 
 Library that includes everything you need to get your STEMI hexapod walking and dancing using your mobile app :)
 
+TODO modify this readme for esp32.
+
 ### Prepare your Arduino IDE for programming of Arduino Due ###
 
 1. Install Arduino IDE.
