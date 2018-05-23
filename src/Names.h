@@ -39,7 +39,7 @@ For additional information please check http://www.stemi.education.
 
 #include <string>
 
-#define NUMBER_OF_NAMES 103
+#define NUMBER_OF_NAMES 110
 
 class Names
 {
@@ -50,8 +50,18 @@ public:
 private:
 	std::string names[NUMBER_OF_NAMES] =
 	{
-		"Beatrix",
-		"Blaire",
+		//developer names
+		"Jole",
+		"Fule",
+		"Vlax",
+		"Tuna",
+		"Maricello",
+		"Mia",
+		"Jan",
+		"Peewee",
+		"Bobby",
+		
+		//generic names
 		"Beatrix",
 		"Blaire",
 		"Callie",
