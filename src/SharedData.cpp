@@ -381,6 +381,11 @@ float SharedData::getBatteryVoltage()
 	return robot.battery.voltage;
 }
 
+uint8_t SharedData::getBatteryPercentage()
+{
+	return robot.battery.percentage;
+}
+
 void SharedData::enterUserMode()
 {
 	robot.setMode(ROBOT_USER_MODE);

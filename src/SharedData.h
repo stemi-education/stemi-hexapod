@@ -65,7 +65,7 @@ For additional information please check http://www.stemi.education.
 #define TASK_PERIOD_DANCE 275 //half of a songs beat
 
 //movement duration
-#define MOVE_DURATION_DEFAULT 10
+#define MOVE_DURATION_DEFAULT -1 //infinite
 
 //servo modes
 #define SERVO_WALKING_MODE 0 //mode for walking
@@ -78,15 +78,12 @@ For additional information please check http://www.stemi.education.
 #define ROBOT_USER_MODE -1
 
 #define ROBOT_STANDBY_MODE 0
-#define ROBOT_STANDING_UP_MODE 1
-#define ROBOT_WALK_MODE 2
-#define ROBOT_WALK_N_TILT_MODE 3
-#define ROBOT_DANCE_MODE 4
-#define ROBOT_EMPTY_MODE 10 //Custom mode for users to program
+#define ROBOT_WALK_MODE 1
+#define ROBOT_DANCE_MODE 2
 
-#define ROBOT_SETUP_MODE 21
-#define ROBOT_CALIBRATION_MODE 22
-#define ROBOT_BATTERY_EMPTY_MODE 23
+#define ROBOT_SETUP_MODE 10
+#define ROBOT_CALIBRATION_MODE 11
+#define ROBOT_BATTERY_EMPTY_MODE 12
 
 #define LED_MANUAL_MODE 0
 #define LED_PARAMETRIC_MODE 1
@@ -320,6 +317,7 @@ public:
 
 	//Battery functions
 	float getBatteryVoltage();
+	uint8_t getBatteryPercentage();
 
 	//Robot modes functions
 	void setMode(int8_t modeNew);
