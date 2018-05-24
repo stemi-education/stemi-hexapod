@@ -246,11 +246,25 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE
 	);
 
+	BLECharacteristic* userSliderCharacteristic = parameterService->createCharacteristic(
+		USERSLIDER_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE
+	);
+
+	BLECharacteristic* versionCharacteristic = parameterService->createCharacteristic(
+		VERSION_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ
+	);
+
 	modeCharacteristic->setValue(&init_data[0], 1);
 	gaitIDCharacteristic->setValue(&init_data[0], 1);
+	userSliderCharacteristic->setValue(&init_data[0], 1);
+	versionCharacteristic->setValue(robot.version, 3);
 
 	modeCharacteristic->setCallbacks(new int8Callback(&robot.mode));
 	gaitIDCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.gaitID));
+	userSliderCharacteristic->setCallbacks(new int8Callback(&robot.userSlider));
 
 	parameterService->start();
 };

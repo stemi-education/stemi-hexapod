@@ -341,6 +341,8 @@ public:
 
 	int8_t mode = ROBOT_STANDBY_MODE;
 	uint8_t BTConnectedCount = 0;
+	int8_t userSlider = 0;
+	uint8_t version[3] = { HEXAPOD_VERSION_MAJOR, HEXAPOD_VERSION_MINOR, HEXAPOD_VERSION_PATCH };
 	uint danceCount = 0;
 };
 

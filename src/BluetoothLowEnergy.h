@@ -59,6 +59,8 @@ For additional information please check http://www.stemi.education.
 #define PARAMETER_SERVICE "6ee32c61-cb9c-4471-a79d-2a2a98afd49a"
 #define MODE_CHARACTERISTIC_UUID "25017253-ae08-4681-ba9b-c6c0bf85da36"
 #define GAITID_CHARACTERISTIC_UUID "be930e0b-db94-48de-bdde-6e50fdac6fa0"
+#define USERSLIDER_CHARACTERISTIC_UUID	"a7b2097f-0fd6-4e14-b745-0c7e9fc3214b"
+#define VERSION_CHARACTERISTIC_UUID "c526c005-97cd-46ca-992e-dae2b83c36e9"
 #define STEPHEIGHT_CHARACTERISTIC_UUID "e4fe2831-f7ae-4148-afd5-154a47f41530"
 
 #define LED_SERVICE "146d53ec-a92c-452c-9c2f-99bd7a6fbf8d"
