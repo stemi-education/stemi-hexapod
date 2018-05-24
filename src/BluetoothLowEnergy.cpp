@@ -83,6 +83,18 @@ public:
 	}
 };
 
+class stringCallback : public BLECharacteristicCallbacks {
+private:
+	std::string* data;
+public:
+	stringCallback(std::string* input) {
+		data = input;
+	}
+	void onWrite(BLECharacteristic* pCharacteristic) {
+			*data = pCharacteristic->getValue();
+	}
+};
+
 class int16Callback : public BLECharacteristicCallbacks {
 private:
 	int16_t* data;
@@ -104,6 +116,7 @@ BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName) {
 	createLEDServiceWithCharacteristics();
 	createParameterServiceWithCharacteristics();
 	createBatteryServiceWithCharacteristics();
+	createNameServiceWithCharacteristics();
 	startAdvertising();
 }
 
@@ -341,4 +354,22 @@ void BluetoothLowEnergy::createBatteryServiceWithCharacteristics() {
 	batteryLevelCharacteristic->setValue(&init_data[0], 1);
 
 	batteryService->start();
+};
+
+void BluetoothLowEnergy::createNameServiceWithCharacteristics() {
+	char nameDummy[20];
+	strcpy(nameDummy, robot.name.c_str());
+	nameService = server->createService(NAME_SERVICE_UUID);
+
+	BLECharacteristic* nameCharacteristic = nameService->createCharacteristic(
+		NAME_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE);
+	//batteryLevelCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
+
+	nameCharacteristic->setValue((uint8_t*)nameDummy, 20);
+
+	nameCharacteristic->setCallbacks(new stringCallback(&robot.name));
+
+	nameService->start();
 };

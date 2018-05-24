@@ -40,6 +40,11 @@ SharedData:: SharedData()
 {
 	Serial.begin(115200);
 
+	Names names;
+	uint8_t mac[6];
+	esp_efuse_mac_get_default(mac);
+	name = names.generateName(names.sumStringMemberValues(mac));
+
 	moveCtrl.linearVelocity = 0;
 	moveCtrl.direction = PI / 2;
 	moveCtrl.angularVelocity = 0;

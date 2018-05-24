@@ -133,13 +133,7 @@ void ledDriver(void *sharedDataNew)
 
 void btEngine(void *sharedDataNew)
 {
-	Names names;
-
-	uint8_t mac[6];
-
-	esp_efuse_mac_get_default(mac);
-		
-	BluetoothLowEnergy BLE("STEMI Hexapod " + names.generateName(names.sumStringMemberValues(mac)));
+	BluetoothLowEnergy BLE("STEMI Hexapod " + robot.name);
 	
 	delay(2000);
 
@@ -235,5 +229,6 @@ Hexapod::Hexapod()
 	xTaskCreatePinnedToCore(dancingEngine, "dancingEngine", 2 * 4096, NULL, 4, NULL, ARDUINO_RUNNING_CORE);
 	
 	delay(200);
-	Serial.printf("\nSTEMI Hexapod initialized :)\n\n");
+	std::string welcomeNote = "\nSTEMI Hexapod " + robot.name + " initialized :)\n\n";
+	Serial.printf("%s",welcomeNote.c_str());
 }

@@ -177,6 +177,7 @@ void RobotEngine::checkState()
 
 void RobotEngine::modesGO()
 {
+	Serial.printf("%s\n",robot.name.c_str());
 	uint8_t randomDummy = random(0, 255);
 
 	int8_t robotMode = robot.getMode();

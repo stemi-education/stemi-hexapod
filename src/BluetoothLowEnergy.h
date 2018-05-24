@@ -42,6 +42,8 @@ For additional information please check http://www.stemi.education.
 #include <BLEServer.h>
 #include <BLE2904.h>
 
+#include "SharedData.h"
+
 #define MOVEMENT_SERVICE_UUID "5fe3a3ac-bc0d-4484-aad5-db8865fec4c7"
 #define LINEARVELOCITY_CHARACTERISTIC_UUID "3ed49873-e0c0-4a7a-9d69-1d533cea05b7"
 #define DIRECTION_CHARACTERISTIC_UUID "3db7ef30-b289-4ef0-8dc8-adac1ef811db"
@@ -74,6 +76,9 @@ For additional information please check http://www.stemi.education.
 #define BATTERY_SERVICE_UUID "0000180f-0000-1000-8000-00805f9b34fb"
 #define BATTERYLEVEL_CHARACTERISTIC_UUID "00002a19-0000-1000-8000-00805f9b34fb"
 
+#define NAME_SERVICE_UUID "2b406cd0-ff12-400e-bd22-028c12f2978e"
+#define NAME_CHARACTERISTIC_UUID "09769166-195f-495e-baa9-383c85211e97"
+
 class BluetoothLowEnergy {
 public:
 	BluetoothLowEnergy(std::string deviceName);
@@ -85,6 +90,7 @@ public:
 	BLEService* parameterService;
 	BLEService* LEDService;
 	BLEService* batteryService;
+	BLEService* nameService;
 	
 	BLEAdvertising* advertising;
 
@@ -100,6 +106,7 @@ private:
 	void createParameterServiceWithCharacteristics();
 	void createLEDServiceWithCharacteristics();
 	void createBatteryServiceWithCharacteristics();
+	void createNameServiceWithCharacteristics();
 };
 
 #endif

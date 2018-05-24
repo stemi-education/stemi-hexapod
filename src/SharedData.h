@@ -43,6 +43,8 @@ For additional information please check http://www.stemi.education.
 #include "WProgram.h"
 #endif
 
+#include "Names.h"
+
 #define HEXAPOD_VERSION_MAJOR 2
 #define HEXAPOD_VERSION_MINOR 0
 #define HEXAPOD_VERSION_PATCH 1
@@ -346,6 +348,7 @@ public:
 	int8_t userSlider = 0;
 	uint8_t version[3] = { HEXAPOD_VERSION_MAJOR, HEXAPOD_VERSION_MINOR, HEXAPOD_VERSION_PATCH };
 	uint danceCount = 0;
+	std::string name;
 };
 
 extern SharedData robot;
