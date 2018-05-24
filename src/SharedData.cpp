@@ -141,26 +141,17 @@ void SharedData::useLedInputData(InputData *data)
 }
 
 //seting user data [public]
-void SharedData::setLed(uint8_t ledNo, Color color)
+void SharedData::setLedStatic(uint8_t ledNo, Color color)
 {
 	userInputData.ledMode = LED_MANUAL_MODE;
 	userInputData.ledManualClr[ledNo][0] = color.r;
 	userInputData.ledManualClr[ledNo][1] = color.g;
 	userInputData.ledManualClr[ledNo][2] = color.b;
 }
-
-void SharedData::_setLed(uint8_t ledNo, Color color)
-{
-	ledCtrl.mode = LED_MANUAL_MODE;
-	ledCtrl.manualClr[ledNo][0] = color.r;
-	ledCtrl.manualClr[ledNo][1] = color.g;
-	ledCtrl.manualClr[ledNo][2] = color.b;
-}
-
-void SharedData::setLed(Color color)
+void SharedData::setLedStatic(Color color)
 {
 	userInputData.ledMode = LED_MANUAL_MODE;
-	for (int i = 0; i < LED_COUNT; i++) 
+	for (int i = 0; i < LED_COUNT; i++)
 	{
 		userInputData.ledManualClr[i][0] = color.r;
 		userInputData.ledManualClr[i][1] = color.g;
@@ -168,7 +159,15 @@ void SharedData::setLed(Color color)
 	}
 }
 
-void SharedData::_setLed(Color color)
+void SharedData::_setLedStatic(uint8_t ledNo, Color color)
+{
+	ledCtrl.mode = LED_MANUAL_MODE;
+	ledCtrl.manualClr[ledNo][0] = color.r;
+	ledCtrl.manualClr[ledNo][1] = color.g;
+	ledCtrl.manualClr[ledNo][2] = color.b;
+}
+
+void SharedData::_setLedStatic(Color color)
 {
 	ledCtrl.mode = LED_MANUAL_MODE;
 	for (int i = 0; i < LED_COUNT; i++)
@@ -177,6 +176,18 @@ void SharedData::_setLed(Color color)
 		ledCtrl.manualClr[i][1] = color.g;
 		ledCtrl.manualClr[i][2] = color.b;
 	}
+}
+
+void SharedData::setLed(Color color)
+{
+	userInputData.ledMode = LED_PARAMETRIC_MODE;
+	setLed(color, color, 50, 0);	
+}
+
+void SharedData::_setLed(Color color)
+{
+	ledCtrl.mode = LED_PARAMETRIC_MODE;
+	_setLed(color, color, 50, 0);
 }
 
 void SharedData::setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio, int16_t direction)
@@ -209,25 +220,21 @@ void SharedData::_setLed(Color primarClr, Color secondarClr, float spreadRatio, 
 
 void SharedData::setLedRotationSpeed(int8_t rotationSpeed)
 {
-	userInputData.ledMode = LED_PARAMETRIC_MODE;
 	userInputData.ledRotationSpeed = rotationSpeed;
 }
 
 void SharedData::_setLedRotationSpeed(float rotationSpeed)
 {
-	ledCtrl.mode = LED_PARAMETRIC_MODE;
 	ledCtrl.rotationSpeed = rotationSpeed;
 }
 
 void SharedData::setLedBlinkingSpeed(uint8_t blinkingSpeed)
 {
-	userInputData.ledMode = LED_PARAMETRIC_MODE;
 	userInputData.ledBlinkingSpeed = blinkingSpeed;
 }
 
 void SharedData::_setLedBlinkingSpeed(float blinkingSpeed)
 {
-	ledCtrl.mode = LED_PARAMETRIC_MODE;
 	ledCtrl.blinkingSpeed = blinkingSpeed;
 }
 

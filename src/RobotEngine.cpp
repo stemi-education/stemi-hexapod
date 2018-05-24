@@ -235,8 +235,8 @@ void RobotEngine::modesGO()
 	case ROBOT_CALIBRATION_MODE:
 		robot._setLedBlinkingSpeed(0);
 		robot._setLedRotationSpeed(0);
-		robot._setLed(BLACK);
-		robot._setLed(calibrationLegSelectedCounter, calibrationServoLayerColors[calibrationServoLayerSelected]);// calibrationServoLayerColors[calibrationServoLayerSelected]);
+		robot._setLedStatic(BLACK);
+		robot._setLedStatic(calibrationLegSelectedCounter, calibrationServoLayerColors[calibrationServoLayerSelected]);// calibrationServoLayerColors[calibrationServoLayerSelected]);
 		break;
 
 	case ROBOT_BATTERY_EMPTY_MODE:
@@ -244,7 +244,7 @@ void RobotEngine::modesGO()
 		robot._setLedBlinkingSpeed(0.5);
 		robot._setLedRotationSpeed(0);
 
-		robot._setLed(RED, RED ,10, 0);
+		robot._setLed(RED);
 		//turn off the servos
 		robot._setServoPower(0);
 		break;

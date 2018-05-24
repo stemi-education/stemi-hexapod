@@ -289,8 +289,10 @@ public:
 	void _setLedRotationSpeed(float rotationSpeed);
 	void setLedBlinkingSpeed(uint8_t blinkingSpeed);
 	void _setLedBlinkingSpeed(float blinkingSpeed);
-	void setLed(uint8_t ledNo, Color color);
-	void _setLed(uint8_t ledNo, Color color);
+	void setLedStatic(uint8_t ledNo, Color color);
+	void setLedStatic(Color color);
+	void _setLedStatic(uint8_t ledNo, Color color);
+	void _setLedStatic(Color color);
 
 	//Movement
 	void move(userPresetInputData movement, float duration = MOVE_DURATION_DEFAULT);

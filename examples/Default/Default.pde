@@ -78,21 +78,16 @@ void loop()
 
 void setLEDrandom()
 {
-	robot.setLed(0, clrArray[random(0, 6)]);
-	robot.setLed(1, clrArray[random(0, 6)]);
-	robot.setLed(2, clrArray[random(0, 6)]);
-	robot.setLed(3, clrArray[random(0, 6)]);
-	robot.setLed(4, clrArray[random(0, 6)]);
-	robot.setLed(5, clrArray[random(0, 6)]);
+	robot.setLedStatic(0, clrArray[random(0, 6)]);
+	robot.setLedStatic(1, clrArray[random(0, 6)]);
+	robot.setLedStatic(2, clrArray[random(0, 6)]);
+	robot.setLedStatic(3, clrArray[random(0, 6)]);
+	robot.setLedStatic(4, clrArray[random(0, 6)]);
+	robot.setLedStatic(5, clrArray[random(0, 6)]);
 }
 
 void setLEDSequence()
 {
-	robot.setLed(0, clrArray[clrCount]);
-	robot.setLed(1, clrArray[clrCount]);
-	robot.setLed(2, clrArray[clrCount]);
-	robot.setLed(3, clrArray[clrCount]);
-	robot.setLed(4, clrArray[clrCount]);
-	robot.setLed(5, clrArray[clrCount]);
+	robot.setLedStatic(clrArray[clrCount]);
 	clrCount = (clrCount + 1) % 7;
 }
