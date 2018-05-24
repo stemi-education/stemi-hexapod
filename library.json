@@ -1,12 +1,12 @@
 {
   "name": "stemi-hexapod",
   "keywords": "Robot",
-  "description": "A library that makes controlling STEMI HEXAPOD v2 easy.",
+  "description": "Library that includes everything you need to get your STEMI hexapod walking and dancing using your mobile app :)",
   "homepage": "https://stemi.education",
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/Makuna/stemi-hexapod"
+    "url": "https://github.com/stemi-education/stemi-hexapod"
   },
   "version": "2.0.0",
   "frameworks": "arduino",
