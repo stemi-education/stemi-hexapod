@@ -97,11 +97,11 @@ void RobotEngine::checkState()
 			break;
 		case TOUCH_00X:
 			if (!robot.BTConnectedCount)
-				robot._move(3, PI / 2, 0, 2);
+				robot._move(3, PI / 2, 0, 2000);
 			break;
 		case TOUCH_X00:
 			if (!robot.BTConnectedCount)
-				robot._move(3, -PI / 2, 0, 2);
+				robot._move(3, -PI / 2, 0, 2000);
 			break;
 		}
 		break;
