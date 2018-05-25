@@ -65,11 +65,11 @@ void loop()
 	}
 	else if (touchPattern == TOUCH_0XX)
 	{
-		robot.move(FORWARD,2);
+		robot.move(FORWARD,2000);
 	}
 	else if (touchPattern == TOUCH_XX0)
 	{
-		robot.move(BACKWARD,2);
+		robot.move(BACKWARD,2000);
 	}
 	delay(20);
 }

@@ -107,7 +107,7 @@ void SharedData::useMoveInputData(InputData *data)
 	
 	if (data->moveDuration > 0)
 	{
-		moveCtrl.timeout = data->moveDuration * PMParam.freq;
+		moveCtrl.timeout = data->moveDuration * PMParam.freq / 1000;
 		data->moveDuration = 0;
 	}
 	else if (data->moveDuration == -1)
@@ -247,20 +247,12 @@ void SharedData::move(userPresetInputData movement, float duration)
 
 }
 
-/*void SharedData::move(userPresetInputData movement, int8_t duration)
-{
-	userInputData.linearVelocity = movement.linearVelocity;
-	userInputData.direction = movement.direction;
-
-	userInputData.moveTimeout = duration;
-}*/
-
 void SharedData::_move(float linearVelocity, float direction, float angularVelocity, float duration)
 {
 	moveCtrl.linearVelocity = linearVelocity;
 	moveCtrl.direction = direction;
 	moveCtrl.angularVelocity = angularVelocity * PI / 180;
-	moveCtrl.timeout = duration * PMParam.freq;
+	moveCtrl.timeout = duration * PMParam.freq / 1000;
 }
 
 void SharedData::move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity, float duration)
@@ -326,8 +318,6 @@ void SharedData::setMode(int8_t modeNew)
 {
 	mode = modeNew;
 	moveCtrl.timeout = 0;
-	//Serial.print("mode set to: ");
-	//Serial.println(mode);
 }
 
 int8_t SharedData::getMode()

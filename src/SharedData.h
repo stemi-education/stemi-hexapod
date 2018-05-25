@@ -205,7 +205,7 @@ struct InputData : MovementData, PoseData, LedData
 
 	//Misc - additional data
 	//int8_t robotMode; //[check ROBOT_XX_MODE macros]mode
-	int8_t moveDuration = 0; // seconds of current command execution [-2 = already written, -1 = inf, 0 = go home, 1-100 = seconds to move]
+	int16_t moveDuration = 0; // miliseconds of current command execution [-1 = inf, 0 = go home, ...]
 	int8_t gaitID = 3; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
 	bool servoPower = 1; // [on,off]power
