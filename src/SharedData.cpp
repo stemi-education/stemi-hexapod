@@ -287,7 +287,7 @@ void SharedData::tilt(int8_t rotationXNew, int8_t rotationYNew, int8_t rotationZ
 {
 	userInputData.rotationX = rotationXNew;
 	userInputData.rotationY = rotationYNew;
-	userInputData.rotationY = rotationZNew;
+	userInputData.rotationZ = rotationZNew;
 }
 
 void SharedData::stretch(userPresetInputData stretchment)
