@@ -47,7 +47,7 @@ For additional information please check http://www.stemi.education.
 
 #define HEXAPOD_VERSION_MAJOR 2
 #define HEXAPOD_VERSION_MINOR 0
-#define HEXAPOD_VERSION_PATCH 1
+#define HEXAPOD_VERSION_PATCH 2
 #define ENABLE_VERSION_BURNING
 //#define DEBUG 
 //#define DEBUG_VOLTAGES
@@ -330,6 +330,10 @@ public:
 	void enterUserMode();
 	void exitUserMode();
 
+	//Naming the robot
+	void loadName();
+	void storeName(std::string nameNew);
+
 	//choose what input data to use [BT, user, dance]
 	void useGeneralInputData(InputData * data);
 	void useMoveInputData(InputData * data);
@@ -342,6 +346,9 @@ public:
 	LedCtrl ledCtrl;
 	BatteryState battery;
 	TouchState touch;
+
+	//Robot name variables
+	Names names;
 
 	int8_t mode = ROBOT_STANDBY_MODE;
 	uint8_t BTConnectedCount = 0;

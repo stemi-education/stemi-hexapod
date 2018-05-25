@@ -83,15 +83,13 @@ public:
 	}
 };
 
-class stringCallback : public BLECharacteristicCallbacks {
+class robotNameCallback : public BLECharacteristicCallbacks {
 private:
-	std::string* data;
 public:
-	stringCallback(std::string* input) {
-		data = input;
+	robotNameCallback() {
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
-			*data = pCharacteristic->getValue();
+			robot.storeName(pCharacteristic->getValue());
 	}
 };
 
@@ -369,7 +367,7 @@ void BluetoothLowEnergy::createNameServiceWithCharacteristics() {
 
 	nameCharacteristic->setValue((uint8_t*)nameDummy, 20);
 
-	nameCharacteristic->setCallbacks(new stringCallback(&robot.name));
+	nameCharacteristic->setCallbacks(new robotNameCallback());
 
 	nameService->start();
 };

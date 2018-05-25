@@ -43,6 +43,8 @@ Names::Names()
 
 std::string Names::generateName(uint16_t number)
 {
+
+
 	return names[number%NUMBER_OF_NAMES];
 }
 
@@ -54,5 +56,20 @@ uint16_t Names::sumStringMemberValues(uint8_t str[6])
 		sum += str[i];
 	}
 	return sum;
+}
+
+void Names::storeInit()
+{
+	preferences.begin("my-app", false);
+}
+
+void Names::store(std::string name)
+{
+	preferences.putString("hexName", name.c_str());
+}
+
+void Names::load(std::string *name)
+{
+	*name = preferences.getString("hexName", "\0").c_str();
 }
 

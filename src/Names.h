@@ -38,6 +38,7 @@ For additional information please check http://www.stemi.education.
 #define NAMES_H
 
 #include <string>
+#include "Preferences.h"
 
 #define NUMBER_OF_NAMES 110
 
@@ -47,7 +48,13 @@ public:
 	Names();
 	std::string generateName(uint16_t number);
 	uint16_t sumStringMemberValues(uint8_t str[6]);
+	void storeInit();
+	void store(std::string name);
+	void load(std::string *name);
 private:
+
+	std::string name;
+	Preferences preferences;
 	std::string names[NUMBER_OF_NAMES] =
 	{
 		//developer names

@@ -40,11 +40,6 @@ SharedData:: SharedData()
 {
 	Serial.begin(115200);
 
-	Names names;
-	uint8_t mac[6];
-	esp_efuse_mac_get_default(mac);
-	name = names.generateName(names.sumStringMemberValues(mac));
-
 	moveCtrl.linearVelocity = 0;
 	moveCtrl.direction = PI / 2;
 	moveCtrl.angularVelocity = 0;
@@ -410,3 +405,21 @@ void SharedData::exitUserMode()
 	moveCtrl.timeout = 0;
 }
 
+void SharedData::loadName()
+{
+	names.storeInit();
+	names.load(&robot.name);
+	uint8_t mac[6];
+	if (name == "\0")
+	{
+		esp_efuse_mac_get_default(mac);
+		name = names.generateName(names.sumStringMemberValues(mac));
+		Serial.printf("Name not stored, storing \"%s\"\n",name.c_str());
+	}
+}
+
+void SharedData::storeName(std::string nameNew)
+{
+	names.store(nameNew);
+	name = nameNew;
+}
