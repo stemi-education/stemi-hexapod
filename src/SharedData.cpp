@@ -240,7 +240,7 @@ void SharedData::_setLedBlinkingSpeed(float blinkingSpeed)
 
 void SharedData::move(userPresetInputData movement, float duration)
 {
-	userInputData.linearVelocity = movement.linearVelocity;
+	userInputData.linearVelocity = saturate(movement.linearVelocity,0,100);
 	userInputData.direction = movement.direction;
 	userInputData.moveDuration = duration;
 
@@ -249,69 +249,69 @@ void SharedData::move(userPresetInputData movement, float duration)
 
 void SharedData::_move(float linearVelocity, float direction, float angularVelocity, float duration)
 {
-	moveCtrl.linearVelocity = linearVelocity;
+	moveCtrl.linearVelocity = saturate(linearVelocity, 0, 15);
 	moveCtrl.direction = direction;
-	moveCtrl.angularVelocity = angularVelocity * PI / 180;
+	moveCtrl.angularVelocity = saturate(angularVelocity * PI / 180, -1, 1);
 	moveCtrl.timeout = duration * PMParam.freq / 1000;
 }
 
 void SharedData::move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity, float duration)
 {
-	userInputData.linearVelocity = linearVelocity;
-	userInputData.direction = direction * PI / 180;
-	userInputData.angularVelocity = angularVelocity * PI / 180;
+	userInputData.linearVelocity = saturate(linearVelocity, 0, 100);
+	userInputData.direction = direction;
+	userInputData.angularVelocity = saturate(angularVelocity, -100, 100);
 	userInputData.moveDuration = duration;
 }
 
 void SharedData::rotate(userPresetInputData rotation, float duration)
 {
-	userInputData.angularVelocity = rotation.angularVelocity;
+	userInputData.angularVelocity = saturate(rotation.angularVelocity, -100, 100);
 	userInputData.moveDuration = duration;
 }
 
 void SharedData::tilt(userPresetInputData tiltation)
 {
-	userInputData.rotationX = tiltation.rotationX;
-	userInputData.rotationY = tiltation.rotationY;
+	userInputData.rotationX = saturate(tiltation.rotationX, -100, 100);
+	userInputData.rotationY = saturate(tiltation.rotationY, -100, 100);
 }
 
 void SharedData::tilt(int8_t rotationXNew, int8_t rotationYNew, int8_t rotationZNew)
 {
-	userInputData.rotationX = rotationXNew;
-	userInputData.rotationY = rotationYNew;
-	userInputData.rotationZ = rotationZNew;
+	userInputData.rotationX = saturate(rotationXNew, -100, 100);
+	userInputData.rotationY = saturate(rotationYNew, -100, 100);
+	userInputData.rotationZ = saturate(rotationZNew, -100, 100);
 }
 
 void SharedData::stretch(userPresetInputData stretchment)
 {
-	userInputData.translationX = stretchment.translationX;
-	userInputData.translationY = stretchment.translationY;
+	userInputData.translationX = saturate(stretchment.translationX, -100, 100);
+	userInputData.translationY = saturate(stretchment.translationY, -100, 100);
 }
 
 void SharedData::stretch(int8_t translationXNew, int8_t treanslationYNew)
 {
-	userInputData.translationX = translationXNew;
-	userInputData.translationY = treanslationYNew;
+	userInputData.translationX = saturate(translationXNew, -100, 100);
+	userInputData.translationY = saturate(treanslationYNew, -100, 100);
 }
 
 void SharedData::setHeight(uint8_t height)
 {
-	userInputData.translationZ = height;
+	userInputData.translationZ = saturate(height, 0, 100);
 }
 
 void SharedData::_setHeight(float height)
 {
-	moveCtrl.poseVector[0] = height;
+	moveCtrl.poseVector[0] = saturate(height, 0, 8);
 }
 
 void SharedData::_setPose(float poseVectorNew[6])
 {
-	moveCtrl.poseVector[0] = poseVectorNew[0];
-	moveCtrl.poseVector[1] = poseVectorNew[1];
-	moveCtrl.poseVector[2] = poseVectorNew[2];
-	moveCtrl.poseVector[3] = poseVectorNew[3];
-	moveCtrl.poseVector[4] = poseVectorNew[4];
-	moveCtrl.poseVector[5] = poseVectorNew[5];
+	moveCtrl.poseVector[0] = saturate(poseVectorNew[0], 0, 8);
+	moveCtrl.poseVector[1] = saturate(poseVectorNew[1], -STRETCH_MAX, STRETCH_MAX);
+	moveCtrl.poseVector[2] = saturate(poseVectorNew[2], -STRETCH_MAX, STRETCH_MAX);
+	moveCtrl.poseVector[3] = saturate(poseVectorNew[3], -TILT_MAX, TILT_MAX);
+	moveCtrl.poseVector[4] = saturate(poseVectorNew[4], -TILT_MAX, TILT_MAX);
+	moveCtrl.poseVector[5] = saturate(poseVectorNew[5], -TILT_MAX, TILT_MAX);
 }
 
 void SharedData::setMode(int8_t modeNew)

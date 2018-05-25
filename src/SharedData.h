@@ -117,6 +117,8 @@ For additional information please check http://www.stemi.education.
 #define TURN_SPEED 50 //%
 #define TILT_AMMOUNT 70 //%
 #define STRETCH_AMMOUNT 70 //%
+#define STRETCH_MAX 3 //radians
+#define TILT_MAX 0.3 //radians
 
 //touch parameters
 #define TOUCH_000 0
@@ -359,5 +361,10 @@ public:
 };
 
 extern SharedData robot;
-
+ 
+// general functions:
+static float saturate(float value, float minimum, float maximum)
+{
+	return min(maximum, max(minimum, value));
+}
 #endif

@@ -36,11 +36,6 @@ For additional information please check http://www.stemi.education.
 
 #include "RobotEngine.h"
 
-float saturate(float value, float minimum, float maximum)
-{
-	return min(maximum, max(minimum, value));
-}
-
 RobotEngine::RobotEngine()
 {
 }
