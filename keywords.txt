@@ -52,6 +52,7 @@ servoPower	KEYWORD2
 setLed	KEYWORD2
 setLedRotationSpeed	KEYWORD2
 setLedBlinkingSpeed	KEYWORD2
+setLedStatic	KEYWORD2
 move	KEYWORD2
 rotate	KEYWORD2
 tilt	KEYWORD2
