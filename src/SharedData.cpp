@@ -346,11 +346,15 @@ uint8_t SharedData::getTouchPattern()
 		return 0; //not allowd to use while not in ROBOT_USER_MODE
 	uint8_t touchState = touch.state;
 	touch.state = TOUCH_000; //reset the touch once it has been used
+#ifdef DEBUG_
 	if (touchState != 0)
 	{
 		Serial.print("t: ");
 		Serial.println(touchState);
 	}
+#endif // DEBUG_
+
+	
 	return touchState;
 }
 
@@ -360,11 +364,13 @@ uint8_t SharedData::_getTouchPattern()
 		return 0; //not allowd to use while in ROBOT_USER_MODE
 	uint8_t touchState = touch.state;
 	touch.state = TOUCH_000; //reset the touch once it has been used
+#ifdef DEBUG_
 	if (touchState != 0)
 	{
 		Serial.print("t: ");
 		Serial.println(touchState);
 	}
+#endif // DEBUG_
 	return touchState;
 }
 
