@@ -216,6 +216,11 @@ void dancingEngine(void *sharedDataNew)
 
 Hexapod::Hexapod()
 {
+}
+
+void Hexapod::init(uint8_t mode)
+{
+	robot.setMode(mode);
 	ProductionVersion version;
 	version.check();
 	robot.loadName();

@@ -35,12 +35,12 @@ For additional information please check http://www.stemi.education.
 
 #include "Hexapod.h"
 SharedData robot;
-Hexapod  *hexapod;
+Hexapod  hexapod;
 void setup()
 {
 	// put your setup code here, to run once:
 	Serial.begin(115200);
-	hexapod = new Hexapod();
+	hexapod.init(ROBOT_USER_MODE);
 }
 
 void loop()

@@ -53,7 +53,7 @@ SharedData:: SharedData()
 	
 	//init for move()
 
-	userInputData.translationZ = 50;
+	userInputData.translationZ = 0;
 	userInputData.ledMode = LED_PARAMETRIC_MODE;
 	userInputData.ledSpreadRatio = 100;
 	userInputData.poseSpeed = 60;

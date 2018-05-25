@@ -35,14 +35,13 @@ For additional information please check http://www.stemi.education.
 
 #include "Hexapod.h"
 SharedData robot;
-Hexapod  *hexapod;
+Hexapod  hexapod;
 void setup()
 {
 	Serial.begin(115200);
-	hexapod = new Hexapod();
+	hexapod.init();
 	robot.setLed(GREEN);
 	robot.setHeight(50);
-	//robot.setMode(ROBOT_USER_MODE);
 }
 
 Color clrArray[7] = {BLUE, YELLOW, GREEN, CYAN, PURPLE, RED, ORANGE};
