@@ -163,7 +163,7 @@ static const userPresetInputData FORWARD = { MOVE_SPEED, 0,0   ,0,STRETCH_AMMOUN
 static const userPresetInputData BACKWARD = { MOVE_SPEED, 180,0   ,0,-STRETCH_AMMOUNT,0,   0,TILT_AMMOUNT,0 };
 static const userPresetInputData LEFT = { MOVE_SPEED, 90, MOVE_SPEED   ,-STRETCH_AMMOUNT,0,0,   -TILT_AMMOUNT,0,0 };
 static const userPresetInputData RIGHT = { MOVE_SPEED, -90, -MOVE_SPEED   ,STRETCH_AMMOUNT,0,0,   TILT_AMMOUNT,0,0 };
-static const userPresetInputData RESET = { 0,0,0, 0,0,0, 0,0,0 };
+static const userPresetInputData STOP = { 0,0,0, 0,0,0, 0,0,0 };
 
 struct MovementData
 {
