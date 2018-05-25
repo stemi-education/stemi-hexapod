@@ -210,7 +210,7 @@ void RobotEngine::modesGO()
 		else
 		{
 			robot._setLed(BLUE, WHITE, 6, PI / 2);
-			robot._setHeight(4);
+			robot._setHeight(4.5);
 		}
 		break;
 
