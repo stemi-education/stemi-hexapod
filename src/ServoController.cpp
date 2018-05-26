@@ -23,9 +23,6 @@ void ServoController::moveAllServos(float radianPositions[18])
   uint16_t millisPCA9685[16];
 	uint16_t pwmESP32[2];
 
-servo.pwmForAngle(mapf(radianPositions[16] * (180 / PI), 90, -90, 90, -90));//L32
-
-
 	//millisPCA9685
 	millisPCA9685[0] = servo.pwmForAngle(mapf(radianPositions[6] * (180 / PI), 90, -90, -90, 90));//R31
 	millisPCA9685[1] = servo.pwmForAngle(mapf(radianPositions[7] * (180 / PI), 90, -90, -90, 90));//R32
