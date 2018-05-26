@@ -45,9 +45,13 @@ For additional information please check http://www.stemi.education.
 
 #include "Names.h"
 
-#define HEXAPOD_VERSION_MAJOR 2
-#define HEXAPOD_VERSION_MINOR 0
-#define HEXAPOD_VERSION_PATCH 2
+#define HEXAPOD_SW_VERSION_MAJOR 2
+#define HEXAPOD_SW_VERSION_MINOR 0
+#define HEXAPOD_SW_VERSION_PATCH 3
+#define HEXAPOD_HW_VERSION_MAJOR 2
+#define HEXAPOD_HW_VERSION_MINOR 0
+#define HEXAPOD_HW_VERSION_PATCH 0
+
 #define ENABLE_VERSION_BURNING
 //#define DEBUG 
 //#define DEBUG_VOLTAGES
@@ -355,7 +359,8 @@ public:
 	int8_t mode = ROBOT_STANDBY_MODE;
 	uint8_t BTConnectedCount = 0;
 	int8_t userSlider = 0;
-	uint8_t version[3] = { HEXAPOD_VERSION_MAJOR, HEXAPOD_VERSION_MINOR, HEXAPOD_VERSION_PATCH };
+	uint8_t hexSwVersion[3] = { HEXAPOD_SW_VERSION_MAJOR, HEXAPOD_SW_VERSION_MINOR, HEXAPOD_SW_VERSION_PATCH };
+	uint8_t hexHwVersion[3] = { HEXAPOD_HW_VERSION_MAJOR, HEXAPOD_HW_VERSION_MINOR, HEXAPOD_HW_VERSION_PATCH };
 	uint danceCount = 0;
 	std::string name;
 };

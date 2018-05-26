@@ -40,24 +40,28 @@ For additional information please check http://www.stemi.education.
 ProductionVersion::ProductionVersion()
 {
 	preferences.begin("my-app", false);
-	version = preferences.getUInt("hexVersionMajor", 0);
+	version = preferences.getUInt("hwVersionMajor", 0);
 }
 
 void ProductionVersion::check()
 {
+	Serial.printf("\n*** STEMI Hexapod ***\n");
 	if (version == 0)
 	{
 		
-		Serial.printf("Version not burned\n");
+		Serial.printf("Hardware version not burned. ");
 #ifdef ENABLE_VERSION_BURNING
-		Serial.printf("Burning STEMI Hexapod v%d.%d.%d\n", HEXAPOD_VERSION_MAJOR, HEXAPOD_VERSION_MINOR, HEXAPOD_VERSION_PATCH);
-		preferences.putUInt("hexVersionMajor", HEXAPOD_VERSION_MAJOR);
-		preferences.putUInt("hexVersionMinor", HEXAPOD_VERSION_MINOR);
-		preferences.putUInt("hexVersionPatch", HEXAPOD_VERSION_PATCH);
+		Serial.printf("Burning hardware v%d.%d.%d", HEXAPOD_HW_VERSION_MAJOR, HEXAPOD_HW_VERSION_MINOR, HEXAPOD_HW_VERSION_PATCH);
+		preferences.putUInt("hwVersionMajor", HEXAPOD_HW_VERSION_MAJOR);
+		preferences.putUInt("hwVersionMinor", HEXAPOD_HW_VERSION_MINOR);
+		preferences.putUInt("hwVersionPatch", HEXAPOD_HW_VERSION_PATCH);
 #endif // ENABLE_VERSION_BURNING
+		Serial.printf("\n");
 	}
 	else
 	{
-		Serial.printf("\n***STEMI Hexapod v%d.%d.%d***\n\n", HEXAPOD_VERSION_MAJOR, HEXAPOD_VERSION_MINOR, HEXAPOD_VERSION_PATCH);
+		Serial.printf("Hardware v%d.%d.%d\n",
+			HEXAPOD_HW_VERSION_MAJOR, HEXAPOD_HW_VERSION_MINOR, HEXAPOD_HW_VERSION_PATCH);
 	}
+	Serial.printf("Software v%d.%d.%d\n\n", HEXAPOD_SW_VERSION_MAJOR, HEXAPOD_SW_VERSION_MINOR, HEXAPOD_SW_VERSION_PATCH);
 }
