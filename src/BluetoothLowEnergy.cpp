@@ -145,21 +145,24 @@ void BluetoothLowEnergy::createMovementServiceWithCharacteristics() {
 	BLECharacteristic* linearVelocityCharacteristic = movementService->createCharacteristic(
 		LINEARVELOCITY_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//linearVelocityCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
 
 	BLECharacteristic* directionCharacteristic = movementService->createCharacteristic(
 		DIRECTION_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//directionCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT16, 0x2763));
 
 	BLECharacteristic* angularVelocityCharacteristic = movementService->createCharacteristic(
 		ANGULARVELOCITY_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//angularVelocityCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 
@@ -182,35 +185,40 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 	BLECharacteristic* translationXCharacteristic = poseService->createCharacteristic(
 		TRANSLATIONX_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//translationXCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 
 	BLECharacteristic* translationYCharacteristic = poseService->createCharacteristic(
 		TRANSLATIONY_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//translationYCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 
 	BLECharacteristic* translationZCharacteristic = poseService->createCharacteristic(
 		TRANSLATIONZ_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//translationZCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 	
 	BLECharacteristic* rotationXCharacteristic = poseService->createCharacteristic(
 		ROTATIONX_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//rotationXCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 	
 	BLECharacteristic* rotationYCharacteristic = poseService->createCharacteristic(
 		ROTATIONY_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//rotationYCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 	
@@ -218,7 +226,8 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 	BLECharacteristic* rotationZCharacteristic = poseService->createCharacteristic(
 		ROTATIONZ_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 	//rotationZCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 
@@ -258,7 +267,8 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 	BLECharacteristic* userSliderCharacteristic = parameterService->createCharacteristic(
 		USERSLIDER_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 
 	BLECharacteristic* versionCharacteristic = parameterService->createCharacteristic(
@@ -285,37 +295,43 @@ void BluetoothLowEnergy::createLEDServiceWithCharacteristics() {
 	BLECharacteristic* directionCharacteristic = LEDService->createCharacteristic(
 		LEDDIRECTION_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 
 	BLECharacteristic* spreadRatioCharacteristic = LEDService->createCharacteristic(
 		SPREADRATIO_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 
 	BLECharacteristic* primatyClrCharacteristic = LEDService->createCharacteristic(
 		PRIMARYCLR_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 
 	BLECharacteristic* secundaryClrCharacteristic = LEDService->createCharacteristic(
 		SECUNDARYCLR_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 
 	BLECharacteristic* rotaiotnSpeedCharacteristic = LEDService->createCharacteristic(
 		ROTATIONSPEED_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 
 	BLECharacteristic* blinkingSpeedCharacteristic = LEDService->createCharacteristic(
 		BLINKINGSPEED_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
 	);
 
 
