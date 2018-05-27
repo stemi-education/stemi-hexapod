@@ -80,6 +80,9 @@ For additional information please check http://www.stemi.education.
 #define NAME_SERVICE_UUID "2b406cd0-ff12-400e-bd22-028c12f2978e"
 #define NAME_CHARACTERISTIC_UUID "09769166-195f-495e-baa9-383c85211e97"
 
+#define BATCH_SERVICE_UUID "651707bb-61f7-4338-b5a9-c36e02c8e2f1"
+#define BATCH_CHARACTERISTIC_UUID "da86113b-ae65-472e-ac2e-ad7d8a00feac"
+
 class BluetoothLowEnergy {
 public:
 	BluetoothLowEnergy(std::string deviceName);
@@ -92,6 +95,7 @@ public:
 	BLEService* LEDService;
 	BLEService* batteryService;
 	BLEService* nameService;
+	BLEService* batchService;
 	
 	BLEAdvertising* advertising;
 
@@ -108,6 +112,7 @@ private:
 	void createLEDServiceWithCharacteristics();
 	void createBatteryServiceWithCharacteristics();
 	void createNameServiceWithCharacteristics();
+	void createBatchMovementServiceWithCharacteristic();
 };
 
 #endif

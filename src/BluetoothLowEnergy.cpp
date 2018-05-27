@@ -113,6 +113,7 @@ BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName) {
 	createParameterServiceWithCharacteristics();
 	createBatteryServiceWithCharacteristics();
 	createNameServiceWithCharacteristics();
+	createBatchMovementServiceWithCharacteristic();
 	startAdvertising();
 }
 
@@ -390,4 +391,36 @@ void BluetoothLowEnergy::createNameServiceWithCharacteristics() {
 	nameCharacteristic->setCallbacks(new robotNameCallback());
 
 	nameService->start();
+};
+
+class batchCallback : public BLECharacteristicCallbacks {
+private:
+	uint8_t* data;
+	uint8_t lenght;
+public:
+	batchCallback() {
+		//data = input;
+		//lenght = arrayLen;
+	}
+	void onWrite(BLECharacteristic* pCharacteristic) {
+		Serial.println("=== BATCH ===");
+		for (int i = 0; i < lenght; i++) {
+		//data[i] = uint8_t(pCharacteristic->getValue().c_str()[i]);
+		  Serial.println(pCharacteristic->getValue().c_str()[i]);
+		}
+	}
+};
+
+void BluetoothLowEnergy::createBatchMovementServiceWithCharacteristic() {
+	batchService = server->createService(BATCH_SERVICE_UUID);
+	BLECharacteristic* batchCharacteristic = batchService->createCharacteristic(
+		BATCH_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE);
+	//batchLevelCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
+
+	uint8_t batchCommands[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	batchCharacteristic->setValue(&batchCommands[0], 10);
+	batchCharacteristic->setCallbacks(new batchCallback());
+	batchService->start();
 };
