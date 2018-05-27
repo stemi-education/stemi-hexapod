@@ -365,11 +365,19 @@ public:
 	std::string name;
 };
 
-extern SharedData robot;
- 
 // general functions:
 static float saturate(float value, float minimum, float maximum)
 {
 	return min(maximum, max(minimum, value));
 }
+
+static float mapSaturate(float x, float in_min, float in_max, float out_min, float out_max, float sat_min, float sat_max)
+{
+	return saturate((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min, sat_min, sat_max);
+}
+static float mapf(float x, float in_min, float in_max, float out_min, float out_max)
+{
+	return ((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+}
+extern SharedData robot;
 #endif

@@ -3,6 +3,7 @@
 
 #include "PCA9685.h"
 #include "Wire.h"
+#include "SharedData.h"
 
 
 //removing this comment will eneable additional prints for debug
@@ -18,7 +19,6 @@ public:
   // [ r11,r12,r13,r21,r22,r23,r31,r32,r33, 
   //   l11,l12,l13,l21,l22,l23,l31,l32,l33 ]
   void moveAllServos(float radianPositions[18]);
-  float mapf(float x, float in_min, float in_max, float out_min, float out_max);
 
 private:
   PCA9685 pwmPCA9685;
