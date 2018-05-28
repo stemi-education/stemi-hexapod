@@ -411,11 +411,11 @@ public:
 		robot.userSlider = int8_t(pCharacteristic->getValue().c_str()[10]);
 		robot.btInputData.ledDiretion = int16_t(pCharacteristic->getValue().c_str()[11]) + int16_t(pCharacteristic->getValue().c_str()[12] << 8);
 		robot.btInputData.ledSpreadRatio = uint8_t(pCharacteristic->getValue().c_str()[13]);
-		for (int i = 14; i < 17; i++) {
-		  robot.btInputData.ledPrimarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[i]);
+		for (int i = 0; i < 3; i++) {
+		  robot.btInputData.ledPrimarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[14 + i]);
 		}
-		for (int i = 17; i < 20; i++) {
-		  robot.btInputData.ledSecondarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[i]);
+		for (int i = 0; i < 3; i++) {
+		  robot.btInputData.ledSecondarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[17 + i]);
 		}
 		robot.btInputData.ledRotationSpeed = int8_t(pCharacteristic->getValue().c_str()[20]);
 		robot.btInputData.ledBlinkingSpeed = uint8_t(pCharacteristic->getValue().c_str()[21]);
