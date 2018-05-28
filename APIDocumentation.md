@@ -74,7 +74,7 @@ robot.setLedStatic(RED);
 * Arguments:
     * Color
 
-#### Possible inputs for: ``` Color ```####
+#### Possible inputs for: ``` Color ``` ####
 ```c++
 RED = { 255, 0, 0 };
 GREEN = { 0, 255, 0 };
@@ -87,7 +87,7 @@ ORANGE = { 255, 60, 0 };
 BLACK = { 0, 0, 0 };
 ```
 
-#### Possible inputs for: ``` ledNo ```####
+#### Possible inputs for: ``` ledNo ``` ####
 ```c++
 LED_R1 = 0
 LED_R2 = 1
@@ -97,7 +97,7 @@ LED_L2 = 4
 LED_L3 = 3
 ```
 
-#### Possible inputs for: ``` direction ```####
+#### Possible inputs for: ``` direction ``` ####
 ```c++
 LED_R1_ANGLE  = -30
 LED_R2_ANGLE = -90
@@ -118,8 +118,7 @@ robot.move(FORWARD, 500);
 ```
 * Arguments:
     * movement,
-    * milliseconds   
-    (Note: duration can be specified but is not obligatory, default is infinite = -1)
+    * milliseconds (Note: duration can be specified but is not obligatory, default is infinite = -1)
 
 ```c++
 void move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity, float duration = MOVE_DURATION_DEFAULT);
@@ -203,7 +202,7 @@ robot.setHeight(30);
 * Arguments:
     * [0,100] %
 
-#### Possible inputs for: ``` userPresetInputData (movement, tiltation, stretchment) ```####
+#### Possible inputs for: ``` userPresetInputData (movement, tiltation, stretchment) ``` ####
 ```
 FORWARD
 BACKWARD
@@ -222,6 +221,7 @@ void exitUserMode(); //Enters walking mode
 ```
 
 #### Possible modes: ####
+
 ```
 ROBOT_USER_MODE -1
 ROBOT_STANDBY_MODE 0
