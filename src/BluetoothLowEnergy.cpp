@@ -256,7 +256,8 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 	BLECharacteristic* modeCharacteristic = parameterService->createCharacteristic(
 		MODE_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_NOTIFY
 	);
 
 	BLECharacteristic* gaitIDCharacteristic = parameterService->createCharacteristic(
@@ -407,6 +408,17 @@ public:
 		robot.btInputData.rotationX = int8_t(pCharacteristic->getValue().c_str()[7]);
 		robot.btInputData.rotationY = int8_t(pCharacteristic->getValue().c_str()[8]);
 		robot.btInputData.rotationZ = int8_t(pCharacteristic->getValue().c_str()[9]);
+		robot.userSlider = int8_t(pCharacteristic->getValue().c_str()[10]);
+		robot.btInputData.ledDiretion = int16_t(pCharacteristic->getValue().c_str()[11]) + int16_t(pCharacteristic->getValue().c_str()[12] << 8);
+		robot.btInputData.ledSpreadRatio = uint8_t(pCharacteristic->getValue().c_str()[13]);
+		for (int i = 14; i < 17; i++) {
+		  robot.btInputData.ledPrimarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[i]);
+		}
+		for (int i = 17; i < 20; i++) {
+		  robot.btInputData.ledSecondarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[i]);
+		}
+		robot.btInputData.ledRotationSpeed = int8_t(pCharacteristic->getValue().c_str()[20]);
+		robot.btInputData.ledBlinkingSpeed = uint8_t(pCharacteristic->getValue().c_str()[21]);
 	}
 };
 
@@ -419,8 +431,8 @@ void BluetoothLowEnergy::createBatchMovementServiceWithCharacteristic() {
 		BLECharacteristic::PROPERTY_WRITE_NR);
 	//batchLevelCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
 
-	uint8_t batchCommands[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-	batchCharacteristic->setValue(&batchCommands[0], 10);
+	uint8_t batchCommands[22] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+	batchCharacteristic->setValue(&batchCommands[0], 22);
 	batchCharacteristic->setCallbacks(new batchCallback());
 	batchService->start();
 };
