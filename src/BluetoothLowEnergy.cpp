@@ -112,7 +112,7 @@ BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName) {
 	createLEDServiceWithCharacteristics();
 	createParameterServiceWithCharacteristics();
 	createBatteryServiceWithCharacteristics();
-	createNameServiceWithCharacteristics();
+	//createNameServiceWithCharacteristics();
 	createBatchMovementServiceWithCharacteristic();
 	startAdvertising();
 }
@@ -394,20 +394,19 @@ void BluetoothLowEnergy::createNameServiceWithCharacteristics() {
 };
 
 class batchCallback : public BLECharacteristicCallbacks {
-private:
-	uint8_t* data;
-	uint8_t lenght;
 public:
 	batchCallback() {
-		//data = input;
-		//lenght = arrayLen;
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
-		Serial.println("=== BATCH ===");
-		for (int i = 0; i < lenght; i++) {
-		//data[i] = uint8_t(pCharacteristic->getValue().c_str()[i]);
-		  Serial.println(pCharacteristic->getValue().c_str()[i]);
-		}
+		robot.btInputData.linearVelocity = uint8_t(pCharacteristic->getValue().c_str()[0]);
+		robot.btInputData.direction = int16_t(pCharacteristic->getValue().c_str()[1]) + int16_t(pCharacteristic->getValue().c_str()[2] << 8);
+		robot.btInputData.angularVelocity = int8_t(pCharacteristic->getValue().c_str()[3]);
+		robot.btInputData.translationX = int8_t(pCharacteristic->getValue().c_str()[4]);
+		robot.btInputData.translationY = int8_t(pCharacteristic->getValue().c_str()[5]);
+		robot.btInputData.translationZ = int8_t(pCharacteristic->getValue().c_str()[6]);
+		robot.btInputData.rotationX = int8_t(pCharacteristic->getValue().c_str()[7]);
+		robot.btInputData.rotationY = int8_t(pCharacteristic->getValue().c_str()[8]);
+		robot.btInputData.rotationZ = int8_t(pCharacteristic->getValue().c_str()[9]);
 	}
 };
 
@@ -416,7 +415,8 @@ void BluetoothLowEnergy::createBatchMovementServiceWithCharacteristic() {
 	BLECharacteristic* batchCharacteristic = batchService->createCharacteristic(
 		BATCH_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE);
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR);
 	//batchLevelCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
 
 	uint8_t batchCommands[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
