@@ -10,11 +10,17 @@ Library that includes everything you need to get your STEMI hexapod walking and 
 ### Install the libraries ###
 
 1. Install NeoPixelBus library: <https://github.com/Makuna/NeoPixelBus>
-2. Install STEMI-hexapod library: <https://github.com/stemi-education/stemi-hexapod> (this library)
+2. Install STEMI-hexapod library: <https://github.com/stemi-education/stemi-hexapod> (this library)  
+Note: We recommend installing these libraries via Arduino Library Manager.
 
-### Upload sample code ###
+### Program the robot ###
 
 1. Open Arduino IDE
 2. Choose "ESP32 Dev Module" board
-3. Open "File > Examples > STEMI-hexapod by STEMI > Default"
-4. upload to your STEMi hexapod robot and enjoy
+3. Open "File > Examples > STEMI-hexapod > Default"
+4. Upload to your STEMI hexapod robot
+
+For writing your own code replace last two steps with:
+3. Open "File > Examples > STEMI-hexapod > Empty-user-mode"
+4. Use STEMI-hexapod API to program the robot and make it move and glow as you please :)
+    * API documentation is available on the following link: <https://github.com/stemi-education/stemi-hexapod/blob/devel/APIDocumentation.md>.
