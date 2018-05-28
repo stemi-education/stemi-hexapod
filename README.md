@@ -21,6 +21,7 @@ Note: We recommend installing these libraries via Arduino Library Manager.
 4. Upload to your STEMI hexapod robot
 
 For writing your own code replace last two steps with:
+
 3. Open "File > Examples > STEMI-hexapod > Empty-user-mode"
 4. Use STEMI-hexapod API to program the robot and make it move and glow as you please :)
     * API documentation is available on the following link: <https://github.com/stemi-education/stemi-hexapod/blob/devel/APIDocumentation.md>.
