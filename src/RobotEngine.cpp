@@ -165,6 +165,10 @@ void RobotEngine::checkState()
 			calibrationLegSelected = calibrationLegSelectedMap[calibrationLegSelectedCounter];
 			Serial.println(calibrationLegSelected);
 			break;
+		case TOUCH_XXX:
+			for (int i = 0; i < 18; i++)
+				robot.servoCtrl.calibrationOffsetBytes[i] = 0;
+			break;
 		}
 		break;
 	}
