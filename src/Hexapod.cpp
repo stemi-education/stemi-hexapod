@@ -148,8 +148,10 @@ void btEngine(void *sharedDataNew)
 		//publish battery level
 		BLE.batteryService->getCharacteristic(BATTERYLEVEL_CHARACTERISTIC_UUID)->setValue(&robot.battery.percentage, 1);
 		//check and publish robot mode
-		if ((int8_t)BLE.parameterService->getCharacteristic(MODE_CHARACTERISTIC_UUID)->getValue().c_str()[0] != robot.mode)
+		if ((int8_t)BLE.parameterService->getCharacteristic(MODE_CHARACTERISTIC_UUID)->getValue().c_str()[0] != robot.mode) {
 			BLE.parameterService->getCharacteristic(MODE_CHARACTERISTIC_UUID)->setValue((uint8_t*)&robot.mode, 1);
+			BLE.parameterService->getCharacteristic(MODE_CHARACTERISTIC_UUID)->notify();
+		}
 		//check and publish gaitID
 		if ((int8_t)BLE.parameterService->getCharacteristic(GAITID_CHARACTERISTIC_UUID)->getValue().c_str()[0] != robot.btInputData.gaitID)
 			BLE.parameterService->getCharacteristic(GAITID_CHARACTERISTIC_UUID)->setValue((uint8_t*)&robot.btInputData.gaitID, 1);
