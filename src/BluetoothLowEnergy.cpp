@@ -401,8 +401,8 @@ public:
 		for (int i = 0; i < 3; i++) {
 		  data->btInputData.ledSecondarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[17 + i]);
 		}
-		data->btInputData.ledRotationSpeed = int8_t(pCharacteristic->getValue().c_str()[20]);
-		data->btInputData.ledBlinkingSpeed = uint8_t(pCharacteristic->getValue().c_str()[21]);
+		data->btInputData.ledRotationSpeed = uint8_t(pCharacteristic->getValue().c_str()[20]);
+		data->btInputData.ledBlinkingSpeed = int8_t(pCharacteristic->getValue().c_str()[21]);
 	}
 };
 
