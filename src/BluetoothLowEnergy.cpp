@@ -376,29 +376,33 @@ void BluetoothLowEnergy::createBatteryServiceWithCharacteristics() {
 
 class batchCallback : public BLECharacteristicCallbacks {
 public:
-	batchCallback() {
+
+	SharedData * data;
+
+	batchCallback(SharedData* dataNew) {
+		data = dataNew;
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
-		robot.btInputData.linearVelocity = uint8_t(pCharacteristic->getValue().c_str()[0]);
-		robot.btInputData.direction = int16_t(pCharacteristic->getValue().c_str()[1]) + int16_t(pCharacteristic->getValue().c_str()[2] << 8);
-		robot.btInputData.angularVelocity = int8_t(pCharacteristic->getValue().c_str()[3]);
-		robot.btInputData.translationX = int8_t(pCharacteristic->getValue().c_str()[4]);
-		robot.btInputData.translationY = int8_t(pCharacteristic->getValue().c_str()[5]);
-		robot.btInputData.translationZ = int8_t(pCharacteristic->getValue().c_str()[6]);
-		robot.btInputData.rotationX = int8_t(pCharacteristic->getValue().c_str()[7]);
-		robot.btInputData.rotationY = int8_t(pCharacteristic->getValue().c_str()[8]);
-		robot.btInputData.rotationZ = int8_t(pCharacteristic->getValue().c_str()[9]);
-		robot.userSlider = int8_t(pCharacteristic->getValue().c_str()[10]);
-		robot.btInputData.ledDiretion = int16_t(pCharacteristic->getValue().c_str()[11]) + int16_t(pCharacteristic->getValue().c_str()[12] << 8);
-		robot.btInputData.ledSpreadRatio = uint8_t(pCharacteristic->getValue().c_str()[13]);
+		data->btInputData.linearVelocity = uint8_t(pCharacteristic->getValue().c_str()[0]);
+		data->btInputData.direction = int16_t(pCharacteristic->getValue().c_str()[1]) + int16_t(pCharacteristic->getValue().c_str()[2] << 8);
+		data->btInputData.angularVelocity = int8_t(pCharacteristic->getValue().c_str()[3]);
+		data->btInputData.translationX = int8_t(pCharacteristic->getValue().c_str()[4]);
+		data->btInputData.translationY = int8_t(pCharacteristic->getValue().c_str()[5]);
+		data->btInputData.translationZ = int8_t(pCharacteristic->getValue().c_str()[6]);
+		data->btInputData.rotationX = int8_t(pCharacteristic->getValue().c_str()[7]);
+		data->btInputData.rotationY = int8_t(pCharacteristic->getValue().c_str()[8]);
+		data->btInputData.rotationZ = int8_t(pCharacteristic->getValue().c_str()[9]);
+		data->userSlider = int8_t(pCharacteristic->getValue().c_str()[10]);
+		data->btInputData.ledDiretion = int16_t(pCharacteristic->getValue().c_str()[11]) + int16_t(pCharacteristic->getValue().c_str()[12] << 8);
+		data->btInputData.ledSpreadRatio = uint8_t(pCharacteristic->getValue().c_str()[13]);
 		for (int i = 0; i < 3; i++) {
-		  robot.btInputData.ledPrimarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[14 + i]);
+		  data->btInputData.ledPrimarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[14 + i]);
 		}
 		for (int i = 0; i < 3; i++) {
-		  robot.btInputData.ledSecondarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[17 + i]);
+		  data->btInputData.ledSecondarClr[i] = uint8_t(pCharacteristic->getValue().c_str()[17 + i]);
 		}
-		robot.btInputData.ledRotationSpeed = int8_t(pCharacteristic->getValue().c_str()[20]);
-		robot.btInputData.ledBlinkingSpeed = uint8_t(pCharacteristic->getValue().c_str()[21]);
+		data->btInputData.ledRotationSpeed = int8_t(pCharacteristic->getValue().c_str()[20]);
+		data->btInputData.ledBlinkingSpeed = uint8_t(pCharacteristic->getValue().c_str()[21]);
 	}
 };
 
@@ -412,6 +416,6 @@ void BluetoothLowEnergy::createBatchMovementServiceWithCharacteristic() {
 
 	uint8_t batchCommands[22];
 	batchCharacteristic->setValue(&batchCommands[0], 22);
-	batchCharacteristic->setCallbacks(new batchCallback());
+	batchCharacteristic->setCallbacks(new batchCallback(&robot));
 	batchService->start();
 };
