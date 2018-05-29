@@ -207,7 +207,6 @@ void RobotEngine::modesGO()
 			robot._setLedBlinkingSpeed(0);
 			robot._setLedRotationSpeed(1);
 			robot._setHeight(4.5);
-			robot._move(0, PI/2, 0);
 		}
 		break;
 
