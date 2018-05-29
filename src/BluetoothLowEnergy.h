@@ -65,6 +65,7 @@ For additional information please check http://www.stemi.education.
 #define SOFTWARE_VERSION_CHARACTERISTIC_UUID "c526c005-97cd-46ca-992e-dae2b83c36e9"
 #define HARDWARE_VERSION_CHARACTERISTIC_UUID "2bbf68c9-2d73-4620-8eba-1758f6bef1b0"
 #define STEPHEIGHT_CHARACTERISTIC_UUID "e4fe2831-f7ae-4148-afd5-154a47f41530"
+#define NAME_CHARACTERISTIC_UUID "09769166-195f-495e-baa9-383c85211e97"
 
 #define LED_SERVICE "146d53ec-a92c-452c-9c2f-99bd7a6fbf8d"
 #define LEDDIRECTION_CHARACTERISTIC_UUID "fcd825b7-d05c-4829-b0e0-3b0fa8b4caff"
@@ -76,9 +77,6 @@ For additional information please check http://www.stemi.education.
 
 #define BATTERY_SERVICE_UUID "0000180f-0000-1000-8000-00805f9b34fb"
 #define BATTERYLEVEL_CHARACTERISTIC_UUID "00002a19-0000-1000-8000-00805f9b34fb"
-
-#define NAME_SERVICE_UUID "2b406cd0-ff12-400e-bd22-028c12f2978e"
-#define NAME_CHARACTERISTIC_UUID "09769166-195f-495e-baa9-383c85211e97"
 
 #define BATCH_SERVICE_UUID "651707bb-61f7-4338-b5a9-c36e02c8e2f1"
 #define BATCH_CHARACTERISTIC_UUID "da86113b-ae65-472e-ac2e-ad7d8a00feac"
@@ -111,7 +109,6 @@ private:
 	void createParameterServiceWithCharacteristics();
 	void createLEDServiceWithCharacteristics();
 	void createBatteryServiceWithCharacteristics();
-	void createNameServiceWithCharacteristics();
 	void createBatchMovementServiceWithCharacteristic();
 };
 

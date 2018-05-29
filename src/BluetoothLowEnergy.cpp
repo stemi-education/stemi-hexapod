@@ -112,14 +112,12 @@ BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName) {
 	createLEDServiceWithCharacteristics();
 	createParameterServiceWithCharacteristics();
 	createBatteryServiceWithCharacteristics();
-	//createNameServiceWithCharacteristics();
 	createBatchMovementServiceWithCharacteristic();
 	startAdvertising();
 }
 
 void BluetoothLowEnergy::createBLEDevice(std::string deviceName) {
 	BLEDevice::init(deviceName);
-	// Ako zelimo dodati neku fun da bude adresa svakog hexaca drugacija
 };
 	
 void BluetoothLowEnergy::createBLEServer() {
@@ -149,7 +147,6 @@ void BluetoothLowEnergy::createMovementServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//linearVelocityCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
 
 	BLECharacteristic* directionCharacteristic = movementService->createCharacteristic(
 		DIRECTION_CHARACTERISTIC_UUID,
@@ -157,7 +154,6 @@ void BluetoothLowEnergy::createMovementServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//directionCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT16, 0x2763));
 
 	BLECharacteristic* angularVelocityCharacteristic = movementService->createCharacteristic(
 		ANGULARVELOCITY_CHARACTERISTIC_UUID,
@@ -165,7 +161,6 @@ void BluetoothLowEnergy::createMovementServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//angularVelocityCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 
 	linearVelocityCharacteristic->setValue(&init_data[0], 1);
 	directionCharacteristic->setValue(init_data, 2);
@@ -189,7 +184,6 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//translationXCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 
 	BLECharacteristic* translationYCharacteristic = poseService->createCharacteristic(
 		TRANSLATIONY_CHARACTERISTIC_UUID,
@@ -197,7 +191,6 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//translationYCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 
 	BLECharacteristic* translationZCharacteristic = poseService->createCharacteristic(
 		TRANSLATIONZ_CHARACTERISTIC_UUID,
@@ -205,15 +198,13 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//translationZCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
-	
+
 	BLECharacteristic* rotationXCharacteristic = poseService->createCharacteristic(
 		ROTATIONX_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//rotationXCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 	
 	BLECharacteristic* rotationYCharacteristic = poseService->createCharacteristic(
 		ROTATIONY_CHARACTERISTIC_UUID,
@@ -221,8 +212,6 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//rotationYCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
-	
 
 	BLECharacteristic* rotationZCharacteristic = poseService->createCharacteristic(
 		ROTATIONZ_CHARACTERISTIC_UUID,
@@ -230,7 +219,6 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR
 	);
-	//rotationZCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_SINT8, 0x27ad));
 
 	translationXCharacteristic->setValue(&init_data[0], 1);
 	translationYCharacteristic->setValue(&init_data[0], 1);
@@ -251,6 +239,9 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 
 void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 	uint8_t init_data[2] = { 0, 0 };
+	char nameDummy[20];
+	strcpy(nameDummy, robot.name.c_str());
+	
 	parameterService = server->createService(PARAMETER_SERVICE);
 
 	BLECharacteristic* modeCharacteristic = parameterService->createCharacteristic(
@@ -283,12 +274,19 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_READ
 	);
 
+	BLECharacteristic* nameCharacteristic = parameterService->createCharacteristic(
+		NAME_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE);
+
+	nameCharacteristic->setValue((uint8_t*)nameDummy, 20);
 	modeCharacteristic->setValue(&init_data[0], 1);
 	gaitIDCharacteristic->setValue(&init_data[0], 1);
 	userSliderCharacteristic->setValue(&init_data[0], 1);
 	softwareVersionCharacteristic->setValue(robot.hexSwVersion, 3);
 	hardwareVersionCharacteristic->setValue(robot.hexHwVersion, 3);
 
+	nameCharacteristic->setCallbacks(new robotNameCallback());
 	modeCharacteristic->setCallbacks(new int8Callback(&robot.mode));
 	gaitIDCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.gaitID));
 	userSliderCharacteristic->setCallbacks(new int8Callback(&robot.userSlider));
@@ -368,30 +366,12 @@ void BluetoothLowEnergy::createBatteryServiceWithCharacteristics() {
 	BLECharacteristic* batteryLevelCharacteristic = batteryService->createCharacteristic(
 		BATTERYLEVEL_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ | 
-		BLECharacteristic::PROPERTY_WRITE);
-	//batteryLevelCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_NOTIFY);
 	
 	batteryLevelCharacteristic->setValue(&init_data[0], 1);
 
 	batteryService->start();
-};
-
-void BluetoothLowEnergy::createNameServiceWithCharacteristics() {
-	char nameDummy[20];
-	strcpy(nameDummy, robot.name.c_str());
-	nameService = server->createService(NAME_SERVICE_UUID);
-
-	BLECharacteristic* nameCharacteristic = nameService->createCharacteristic(
-		NAME_CHARACTERISTIC_UUID,
-		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE);
-	//batteryLevelCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
-
-	nameCharacteristic->setValue((uint8_t*)nameDummy, 20);
-
-	nameCharacteristic->setCallbacks(new robotNameCallback());
-
-	nameService->start();
 };
 
 class batchCallback : public BLECharacteristicCallbacks {
@@ -429,9 +409,8 @@ void BluetoothLowEnergy::createBatchMovementServiceWithCharacteristic() {
 		BLECharacteristic::PROPERTY_READ |
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR);
-	//batchLevelCharacteristic->addDescriptor(createBLE2904Descriptor(BLE2904::FORMAT_UINT8, 0x27ad));
 
-	uint8_t batchCommands[22] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+	uint8_t batchCommands[22];
 	batchCharacteristic->setValue(&batchCommands[0], 22);
 	batchCharacteristic->setCallbacks(new batchCallback());
 	batchService->start();
