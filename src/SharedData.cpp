@@ -411,6 +411,7 @@ void SharedData::loadName()
 		esp_efuse_mac_get_default(mac);
 		name = names.generateName(names.sumStringMemberValues(mac));
 		Serial.printf("Name not stored, storing \"%s\"\n",name.c_str());
+		storeName(name);
 	}
 }
 
