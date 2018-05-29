@@ -187,17 +187,15 @@ void RobotEngine::modesGO()
 		else
 		{
 			robot._setLed(BLUE, BLACK, 2, 1);
+			robot._setLedBlinkingSpeed(0);
+			robot._setLedRotationSpeed(1);
 		}
-		robot._setLedBlinkingSpeed(0);
-		robot._setLedRotationSpeed(1);
 		robot._move(0,0,0);
 		robot._setHeight(1);
 		break;
 
 	case ROBOT_WALK_MODE:
 		//set up walking parameters
-		robot._setLedBlinkingSpeed(0);
-		robot._setLedRotationSpeed(1);
 		if (robot.BTConnectedCount)
 		{
 			robot.useMoveInputData(&robot.btInputData);
@@ -206,7 +204,10 @@ void RobotEngine::modesGO()
 		else
 		{
 			robot._setLed(BLUE, WHITE, 6, PI / 2);
+			robot._setLedBlinkingSpeed(0);
+			robot._setLedRotationSpeed(1);
 			robot._setHeight(4.5);
+			robot._move(0, PI/2, 0);
 		}
 		break;
 
