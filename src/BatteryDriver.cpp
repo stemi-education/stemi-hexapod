@@ -47,6 +47,8 @@ static const adc_unit_t unit = ADC_UNIT_1;
 
 BatteryDriver::BatteryDriver()
 {
+
+	timeStarted = millis();
 	preferences.begin("my-app", false);
 	batteryPinCalibrationValue = preferences.getFloat("batCalibVal",0);
 	Serial.println("Battery sense calibration data loaded: ");
@@ -147,17 +149,24 @@ float BatteryDriver::LPFvoltage(float valueNew)
 
 void BatteryDriver::calibrateBatteryPin()
 {
-	batteryPinCalibrationValue = 0;
-	float batteryPinCalibrationValueSum = 0;
-	for (int i = 0; i < 10; i++)
+	if ((millis() - timeStarted) < 8000)
 	{
-		batteryPinCalibrationValueSum += BATTERY_PIN_CALIBRATION_REF_V - readBatteryVoltage();
-		delay(2);
+		batteryPinCalibrationValue = 0;
+		float batteryPinCalibrationValueSum = 0;
+		for (int i = 0; i < 10; i++)
+		{
+			batteryPinCalibrationValueSum += BATTERY_PIN_CALIBRATION_REF_V - readBatteryVoltage();
+			delay(2);
+		}
+		batteryPinCalibrationValue += batteryPinCalibrationValueSum / 10;
+		preferences.putFloat("batCalibVal", batteryPinCalibrationValue);
+		Serial.print("Stored battery calibration value: ");
+		Serial.println(batteryPinCalibrationValue);
+		Serial.print(" measured: ");
+		Serial.println(readBatteryVoltage());
 	}
-	batteryPinCalibrationValue += batteryPinCalibrationValueSum / 10;
-	preferences.putFloat("batCalibVal", batteryPinCalibrationValue);
-	Serial.print("Stored battery calibration value: ");
-	Serial.println(batteryPinCalibrationValue);
-	Serial.print(" measured: ");
-	Serial.println(readBatteryVoltage());
+	else
+	{
+		Serial.println("Battery Caliration Unavailable");
+	}
 }
