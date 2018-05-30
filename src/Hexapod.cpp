@@ -145,14 +145,18 @@ void btEngine(void *sharedDataNew)
 	{
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 		robot.BTConnectedCount = BLE.server->getConnectedCount();
-		//publish battery level
-		BLE.batteryService->getCharacteristic(BATTERYLEVEL_CHARACTERISTIC_UUID)->setValue(&robot.battery.percentage, 1);
+		//check and publish battery level
+		if ((uint8_t)BLE.batteryService->getCharacteristic(BATTERYLEVEL_CHARACTERISTIC_UUID)->getValue().c_str()[0] != robot.battery.percentage)
+		{
+			BLE.batteryService->getCharacteristic(BATTERYLEVEL_CHARACTERISTIC_UUID)->setValue(&robot.battery.percentage, 1);
+			BLE.batteryService->getCharacteristic(BATTERYLEVEL_CHARACTERISTIC_UUID)->notify();
+		}
 		//check and publish robot mode
 		if ((int8_t)BLE.parameterService->getCharacteristic(MODE_CHARACTERISTIC_UUID)->getValue().c_str()[0] != robot.mode)
+		{
 			BLE.parameterService->getCharacteristic(MODE_CHARACTERISTIC_UUID)->setValue((uint8_t*)&robot.mode, 1);
-		//check and publish gaitID
-		if ((int8_t)BLE.parameterService->getCharacteristic(GAITID_CHARACTERISTIC_UUID)->getValue().c_str()[0] != robot.btInputData.gaitID)
-			BLE.parameterService->getCharacteristic(GAITID_CHARACTERISTIC_UUID)->setValue((uint8_t*)&robot.btInputData.gaitID, 1);
+			BLE.parameterService->getCharacteristic(MODE_CHARACTERISTIC_UUID)->notify();
+		}
 	}
 }
 

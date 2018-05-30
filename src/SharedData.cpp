@@ -132,11 +132,7 @@ void SharedData::useLedInputData(InputData *data)
 			ledCtrl.manualClr[i][j] = data->ledManualClr[i][j];
 		}
 	}
-	/*Serial.println(data->ledDiretion * PI / 180 + PI / 2);
-	Serial.println(data->ledDiretion);
-	Serial.println(robot.ledCtrl.direction);
-	Serial.println(robot.ledCtrl.primarClr[0]);
-	Serial.println(robot.ledCtrl.secondarClr[0]);*/
+
 
 }
 
@@ -411,6 +407,7 @@ void SharedData::loadName()
 		esp_efuse_mac_get_default(mac);
 		name = names.generateName(names.sumStringMemberValues(mac));
 		Serial.printf("Name not stored, storing \"%s\"\n",name.c_str());
+		storeName(name);
 	}
 }
 

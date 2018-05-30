@@ -72,5 +72,6 @@ public:
 	Preferences preferences;
 
 	float batteryPinCalibrationValue = 0;
+	uint16_t timeStarted = 0;
 };
 #endif
