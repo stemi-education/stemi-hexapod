@@ -76,9 +76,6 @@ void RobotEngine::checkState()
 		case TOUCH_0X0:
 			robot.setMode(ROBOT_WALK_MODE);
 			break;
-		case TOUCH_0XX:
-			robot.battery.store = 1;
-			break;
 		}
 		break;
 	case ROBOT_WALK_MODE:
@@ -187,17 +184,15 @@ void RobotEngine::modesGO()
 		else
 		{
 			robot._setLed(BLUE, BLACK, 2, 1);
+			robot._setLedBlinkingSpeed(0);
+			robot._setLedRotationSpeed(1);
 		}
-		robot._setLedBlinkingSpeed(0);
-		robot._setLedRotationSpeed(1);
 		robot._move(0,0,0);
 		robot._setHeight(1);
 		break;
 
 	case ROBOT_WALK_MODE:
 		//set up walking parameters
-		robot._setLedBlinkingSpeed(0);
-		robot._setLedRotationSpeed(1);
 		if (robot.BTConnectedCount)
 		{
 			robot.useMoveInputData(&robot.btInputData);
@@ -206,6 +201,8 @@ void RobotEngine::modesGO()
 		else
 		{
 			robot._setLed(BLUE, WHITE, 6, PI / 2);
+			robot._setLedBlinkingSpeed(0);
+			robot._setLedRotationSpeed(1);
 			robot._setHeight(4.5);
 		}
 		break;
@@ -263,7 +260,7 @@ void RobotEngine::calibrateBattery(uint8_t touchID, int8_t exitMode)
 		batteryCalibrationTouchPasswordCounter++;
 		if (batteryCalibrationTouchPasswordCounter == 5)
 		{
-			Serial.println("calibrating battery");
+			Serial.println("Calibrating battery");
 			robot.battery.store = 1;
 			batteryCalibrationTouchPasswordCounter = 0;
 			robot._setLed(YELLOW, BLACK, 2, 0);
@@ -278,6 +275,5 @@ void RobotEngine::calibrateBattery(uint8_t touchID, int8_t exitMode)
 		batteryCalibrationTouchPasswordCounter = 0;
 		robot.setMode(exitMode);
 	}
-	Serial.println(batteryCalibrationTouchPasswordCounter);
 }
 
