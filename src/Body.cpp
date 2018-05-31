@@ -162,6 +162,7 @@ void Body::setGaitCurFi(double gaitCurFiNew)
 void Body::setMoveParam(double speedNew, double fiNew, double deltaFiNew) {
 	speed = speedNew;
 	double moveCenterNew[2];
+	deltaFiNew = -deltaFiNew; //added quickfix to fit rotation acording to the right hand rule, left should be positive, right should be negative
 	moveDeltaFi = deltaFiNew == 0 ? speed / robot.PMParam.freq / 100000 : deltaFiNew / robot.PMParam.freq;
 
 	double r = deltaFiNew == 0 ? 100000 : absolute(speedNew) / deltaFiNew;
