@@ -269,6 +269,7 @@ void SharedData::tilt(userPresetInputData tiltation)
 {
 	userInputData.rotationX = saturate(tiltation.rotationX, -100, 100);
 	userInputData.rotationY = saturate(tiltation.rotationY, -100, 100);
+	userInputData.rotationZ = saturate(tiltation.rotationZ, -100, 100);
 }
 
 void SharedData::tilt(int8_t rotationXNew, int8_t rotationYNew, int8_t rotationZNew)
