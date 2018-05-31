@@ -247,7 +247,7 @@ void SharedData::_move(float linearVelocity, float direction, float angularVeloc
 {
 	moveCtrl.linearVelocity = saturate(linearVelocity, 0, 15);
 	moveCtrl.direction = direction;
-	moveCtrl.angularVelocity = saturate(angularVelocity * PI / 180, -1, 1);
+	moveCtrl.angularVelocity = saturate(angularVelocity, -1, 1);
 	moveCtrl.timeout = duration * PMParam.freq / 1000;
 }
 
