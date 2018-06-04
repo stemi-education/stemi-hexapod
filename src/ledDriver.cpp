@@ -102,7 +102,7 @@ float LedDriver::applyDirectionSpeed()
 		if (rotationSpeedDirection > PI)
 			rotationSpeedDirection = rotationSpeedDirection - 2 * PI* ceil(rotationSpeedDirection / (2 * PI));
 		else if (rotationSpeedDirection < -PI)
-			rotationSpeedDirection = rotationSpeedDirection + 2 * PI* floor(rotationSpeedDirection / (2 * PI));
+			rotationSpeedDirection = rotationSpeedDirection - 2 * PI* floor(rotationSpeedDirection / (2 * PI));
 	}
 }
 float LedDriver::applyBlinkingSpeed() 
