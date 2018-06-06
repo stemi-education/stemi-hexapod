@@ -194,7 +194,9 @@ void dancingEngine(void *sharedDataNew)
 		vTaskDelayUntil(&xLastWakeTime, xFrequency2);
 		if (robot.mode == ROBOT_DANCE_MODE)
 		{
-			//dance.tickStart();
+#ifdef FULL_DANCE
+			dance.tickStart();
+#endif // FULL_DANCE
 			xLastWakeTime = xTaskGetTickCount();
 		}
 		else
