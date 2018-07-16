@@ -7,8 +7,8 @@
 #######################################
 
 SharedData	KEYWORD1
-Hexapod		KEYWORD1
-Color 		KEYWORD1
+Hexapod	KEYWORD1
+Color	KEYWORD1
 userPresetInputData	KEYWORD1
 MovementData	KEYWORD1
 PoseData	KEYWORD1
@@ -18,7 +18,7 @@ LedData	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-move		KEYWORD2
+move	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
