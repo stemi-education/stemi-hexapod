@@ -65,11 +65,15 @@ void loop()
 	}
 	else if (touchPattern == TOUCH_0XX)
 	{
-		robot.move(FORWARD,2000);
+		robot.setLed(RED, RED, 50, 0);
+		robot.setLedRotationSpeed(0);
+		robot.setLedBlinkingSpeed(30);
 	}
 	else if (touchPattern == TOUCH_XX0)
 	{
-		robot.move(BACKWARD,2000);
+		robot.setLed(RED, WHITE, 50, 0);
+		robot.setLedRotationSpeed(30);
+		robot.setLedBlinkingSpeed(0);
 	}
 	delay(20);
 }
@@ -77,16 +81,20 @@ void loop()
 
 void setLEDrandom()
 {
-	robot.setLedStatic(0, clrArray[random(0, 6)]);
-	robot.setLedStatic(1, clrArray[random(0, 6)]);
-	robot.setLedStatic(2, clrArray[random(0, 6)]);
-	robot.setLedStatic(3, clrArray[random(0, 6)]);
-	robot.setLedStatic(4, clrArray[random(0, 6)]);
-	robot.setLedStatic(5, clrArray[random(0, 6)]);
+	robot.setLedStatic(0, RED);
+	robot.setLedStatic(1, WHITE);
+	robot.setLedStatic(2, BLUE);
+	robot.setLedStatic(3, BLUE);
+	robot.setLedStatic(4, WHITE);
+	robot.setLedStatic(5, RED);
 }
 
 void setLEDSequence()
 {
-	robot.setLedStatic(clrArray[clrCount]);
-	clrCount = (clrCount + 1) % 7;
+	robot.setLedStatic(0, RED);
+	robot.setLedStatic(1, WHITE);
+	robot.setLedStatic(2, RED);
+	robot.setLedStatic(3, WHITE);
+	robot.setLedStatic(4, RED);
+	robot.setLedStatic(5, WHITE);
 }

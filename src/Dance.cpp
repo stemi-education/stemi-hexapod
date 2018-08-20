@@ -33,6 +33,7 @@ For additional information please check http://www.stemi.education.
 
 */
 
+#define HRVATSKA 1
 
 #include "Dance.h"
 
@@ -67,19 +68,44 @@ void Dance::setRobot(uint j)
 	robot.danceInputData.rotationZ = poses[poseArray[i]].rotationZ;
 	
 	//led
-	robot.danceInputData.ledPrimarClr[0] = ledColors[ledColorArray[i]].ledPrimarClr[0];
-	robot.danceInputData.ledPrimarClr[1] = ledColors[ledColorArray[i]].ledPrimarClr[1];
-	robot.danceInputData.ledPrimarClr[2] = ledColors[ledColorArray[i]].ledPrimarClr[2];
 
-	robot.danceInputData.ledSecondarClr[0] = ledColors[ledColorArray[i]].ledSecondarClr[0];
-	robot.danceInputData.ledSecondarClr[1] = ledColors[ledColorArray[i]].ledSecondarClr[1];
-	robot.danceInputData.ledSecondarClr[2] = ledColors[ledColorArray[i]].ledSecondarClr[2];
+#if HRVATSKA == 0
+	robot.danceInputData.ledMode = LED_MANUAL_MODE;
+		for (int k = 0; k < 6; k++)
+		{
+			robot.danceInputData.ledManualClr[k][0] = 255;
+			robot.danceInputData.ledManualClr[k][1] = ((k + i % 2 ) % 2) * 255;
+			robot.danceInputData.ledManualClr[k][2] = ((k + i % 2 ) % 2) * 255;
+		}
+#elif HRVATSKA == 1
+	robot.danceInputData.ledPrimarClr[0] = 255;
+	robot.danceInputData.ledPrimarClr[1] = 0;
+	robot.danceInputData.ledPrimarClr[2] = 0;
 
-	robot.danceInputData.ledDiretion = ledColors[ledColorArray[i]].ledDiretion;
-	robot.danceInputData.ledSpreadRatio = ledColors[ledColorArray[i]].ledSpreadRatio;
+	robot.danceInputData.ledSecondarClr[0] = 255;
+	robot.danceInputData.ledSecondarClr[1] = 255;
+	robot.danceInputData.ledSecondarClr[2] = 255;
 
-	robot.danceInputData.ledRotationSpeed = ledAnimations[ledAnimationArray[i]].ledRotationSpeed;
-	robot.danceInputData.ledBlinkingSpeed = ledAnimations[ledAnimationArray[i]].ledBlinkingSpeed;
+	robot.danceInputData.ledDiretion = 0;
+	robot.danceInputData.ledSpreadRatio = 50;
+
+	robot.danceInputData.ledRotationSpeed = 20;
+	robot.danceInputData.ledBlinkingSpeed = 0;
+#elif HRVATSKA == 2
+	robot.danceInputData.ledPrimarClr[0] = 255;
+	robot.danceInputData.ledPrimarClr[1] = 0;
+	robot.danceInputData.ledPrimarClr[2] = 0;
+
+	robot.danceInputData.ledSecondarClr[0] = 0;
+	robot.danceInputData.ledSecondarClr[1] = 0;
+	robot.danceInputData.ledSecondarClr[2] = 255;
+
+	robot.danceInputData.ledDiretion = 0;
+	robot.danceInputData.ledSpreadRatio = 50;
+
+	robot.danceInputData.ledRotationSpeed = 20;
+	robot.danceInputData.ledBlinkingSpeed = 0;
+#endif
 }
 void Dance::tickStart()
 {

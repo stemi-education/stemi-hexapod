@@ -196,7 +196,19 @@ void RobotEngine::modesGO()
 		if (robot.BTConnectedCount)
 		{
 			robot.useMoveInputData(&robot.btInputData);
-			robot.useLedInputData(&robot.btInputData);
+			//robot.useLedInputData(&robot.btInputData);
+			robot._setLed(BLUE, BLUE, 1.5, 0);
+			robot._setLedRotationSpeed(2);
+			robot._setLedBlinkingSpeed(0);
+			
+			/*robot.ledCtrl.mode = LED_MANUAL_MODE;
+			for (int k = 0; k < 6; k++)
+			{
+				robot.ledCtrl.manualClr[k][0] = 255;
+				robot.ledCtrl.manualClr[k][1] = ((k) % 2) * 255;
+				robot.ledCtrl.manualClr[k][2] = ((k) % 2) * 255;
+			}
+			*/
 		}
 		else
 		{

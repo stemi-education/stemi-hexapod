@@ -40,7 +40,7 @@ For additional information please check http://www.stemi.education.
 LedDriver::LedDriver(): strip(LED_COUNT, LED_PIN)
 {
 	strip.Begin();
-	strip.SetBrightness(255);
+	strip.SetBrightness(40);
 	strip.SetPixelColor(0, RgbColor(0, 0, 0));
 	strip.SetPixelColor(1, RgbColor(0, 0, 0));
 	strip.SetPixelColor(2, RgbColor(0, 0, 0));
