@@ -56,8 +56,6 @@ For additional information please check http://www.stemi.education.
 //#define DEBUG 
 //#define DEBUG_VOLTAGES
 
-//#define FULL_DANCE
-
 #define LED_COUNT 6
 #define LED_PIN 19 //Neopixel RGB LED strip pin
 #define SERVO_POWER_PIN 33

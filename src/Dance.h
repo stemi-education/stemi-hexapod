@@ -37,6 +37,8 @@ For additional information please check http://www.stemi.education.
 #ifndef DANCE_H
 #define DANCE_H
 
+//#define FULL_DANCE
+
 #define ST_0 0,	0
 
 #define S_L -50,0
