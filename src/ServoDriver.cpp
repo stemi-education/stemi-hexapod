@@ -47,7 +47,7 @@ ServoDriver::ServoDriver()
 void ServoDriver::servoPower(bool power)
 {
 	pinMode(SERVO_POWER_PIN, OUTPUT); //Servo power enable
-	digitalWrite(SERVO_POWER_PIN, power); //LOW for disable, HIGH for enable
+	digitalWrite(SERVO_POWER_PIN, LOW); //LOW for disable, HIGH for enable //allways LOW for showcase purposes.
 }
 
 int ServoDriver::servoWrite()

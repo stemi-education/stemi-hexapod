@@ -356,7 +356,7 @@ public:
 	//Robot name variables
 	Names names;
 
-	int8_t mode = ROBOT_STANDBY_MODE;
+	int8_t mode = ROBOT_DANCE_MODE; //Showcase specific
 	uint8_t BTConnectedCount = 0;
 	int8_t userSlider = 0;
 	uint8_t hexSwVersion[3] = { HEXAPOD_SW_VERSION_MAJOR, HEXAPOD_SW_VERSION_MINOR, HEXAPOD_SW_VERSION_PATCH };

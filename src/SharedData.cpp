@@ -313,7 +313,7 @@ void SharedData::_setPose(float poseVectorNew[6])
 
 void SharedData::setMode(int8_t modeNew)
 {
-	mode = modeNew;
+	mode = ROBOT_DANCE_MODE; //SHOWCASE SPECIFIC
 	moveCtrl.timeout = 0;
 }
 
