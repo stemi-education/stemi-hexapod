@@ -91,7 +91,7 @@ For additional information please check http://www.stemi.education.
 #define M9 9
 
 #ifndef FULL_DANCE
-#define NUMBER_OF_MOVES 288
+#define NUMBER_OF_MOVES 48
 #else
 #define NUMBER_OF_MOVES 460
 #endif // FULL_DANCE
@@ -112,115 +112,35 @@ public:
 #ifndef FULL_DANCE
 	uint8_t movesArray[NUMBER_OF_MOVES] =
 	{
-		//first
-		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-
-		//solo
-		MF,	MF,  MF,	MF,	0,	0,	0,	0,		RR,	RR,  RR,	RR,	0,	0,	0,	0,		RL,	RL,  RL,	RL,	0,	0,	0,	0,		MB,	MB,  MB,	MB,	0,	0,	0,	0,
-		RR,	RR,  RR,	RR,	0,	0,	0,	0,		RL,	RL,  RL,	RL,	0,	0,	0,	0,
-
-		//orchestral
-		RR,	RR, RR,	RR,	RR,	RR, 0,	0,			MF,	0,  MB,	0,	MF,	0,	MB,	0,			RL,	RL, RL,	RL,	RL,	RL,	0,	0,			MF,	0,  MB,	0,	MF,	0,	MB,	0,
-		ML,	ML,  ML,	0, 0,	0,	0,	0,			Mr,	Mr,  Mr,	Mr,	0,	0,	0,	0,		Mr,	Mr,  Mr,	Mr,	0,	0,	0,	0,		ML,	ML,  ML,	ML, 0,	0,	0,	0,
-
-		//third
-		0,	0,  0,	0,	0,	0,	0,	0,			MF,	0,  MB,	0,	MF,	0,	MB,	0,			0,	0,  0,	0,	0,	0,	0,	0,			ML,	0,  Mr,	0,	ML,	0,	Mr,	0,
-		0,	0,  0,	0,	0,	0,	0,	0,			MF,	0,  MB,	0,	MF,	0,	MB,	0,			0,	0,  0,	0,	0,	0,	0,	0,			ML,	0,  Mr,	0,	0,	0,	0,	0,
-
-		//fourth
-		0,	0,  0,	0,	0,	0,	0,	0,			MF,	0,  MB,	0,	MF,	0,	MB,	0,			0,	0,  0,	0,	0,	0,	0,	0,			ML,	0,  Mr,	0,	ML,	0,	Mr,	0,
-		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0
+		//showcase
+		0,	0,	0,	0,	0,	0,	0,	0,		0,	0,	0,	0,	0,	0,	0,	0,		0,	0,	0,	0,	0,	0,	0,	0,		0,	0,	0,	0,	0,	0,	0,	0,
+		0,	0,	0,	0,	0,	0,	0,	0,		0,	0,	0,	0,	0,	0,	0,	0,
 	};
 	uint8_t heightArray[NUMBER_OF_MOVES] =
 	{
-		//first  72
-		0,  0,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,
-		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HL,  HM,	HL,	HM,	0,	0,	0,	0,
-
 		//solo 228
-		0,	0,  0,	0,	HC,	HC,	HC,	HC,			0,	0,  0,	0,	HC,	HC,	HC,	HC,			0,	0,  0,	0,	HC,	HC,	HC,	HC,			0,	0,  0,	0,	HC,	HC,	HC,	HC,
-		0,	0,  0,	0,	HC,	HC,	HC,	HC,			0,	0,  0,	0,	0,	0,  0,	0,
-	
-		//orchestral 276
-		0,	0,  0,	0,	0,	0,	0,	0,			0,	HC,  0,	HC,	0,	HC,	0,	HC,			0,	0,  0,	0,	0,	0,	0,	0,			0,	HC,  0,	HC,	0,	HC,	0,	HC,
-		0,	0,  0,	0,	HC,	HC,	HC,	HC,			0,	0,  0,	0,	HC,	HC,	HC,	HC,			0,	0,  0,	0,	HC,	HC,	HC,	HC,			0,	0,  0,	0,	0,	0,  0,	0,
-
-		//third 340
-		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		0,	0,  0,	0,	0,	0,	0,	0,			HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		0,	0,  0,	0,	0,	0,	0,	0,
-		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		0,	0,  0,	0,	0,	0,	0,	0,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,			0,	0,  0,	0,	0,	0,	0,	0,
-
-		//fourth 404
-		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		0,	0,  0,	0,	0,	0,	0,	0,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,
-		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0
+		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		0,	0,	0,	0,	0,	0,	0,	0,			HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		0,	0,	0,	0,	0,	0,	0,	0,
+		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC,		HC,  HC,	HC,	HC,	HC,	HC,	HC,	HC
 	};
 	uint8_t poseArray[NUMBER_OF_MOVES] =
 	{
-		//first
-		0,	0,  0,	0,	0,	0,	0,	0,			PL,	PL,	PL,	PL,	PL,	PL,	PL,	PL,			PR,	PR,	PR,	PR,	PR,	PR,	PR,	PR,			PL,	PL,	PL,	PL,	PR,	PR,	PR,	PR,
-		PL,	PL, PR,	PR,	PL,	PL,	PR,	PR,			PL,	0, PR,	0,	PL,	0,	PR,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-
 		//solo
-		PF,	PF,  PF,	PF,	0,	PR,	0,PL,		0,	0,  0,	0,	0,	PR,	0,	PL,			0,	0,  0,	0,	0,	PR,	0,	PL,			0,	0,  0,	0,	0,	PR,	0,	PL,
-		0,	0,  0,	0,	0,	PR,	0,	PL,			0,	0,  0,	0,	0,	0,	0,	0,
-
-		//orchestral
-		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-		PL,	PL,  PL,	PL,	0,	PR,	0,	PL,		PR,	PR,  PR,	PR,	0,	PL,	0,	PR,		PR,	PR,  PR,	PR,	0,	PL,	0,	PR,		PL,	PL,  PL,	PL,	0,	0,	0,	0,
-
-		//third
-		PL,	0, PR,	0,	PL,	0,	PR,	0,			0,	0,  0,	0,	0,	0,	0,	0,			PL,	0, PR,	0,	PL,	0,	PR,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-		PL,	0, PR,	0,	PL,	0,	PR,	0,			0,	0,  0,	0,	0,	0,	0,	0,			PL,	0, PR,	0,	PL,	0,	PR,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-
-		//fourth
-		PL,	0, PR,	0,	PL,	0,	PR,	0,			0,	0,  0,	0,	0,	0,	0,	0,			PL,	0, PR,	0,	PL,	0,	PR,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-		PL,	0, PR,	0,	PL,	0,	PR,	0,			0,	0,  0,	0,	0,	0,	0,	0,			PF,	PF,  PF,	PF,	PF,	PF,	PF,	0
+		PF,	PF,  PF,	PF,	0,	PR,	0,PL,			PL,	PR,  PL,	PR,	PL,	PR,	PL,	PR,		0,	PR,	0,	PL,	0,	PR,	0,	PL,			PL,	PR,  PL,	PR,	PL,	PR,	PL,	PR,
+		PL,	PL,  PL,	PL,	PR,	PR,	PR,	PR,		PL,	PL,  PL,	PL,	PR,	PR,	PR,	PR
 	};
 
 	uint8_t ledColorArray[NUMBER_OF_MOVES] =
 	{
-		//first 
-		CB,	CB,  CB,	CB,	CB,	CB,	CB,	CB,		CY,	CY,  CY,	CY,	CG,	CG,	CG,	CG,		CR,	CR, CR,	CR,CP,	CP,	CP,	CP,			CY,	CR,  CY,	CR,	CG,	CC,	CG,	CC,
-		CY,	CR,  CB,	CP,	CC,	CG,	CR,	CB,		CY,	CR,  CB,	CP,	CC,	CG,	CR,	CB,		CY,	CR,  CB,	CP,	0,	0,	0,	0,
-
 		//solo
 		CB,	CB,  CB,	CB,	CB,	CB,	CB,	CB,		CY,	CY,  CY,	CY,	CG,	CG,	CG,	CG,		CR,	CR, CR,	CR,CP,	CP,	CP,	CP,			CY,	CR,  CY,	CR,	CG,	CC,	CG,	CC,
-		CY,	CR,  CB,	CP,	CC,	CG,	CR,	CB,		CY,	CR,  CB,	CP,	0,	0,	0,	0,
-
-		//orchestral
-		CB,	CB,  CB,	CB,	CB,	CB,	CB,	CB,		CY,	CY,  CY,	CY,	CG,	CG,	CG,	CG,		CR,	CR, CR,	CR,CP,	CP,	CP,	CP,			CY,	CR,  CY,	CR,	CG,	CC,	CG,	CC,
-		CY,	CR,  CB,	CP,	CC,	CG,	CR,	CB,		CY,	CR,  CB,	CP,	CY,	CR, CB,	CP,		CR,	CR, CR,	CR,CP,	CP,	CP,	CP,			CY,	CR,  CY,	CR,	0,	0,	0,	0,
-
-		//third
-		CB,	CB,  CB,	CB,	CB,	CB,	CB,	CB,		CY,	CY,  CY,	CY,	CG,	CG,	CG,	CG,		CR,	CR, CR,	CR,CP,	CP,	CP,	CP,			CY,	CR,  CY,	CR,	CG,	CC,	CG,	CC,
-		CY,	CR,  CB,	CP,	CC,	CG,	CR,	CB,		CY,	CR,  CB,	CP,	CY,	CR, CB,	CP,		CR,	CR, CR,	CR,CP,	CP,	CP,	CP,			CY,	CR,  CY,	CR,	0,	0,	0,	0,
-
-		//fourth
-		CB,	CB,  CB,	CB,	CB,	CB,	CB,	CB,		CY,	CY,  CY,	CY,	CG,	CG,	CG,	CG,		CR,	CR, CR,	CR,CP,	CP,	CP,	CP,			CY,	CR,  CY,	CR,	CG,	CC,	CG,	CC,
-		CY,	CR,  CB,	CP,	CC,	CG,	CR,	CB,		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0
+		CY,	CR,  CB,	CP,	CC,	CG,	CR,	CB,		CY,	CR,  CB,	CP,	CY,	CR, CB,	CP
 	};
 
 	uint8_t ledAnimationArray[NUMBER_OF_MOVES] =
 	{
-		//first
-		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0,
-
 		//solo
 		0,	0,  0,	0,	0,	M2,	0,	M4,			0,	0,  0,	0,	0,	M2,	0,	M4,			0,	0,  0,	0,	0,	M2,	0,	M4,			0,	0,  0,	0,	0,	M2,	0,	M4,
-		M6,	M7,  M6,M7,M6,	M7,  M6,M7,			M6,	M7,  M6,	M7,	0,	0,	0,	0,
-
-		//orchestral
-		M0,	M5,  M0,	M6,	M0,	M5,	M0,	M7,		M0,	M8,  M0,	M5,	M0,	M8,	M0,	M5,		M0,	M5,  M0,	M6,	M0,	M5,	M0,	M7,		M0,	M8,  M0,	M5,	M0,	M8,	M0,	M5,
-		M5,	M7,  M5,	M7,	M5,	M7,	M5,	M7,		M5,	M7,  M5,	M7,	M5,	M7,	M5,	M7,		M0,	M8,  M0,	M5,	M0,	M8,	M0,	M5,		M0,	M5,  M0,	M6,	0,	0,	0,	0,
-
-		//third
-		M0,	M1,  M0,	M1,	M0,	M1,	M0,	M1,		M0,	M1,  M0,	M1,	M0,	M1,	M0,	M1,		M0,	M2,  M0,	M1,	M0,	M2,	M0,	M1,		M0,	M2,  M0,	M1,	M0,	M2,	M0,	M1,
-		M0,	M1,  M0,	M1,	M0,	M1,	M0,	M1,		M0,	M1,  M0,	M1,	M0,	M1,	M0,	M1,		M0,	M2,  M0,	M1,	M0,	M2,	M0,	M1,		M0,	M2,  M0,	0,	0,	0,	0,
-
-		//fourth
-		M0,	M1,  M0,	M1,	M0,	M1,	M0,	M1,		M0,	M1,  M0,	M1,	M0,	M1,	M0,	M1,		M0,	M2,  M0,	M1,	M0,	M2,	M0,	M1,		M0,	M2,  M0,	M1,	M0,	M2,	M0,	M1,
-		M0,	M1,  M0,	M1,	M0,	M1,	M0,	M1,		0,	0,  0,	0,	0,	0,	0,	0,			0,	0,  0,	0,	0,	0,	0,	0
+		M6,	M7,  M6,M7,M6,	M7,  M6,M7,			M6,	M7,  M6,	M7,	0,	0,	0,	0
 	};
 #else
 uint8_t movesArray[460] =
@@ -432,7 +352,7 @@ uint8_t ledAnimationArray[460] =
 		{ -50, 0,	50,		0,	0,	30 }, // PL 1
 		{ 50, 0,	50,		0,	0,	-30 }, // PR 2
 		{ 0, 0,	0,		-30,	0,	0 }, // PF 3
-		{ 0, 0,	0,		60,	0,	0 }, // PB 4
+		{ 0, 0,	0,		30,	0,	0 }, // PB 4
 	};
 	LedData ledColors[7] = 
 	{

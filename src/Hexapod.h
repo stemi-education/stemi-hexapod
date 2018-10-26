@@ -63,7 +63,7 @@ class Hexapod
 {
 public:
 	Hexapod();
-	void init(uint8_t mode = ROBOT_STANDBY_MODE);
+	void init(uint8_t mode = ROBOT_DANCE_MODE);
 };
 
 #endif

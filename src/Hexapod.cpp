@@ -44,7 +44,6 @@ void batteryDriver(void *sharedDataNew)
 	const TickType_t xFrequency = TASK_PERIOD_BATT;
 	xLastWakeTime = xTaskGetTickCount();
 	
-	battery.checkState();
 	vTaskPrioritySet(NULL, 2);
 
 	while (1)
@@ -55,7 +54,6 @@ void batteryDriver(void *sharedDataNew)
 			battery.calibrateBatteryPin();
 			robot.battery.store = 0;
 		}
-		battery.checkState();
 	}
 }
 

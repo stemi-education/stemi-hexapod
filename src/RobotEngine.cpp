@@ -54,6 +54,14 @@ void RobotEngine::checkState()
 	{
 	case ROBOT_USER_MODE:
 		//apply user data
+		if (robot.BTConnectedCount)
+		{
+			robot._setServoPower(1);
+		}
+		else
+		{
+			robot.setMode(ROBOT_DANCE_MODE);
+		}
 		break;
 	case ROBOT_BATTERY_EMPTY_MODE:
 		//rebooting the robot is the only way out of this mode
@@ -79,6 +87,15 @@ void RobotEngine::checkState()
 		}
 		break;
 	case ROBOT_WALK_MODE:
+		if (robot.BTConnectedCount)
+		{
+			robot._setServoPower(1);
+		}
+		else
+		{
+			robot.setMode(ROBOT_DANCE_MODE);
+		}
+		
 		switch (touchState)
 		{
 		case TOUCH_X0X:
@@ -98,6 +115,30 @@ void RobotEngine::checkState()
 		}
 		break;
 	case ROBOT_DANCE_MODE:
+		if (robot.BTConnectedCount)
+		{
+			robot._setServoPower(1);
+		}
+		else //if the BT is not connected alternate periodically between servos ON and OFF
+		{
+			if (robot.servoCtrl.power)
+			{
+				if (millis() - showcaseMoveTime > 10000) //servos ON for X seconds
+				{
+					robot._setServoPower(0);
+					showcaseMoveTime = millis();
+				}
+
+			}
+			else
+			{
+				if (millis() - showcaseMoveTime > 5000) //servos OFF for X seconds
+				{
+					robot._setServoPower(1);
+					showcaseMoveTime = millis();
+				}
+			}
+		}
 		switch (touchState)
 		{
 		case TOUCH_X0X:

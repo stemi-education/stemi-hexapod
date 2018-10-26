@@ -55,22 +55,8 @@ BatteryDriver::BatteryDriver()
 	Serial.println(batteryPinCalibrationValue);
 
 	robot.battery.voltage = readBatteryVoltage();
-	for (uint8_t i = 0; i < 10; i++)
-	{
-		checkState();
-#ifdef DEBUG_VOLTAGES
-		Serial.println(robot.battery.voltage);
-#endif // DEBUG_VOLTAGES	
-	}
-	//scheck bat state
-	if (robot.battery.voltage > MIN_TURN_ON_VOLTAGE)
-		robot._setServoPower(1);
-	else
-	{
-		Serial.println("Battery too low on startup");
-		robot._setServoPower(0);
-		robot.setMode(ROBOT_BATTERY_EMPTY_MODE);
-	}
+
+
 }
 
 void BatteryDriver::checkState()
@@ -92,7 +78,7 @@ void BatteryDriver::checkState()
 			robot.battery.state = BATTERY_EMPTY_STATE;
 			robot.battery.percentage = BATTERY_EMPTY_P;
 			//shut down servos and put to battery empty mode
-			robot._setServoPower(0);
+			//robot._setServoPower(0);
 			robot.setMode(ROBOT_BATTERY_EMPTY_MODE);
 		}
 		break;

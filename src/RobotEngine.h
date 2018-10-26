@@ -54,5 +54,7 @@ public:
 	Color calibrationServoLayerColors[3] = {RED, BLUE, YELLOW};
 	uint8_t batteryCalibrationTouchPassword[5] = { TOUCH_0XX, TOUCH_XX0, TOUCH_0XX, TOUCH_XX0, TOUCH_0XX};
 	uint8_t batteryCalibrationTouchPasswordCounter = 0;
+	bool showcaseMove = 0;
+	uint showcaseMoveTime = 0;
 };
 #endif

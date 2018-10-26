@@ -214,7 +214,7 @@ struct InputData : MovementData, PoseData, LedData
 	int16_t moveDuration = 0; // miliseconds of current command execution [-1 = inf, 0 = go home, ...]
 	int8_t gaitID = 3; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
-	bool servoPower = 1; // [on,off]power
+	bool servoPower = 0; // [on,off]power
 };
 
 struct PhisicsAndMoveParameters
@@ -356,7 +356,7 @@ public:
 	//Robot name variables
 	Names names;
 
-	int8_t mode = ROBOT_STANDBY_MODE;
+	int8_t mode = ROBOT_DANCE_MODE;
 	uint8_t BTConnectedCount = 0;
 	int8_t userSlider = 0;
 	uint8_t hexSwVersion[3] = { HEXAPOD_SW_VERSION_MAJOR, HEXAPOD_SW_VERSION_MINOR, HEXAPOD_SW_VERSION_PATCH };
