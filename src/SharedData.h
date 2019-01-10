@@ -212,7 +212,7 @@ struct InputData : MovementData, PoseData, LedData
 	//Misc - additional data
 	//int8_t robotMode; //[check ROBOT_XX_MODE macros]mode
 	int16_t moveDuration = 0; // miliseconds of current command execution [-1 = inf, 0 = go home, ...]
-	int8_t gaitID = 3; //[0,5]gait
+	int8_t gaitID = 5; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
 	bool servoPower = 1; // [on,off]power
 };
@@ -220,10 +220,10 @@ struct InputData : MovementData, PoseData, LedData
 struct PhisicsAndMoveParameters
 {
 	double a[3] = { 1.11,4.82,6.04 }; //dimensions of one leg
-	double dim[3] = { 3, 5.4, 7.2 }; //coordinates of the robots hips
+	double dim[3] = { 4.24, 4.24, 4.24 }; //coordinates of the robots hips
 	double freq = 50; //frequency of the algorithm
 	double ts = 1.0 / freq;
-	int8_t gaitID = 3;
+	int8_t gaitID = 5;
 	float stepHeight = 2;
 	float poseChangeSpeed = 0.93; //parameter for PT1 filter recomended [0.90,0.98]
 };

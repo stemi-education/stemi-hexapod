@@ -92,8 +92,8 @@ public:
 	double speed;
 	double maxAllowedSpeed;
 
-	uint8_t walkingLegsMap[6] = { 1,2,4,5, 0, 3 }; //what legs are used for walking
-	uint8_t nWalkingLegs = 6; //number of used legs for walking on the robot
+	uint8_t walkingLegsMap[6] = {0,2,3,5, 1, 4 }; //what legs are used for walking
+	uint8_t nWalkingLegs = 4; //number of used legs for walking on the robot
 	uint8_t nLegs = 6; //all installed legs on robot - 6 for hexapod 8 for octopod
 
 	double moveDelta;  //delta body movement 

@@ -86,11 +86,11 @@ Gait::Gait() {
 													4, 5,
 													5, 0 };
 
-	double quadWaveBase[12] = { 0, 0,
-															0, 1.5,
-															1.5, 3,
+	double quadWaveBase[12] = { 0, 1.5,
 															0, 0,
+															1.5, 3,
 															4.5, 0,
+															0, 0,
 															3, 4.5 };
 
 	double offsetZero[6] = { 0, 0, 0, 0, 0, 0 };
