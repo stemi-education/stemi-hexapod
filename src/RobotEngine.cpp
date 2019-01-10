@@ -132,7 +132,7 @@ void RobotEngine::checkState()
 			}
 			else
 			{
-				if (millis() - showcaseMoveTime > 5000) //servos OFF for X seconds
+				if (millis() - showcaseMoveTime > 20000) //servos OFF for X seconds
 				{
 					robot._setServoPower(1);
 					showcaseMoveTime = millis();
