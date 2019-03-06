@@ -59,6 +59,7 @@ For additional information please check http://www.stemi.education.
 #define LED_COUNT 6
 #define LED_PIN 19 //Neopixel RGB LED strip pin
 #define SERVO_POWER_PIN 33
+#define EXTRA_SERVO_PIN 25
 
 //task frequencies
 #define TASK_PERIOD_WALK 20
@@ -215,6 +216,7 @@ struct InputData : MovementData, PoseData, LedData
 	int8_t gaitID = 3; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
 	bool servoPower = 1; // [on,off]power
+	int8_t extraServoAngle = 0;
 };
 
 struct PhisicsAndMoveParameters
@@ -255,6 +257,7 @@ struct ServoCtrl
 																				0, 0, 0 };
 	bool store = 0;
 	int8_t nudge = -1;
+	float extraServoAngle = 90;
 };
 
 struct LedCtrl
@@ -320,6 +323,10 @@ public:
 	void storeServoCalibrationData();
 	void setServoPower(bool power);
 	void _setServoPower(bool power);
+
+	//Extra servo functions
+	void writeExtraServo(float servoAngle);
+	void _writeExtraServo(float servoAngle);
 
 	//touch functions
 	uint8_t getTouchPattern();

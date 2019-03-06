@@ -10,18 +10,20 @@ ServoController::ServoController() : servo(115, 302, 519)
 
 	ledcSetup(1, 50, 16);
 	ledcSetup(2, 50, 16);
+	ledcSetup(3, 50, 16);
 	ledcAttachPin(18, 1);
 	ledcAttachPin(21, 2);
+	ledcAttachPin(EXTRA_SERVO_PIN, 3);
 
 }
 
-void ServoController::moveAllServos(float radianPositions[18])
+void ServoController::moveAllServos(float radianPositions[18], float extraServoPosition)
 {
   
     // take care of phyisical servo orientation, convert radian to degrees and
     // then convert it to PWM duratio
   uint16_t millisPCA9685[16];
-	uint16_t pwmESP32[2];
+	uint16_t pwmESP32[3];
 
 	//millisPCA9685
 	millisPCA9685[0] = servo.pwmForAngle(mapSaturate(radianPositions[6] * (180 / PI), 90, -90, -90, 90, -80, 80));//R31
@@ -49,10 +51,12 @@ void ServoController::moveAllServos(float radianPositions[18])
 	//millisM0
 	pwmESP32[0] = mapSaturate(radianPositions[16] * (180 / PI), 90, -90, 7630, 1700, 2029, 7300);//L32
 	pwmESP32[1] = mapSaturate(radianPositions[17] * (180 / PI), -180, 0, 7630, 1700, 2029, 7300);//L33
+	pwmESP32[2] = mapSaturate(extraServoPosition, 90, -90, 7630, 1700, 2029, 7300);//EXTRA SERVO
 
 	pwmPCA9685.setChannelsPWM(0, 16, millisPCA9685);
 	ledcWrite(1, pwmESP32[0]);
 	ledcWrite(2, pwmESP32[1]);
+	ledcWrite(3, pwmESP32[2]);
 }
 
 

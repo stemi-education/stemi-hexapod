@@ -18,7 +18,7 @@ public:
   // radianPositions should be ordered like
   // [ r11,r12,r13,r21,r22,r23,r31,r32,r33, 
   //   l11,l12,l13,l21,l22,l23,l31,l32,l33 ]
-  void moveAllServos(float radianPositions[18]);
+  void moveAllServos(float radianPositions[18], float extraServoPosition = 0);
 
 private:
   PCA9685 pwmPCA9685;
