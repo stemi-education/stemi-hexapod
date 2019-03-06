@@ -112,7 +112,7 @@ int ServoDriver::servoWrite()
 			//Serial.print(" ");
 		}
 		//Serial.println();
-		sc.moveAllServos(calibratedServos);
+		sc.moveAllServos(calibratedServos, robot.servoCtrl.extraServoAngle);
 		break;
 	}
 	return 0;

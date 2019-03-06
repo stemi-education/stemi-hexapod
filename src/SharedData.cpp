@@ -101,10 +101,12 @@ void SharedData::useMoveInputData(InputData *data)
 	moveCtrl.poseVector[4] = data->rotationX / 100.0 * 0.3;
 	moveCtrl.poseVector[5] = data->rotationY / 100.0 * 0.3;
 
+	_writeExtraServo(data->extraServoAngle);
+
 	PMParam.gaitID = data->gaitID;
 	PMParam.stepHeight = data->stepHeight / 100.0 * 4;
 	PMParam.poseChangeSpeed = 0.99 - (0.00014 / -0.055)*(1 - exp(0.055*data->poseSpeed));
-	
+
 	if (data->moveDuration > 0)
 	{
 		moveCtrl.timeout = data->moveDuration * PMParam.freq / 1000;
@@ -335,6 +337,16 @@ void SharedData::setServoPower(bool power)
 void SharedData::_setServoPower(bool power)
 {
 	servoCtrl.power = power;
+}
+
+void SharedData::writeExtraServo(float servoAngle)
+{
+	userInputData.extraServoAngle = servoAngle;
+}
+
+void SharedData::_writeExtraServo(float servoAngle)
+{
+	servoCtrl.extraServoAngle = servoAngle;
 }
 
 uint8_t SharedData::getTouchPattern()
