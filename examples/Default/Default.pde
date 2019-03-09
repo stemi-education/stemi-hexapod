@@ -53,11 +53,13 @@ void loop()
 	int touchPattern = robot.getTouchPattern();
 	if (touchPattern == TOUCH_00X)
 	{
+		robot.writeExtraServo(-80);
 		setLEDrandom();
 	}
 	else if (touchPattern == TOUCH_X00)
 	{
 		setLEDSequence();
+		robot.writeExtraServo(80);
 	}
 	else if (touchPattern == TOUCH_0X0)
 	{
