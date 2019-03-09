@@ -95,6 +95,14 @@ void RobotEngine::checkState()
 			if (!robot.BTConnectedCount)
 				robot._move(3, -PI / 2, 0, 2000);
 			break;
+		case TOUCH_0XX:
+			if (!robot.BTConnectedCount)
+				robot._writeExtraServo(-80);
+			break;
+		case TOUCH_XX0:
+			if (!robot.BTConnectedCount)
+				robot._writeExtraServo(80);
+			break;
 		}
 		break;
 	case ROBOT_DANCE_MODE:
@@ -197,6 +205,7 @@ void RobotEngine::modesGO()
 		{
 			robot.useMoveInputData(&robot.btInputData);
 			robot.useLedInputData(&robot.btInputData);
+			robot._writeExtraServo(robot.universalData[0]);
 		}
 		else
 		{

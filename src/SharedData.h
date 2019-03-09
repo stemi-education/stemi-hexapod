@@ -47,7 +47,7 @@ For additional information please check http://www.stemi.education.
 
 #define HEXAPOD_SW_VERSION_MAJOR 2
 #define HEXAPOD_SW_VERSION_MINOR 0
-#define HEXAPOD_SW_VERSION_PATCH 7
+#define HEXAPOD_SW_VERSION_PATCH 8
 #define HEXAPOD_HW_VERSION_MAJOR 2
 #define HEXAPOD_HW_VERSION_MINOR 0
 #define HEXAPOD_HW_VERSION_PATCH 0
@@ -216,7 +216,7 @@ struct InputData : MovementData, PoseData, LedData
 	int8_t gaitID = 3; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
 	bool servoPower = 1; // [on,off]power
-	int8_t extraServoAngle = 0;
+	int16_t extraServoAngle = 0;
 };
 
 struct PhisicsAndMoveParameters
@@ -351,6 +351,9 @@ public:
 	void useGeneralInputData(InputData * data);
 	void useMoveInputData(InputData * data);
 	void useLedInputData(InputData * data);
+
+	//UniversalData to be written from bluetooth or other sources
+	int8_t universalData[4] = { 0, 0, 0, 0, };
 
 	MoveCtrl moveCtrl;
 	InputData btInputData, userInputData, danceInputData;

@@ -81,6 +81,22 @@ public:
 	}
 };
 
+class int8ArrayCallback : public BLECharacteristicCallbacks {
+private:
+	int8_t* data;
+	uint8_t lenght;
+public:
+	int8ArrayCallback(int8_t* input, uint8_t arrayLen) {
+		data = input;
+		lenght = arrayLen;
+	}
+	void onWrite(BLECharacteristic* pCharacteristic) {
+		for (int i = 0; i < lenght; i++) {
+			data[i] = int8_t(pCharacteristic->getValue().c_str()[i]);
+		}
+	}
+};
+
 class robotNameCallback : public BLECharacteristicCallbacks {
 private:
 public:
@@ -113,6 +129,7 @@ BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName) {
 	createParameterServiceWithCharacteristics();
 	createBatteryServiceWithCharacteristics();
 	createBatchMovementServiceWithCharacteristic();
+	createUniversalDataServiceWithCharacteristic();
 	startAdvertising();
 }
 
@@ -418,4 +435,25 @@ void BluetoothLowEnergy::createBatchMovementServiceWithCharacteristic() {
 	batchCharacteristic->setValue(&batchCommands[0], 22);
 	batchCharacteristic->setCallbacks(new batchCallback(&robot));
 	batchService->start();
-};
+}
+
+void BluetoothLowEnergy::createUniversalDataServiceWithCharacteristic()
+{
+	uint8_t init_data[4] = { 0, 0, 0, 0 };
+	universalDataService = server->createService(UNIVERSAL_DATA_SERVICE_UUID);
+
+	BLECharacteristic* universalDataCharacteristic = universalDataService->createCharacteristic(
+		UNIVERSAL_DATA_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
+	);
+
+	universalDataCharacteristic->setValue(init_data, 4);
+
+
+	universalDataCharacteristic->setCallbacks(new int8ArrayCallback(robot.universalData, 4));
+
+	movementService->start();
+}
+;
