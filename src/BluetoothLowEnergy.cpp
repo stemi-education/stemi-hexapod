@@ -454,6 +454,6 @@ void BluetoothLowEnergy::createUniversalDataServiceWithCharacteristic()
 
 	universalDataCharacteristic->setCallbacks(new int8ArrayCallback(robot.universalData, 4));
 
-	movementService->start();
+	universalDataService->start();
 }
 ;
