@@ -129,7 +129,6 @@ BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName) {
 	createParameterServiceWithCharacteristics();
 	createBatteryServiceWithCharacteristics();
 	createBatchMovementServiceWithCharacteristic();
-	createUniversalDataServiceWithCharacteristic();
 	startAdvertising();
 }
 
@@ -274,6 +273,13 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_WRITE
 	);
 
+	BLECharacteristic* universalDataCharacteristic = parameterService->createCharacteristic(
+		UNIVERSAL_DATA_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_WRITE_NR
+	);
+
 	BLECharacteristic* userSliderCharacteristic = parameterService->createCharacteristic(
 		USERSLIDER_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
@@ -299,6 +305,7 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 	nameCharacteristic->setValue((uint8_t*)nameDummy, 20);
 	modeCharacteristic->setValue(&init_data[0], 1);
 	gaitIDCharacteristic->setValue(&init_data[0], 1);
+	universalDataCharacteristic->setValue(init_data, 1);
 	userSliderCharacteristic->setValue(&init_data[0], 1);
 	softwareVersionCharacteristic->setValue(robot.hexSwVersion, 3);
 	hardwareVersionCharacteristic->setValue(robot.hexHwVersion, 3);
@@ -306,6 +313,7 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 	nameCharacteristic->setCallbacks(new robotNameCallback());
 	modeCharacteristic->setCallbacks(new int8Callback(&robot.mode));
 	gaitIDCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.gaitID));
+	universalDataCharacteristic->setCallbacks(new int8Callback(&robot.universalData[0]));
 	userSliderCharacteristic->setCallbacks(new int8Callback(&robot.userSlider));
 
 	parameterService->start();
@@ -436,24 +444,3 @@ void BluetoothLowEnergy::createBatchMovementServiceWithCharacteristic() {
 	batchCharacteristic->setCallbacks(new batchCallback(&robot));
 	batchService->start();
 }
-
-void BluetoothLowEnergy::createUniversalDataServiceWithCharacteristic()
-{
-	uint8_t init_data[4] = { 0, 0, 0, 0 };
-	universalDataService = server->createService(UNIVERSAL_DATA_SERVICE_UUID);
-
-	BLECharacteristic* universalDataCharacteristic = universalDataService->createCharacteristic(
-		UNIVERSAL_DATA_CHARACTERISTIC_UUID,
-		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE |
-		BLECharacteristic::PROPERTY_WRITE_NR
-	);
-
-	universalDataCharacteristic->setValue(init_data, 4);
-
-
-	universalDataCharacteristic->setCallbacks(new int8ArrayCallback(robot.universalData, 4));
-
-	universalDataService->start();
-}
-;

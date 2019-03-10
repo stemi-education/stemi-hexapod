@@ -61,6 +61,7 @@ For additional information please check http://www.stemi.education.
 #define PARAMETER_SERVICE "6ee32c61-cb9c-4471-a79d-2a2a98afd49a"
 #define MODE_CHARACTERISTIC_UUID "25017253-ae08-4681-ba9b-c6c0bf85da36"
 #define GAITID_CHARACTERISTIC_UUID "be930e0b-db94-48de-bdde-6e50fdac6fa0"
+#define UNIVERSAL_DATA_CHARACTERISTIC_UUID "387551c9-f9e9-4e06-804b-e167bcd520ea"
 #define USERSLIDER_CHARACTERISTIC_UUID	"a7b2097f-0fd6-4e14-b745-0c7e9fc3214b"
 #define SOFTWARE_VERSION_CHARACTERISTIC_UUID "c526c005-97cd-46ca-992e-dae2b83c36e9"
 #define HARDWARE_VERSION_CHARACTERISTIC_UUID "2bbf68c9-2d73-4620-8eba-1758f6bef1b0"
@@ -80,9 +81,6 @@ For additional information please check http://www.stemi.education.
 
 #define BATCH_SERVICE_UUID "651707bb-61f7-4338-b5a9-c36e02c8e2f1"
 #define BATCH_CHARACTERISTIC_UUID "da86113b-ae65-472e-ac2e-ad7d8a00feac"
-
-#define UNIVERSAL_DATA_SERVICE_UUID "b5b87b59-8e3a-4202-b179-37fd5872bf10"
-#define UNIVERSAL_DATA_CHARACTERISTIC_UUID "387551c9-f9e9-4e06-804b-e167bcd520ea"
 
 class BluetoothLowEnergy {
 public:
@@ -114,7 +112,6 @@ private:
 	void createLEDServiceWithCharacteristics();
 	void createBatteryServiceWithCharacteristics();
 	void createBatchMovementServiceWithCharacteristic();
-	void createUniversalDataServiceWithCharacteristic();
 };
 
 #endif
