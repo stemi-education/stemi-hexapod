@@ -47,7 +47,7 @@ For additional information please check http://www.stemi.education.
 
 #define HEXAPOD_SW_VERSION_MAJOR 2
 #define HEXAPOD_SW_VERSION_MINOR 0
-#define HEXAPOD_SW_VERSION_PATCH 8
+#define HEXAPOD_SW_VERSION_PATCH 9
 #define HEXAPOD_HW_VERSION_MAJOR 2
 #define HEXAPOD_HW_VERSION_MINOR 0
 #define HEXAPOD_HW_VERSION_PATCH 0
