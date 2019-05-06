@@ -39,7 +39,7 @@ For additional information please check http://www.stemi.education.
 
 ServoDriver::ServoDriver()
 {
-	delay(50);
+	delay(200);
 	storageInit();
 	loadCalibrationData();
 }
@@ -108,10 +108,10 @@ int ServoDriver::servoWrite()
 		for (int i = 0; i < 18; i++)
 		{
 			calibratedServos[i] = robot.servoCtrl.servoAngles[i] + robot.servoCtrl.calibrationOffsetBytes[i] / 100.0 * 0.2;
-			//Serial.print(calibratedServos[i]);
-			//Serial.print(" ");
+			// Serial.print(calibratedServos[i]);
+			// Serial.print(" ");
 		}
-		//Serial.println();
+		// Serial.println();
 		sc.moveAllServos(calibratedServos, robot.servoCtrl.extraServoAngle);
 		break;
 	}

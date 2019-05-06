@@ -10,6 +10,11 @@
 
 #define NR_END 1
 
+double absolute(double number)
+{
+	return number >= 0 ? number : -number;
+}
+
 //MatrixMath Matrix;			// Pre-instantiate
 
 // Matrix Printing Routine
@@ -132,9 +137,9 @@ int MatrixMath::Invert(float* A, int n)
 		tmp = 0;
 		for (i = k; i < n; i++)
 		{
-			if (abs(A[i*n+k]) >= tmp)	// 'Avoid using other functions inside abs()?'
+			if (absolute(A[i*n+k]) >= tmp)	// 'Avoid using other functions inside abs()?'
 			{
-				tmp = abs(A[i*n+k]);
+				tmp = absolute(A[i*n+k]);
 				pivrow = i;
 			}
 		}
