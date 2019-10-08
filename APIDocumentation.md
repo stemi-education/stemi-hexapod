@@ -16,6 +16,8 @@ robot.setLed(CYAN);
 * Arguments:
     * Color
 
+---
+
 ```c++
 void setLed(Color primarClr, Color secondarClr, uint8_t spreadRatio, int16_t direction);
 ```
@@ -30,6 +32,8 @@ robot.setLed(PURPLE, YELLOW, 50, LED_L1_ANGLE);
     * [0,100] %,
     * [-180, 180] °
 
+---
+
 ```c++
 void setLedRotationSpeed(int8_t rotationSpeed);
 ```
@@ -40,6 +44,8 @@ robot.setLedRotationSpeed(50);
 * Units:
     * [-100,100] %
 
+---
+
 ```c++
 void setLedBlinkingSpeed(uint8_t blinkingSpeed);
 ```
@@ -49,6 +55,8 @@ robot.setLedBlinkingSpeed(50);
 ```
 * Arguments:
     * [0,100] %
+
+---
 
 #### Functions for static led colors - without animations (rotation and blinking don’t work when combined with these functions): ####
 
@@ -64,6 +72,8 @@ robot.setLedStatic(LED_L2, BLUE);
     * [0,5] led number,
     * Color
 
+---
+
 ```c++
 void setLedStatic(Color color);
 ```
@@ -73,6 +83,8 @@ robot.setLedStatic(RED);
 ```
 * Arguments:
     * Color
+
+---
 
 #### Possible inputs for: ``` Color ``` ####
 ```c++
@@ -120,6 +132,8 @@ robot.move(FORWARD, 500);
     * movement,
     * milliseconds (Note: duration can be specified but is not obligatory, default is infinite = -1)
 
+---
+
 ```c++
 void move(uint8_t linearVelocity, int16_t direction, int8_t angularVelocity, float duration = MOVE_DURATION_DEFAULT);
 ```
@@ -135,6 +149,8 @@ robot.move(40, 0, 0, 5000) //move forward for 5000 miliseconds
     * [-100,100] %,
     * milliseconds (Note: duration can be specified but is not obligatory, default is infinite = -1)
 
+---
+
 ```c++
 void rotate(userPresetInputData rotation, float duration = MOVE_DURATION_DEFAULT);
 ```
@@ -146,6 +162,8 @@ robot.rotate(LEFT, 5000);
     * movement,
     * milliseconds (Note: duration can be specified but is not obligatory, default is infinite = -1)
 
+---
+
 ```c++
 void tilt(userPresetInputData tiltation);
 ```
@@ -156,6 +174,7 @@ robot.tilt(LEFT);
 * Arguments:
     * tiltation
 
+---
 
 ```c++
 void tilt(int8_t rotationXNew, int8_t rotationYNew, int8_t rotationZNew);
@@ -170,6 +189,8 @@ robot.tilt(30, 0 , 50);
     * [-100,100] %
     Note: check robot axes
 
+---
+
 ```c++
 void stretch(userPresetInputData stretchment);
 ```
@@ -179,6 +200,8 @@ robot.stretch(LEFT);
 ```
 * Arguments:
     * stretchment
+
+---
 
 ```c++
 void stretch(int8_t translationXNew, int8_t treanslationYNew);
@@ -192,6 +215,8 @@ robot.tilt(30, 0);
     * [-100,100] %
     Note: check robot axes
 
+---
+
 ```c++
 void setHeight(uint8_t height);
 ```
@@ -202,6 +227,8 @@ robot.setHeight(30);
 * Arguments:
     * [0,100] %
 
+---
+
 #### Possible inputs for: ``` userPresetInputData (movement, tiltation, stretchment) ``` ####
 ```
 FORWARD
@@ -210,6 +237,8 @@ RIGHT
 LEFT
 RESET
 ```
+
+---
 
 ## Modes ##
 
@@ -231,6 +260,8 @@ ROBOT_SETUP_MODE 10
 ROBOT_CALIBRATION_MODE 11
 ROBOT_BATTERY_EMPTY_MODE 12
 ```
+
+---
 
 ## Touch sensors ##
 
@@ -254,23 +285,27 @@ TOUCH_0XX 6
 TOUCH_XXX 7
 ```
 
+---
+
 ## Battery ##
 ```c++
 float getBatteryVoltage(); //returns current battery voltage
 uint8_t getBatteryPercentage(); // returns current battery percentage
 ```
 
+---
+
 ## Data ##
 All user input data is stored in ```userInputData```, an object made out of the following structure:
 ```c++
 struct InputData
 {
-	//Movement - inherited from MovementData
-uint8_t linearVelocity; // [0,100]%
+	// Movement - inherited from MovementData
+    uint8_t linearVelocity; // [0,100]%
 	int16_t direction; // [-180,180]degree
 	int8_t  angularVelocity; // [-100,100]%
 
-	//Pose - inherited from PoseData
+	// Pose - inherited from PoseData
 	int8_t translationX; // [-100,100]%
 	int8_t translationY; // [-100,100]%
 	int8_t translationZ; // [-100,100]%
@@ -279,7 +314,7 @@ uint8_t linearVelocity; // [0,100]%
 	int8_t rotationZ; // [-100,100]%
 	int8_t poseSpeed; // [0,100]% - temporary [99,30]
 
-//Led - inherited from LedData
+    // Led - inherited from LedData
 	uint8_t ledPrimarClr[3]; // [255]r, [255]g, [255]b
 	uint8_t ledSecondarClr[3]; // [255]r, [255]g, [255]b
 	int16_t ledDiretion; // [-180,180]degree
@@ -289,8 +324,8 @@ uint8_t linearVelocity; // [0,100]%
 	uint8_t ledManualClr[6][3]; // 6x [255]r, [255]g, [255]b
 	int8_t ledMode; // [manual, parametric]mode
 
-	//Misc - additional data
-	//int8_t robotMode; //[check ROBOT_XX_MODE macros]mode
+	// Misc - additional data
+	// int8_t robotMode; //[check ROBOT_XX_MODE macros]mode
 	int8_t moveDuration = 0; // seconds of current command execution [-2 = already written, -1 = inf, 0 = go home, 1-100 = seconds to move]
 	int8_t gaitID = 3; //[0,5]gait
 	uint8_t stepHeight = 50; // [0,100]%
