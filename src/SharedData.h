@@ -47,7 +47,7 @@ For additional information please check http://www.stemi.education.
 
 #define HEXAPOD_SW_VERSION_MAJOR 2
 #define HEXAPOD_SW_VERSION_MINOR 0
-#define HEXAPOD_SW_VERSION_PATCH 9
+#define HEXAPOD_SW_VERSION_PATCH 10
 #define HEXAPOD_HW_VERSION_MAJOR 2
 #define HEXAPOD_HW_VERSION_MINOR 0
 #define HEXAPOD_HW_VERSION_PATCH 0
@@ -268,7 +268,7 @@ struct LedCtrl
 	uint8_t secondarClr[3] = { 0,0,0 };
 	float rotationSpeed = 0; // [-10, 0=off, 10] ~ rotations / s
 	float blinkingSpeed = 0; // [0=off, 10] ~ blinks / s
-	uint8_t blinkShape = 0;// [0, 1, 2...](sine, square…) //TODO make MACROS with names
+	uint8_t blinkShape = 0;// [0, 1, 2...](sine, squareï¿½) //TODO make MACROS with names
 	uint8_t manualClr[6][3];
 	uint8_t finalClr[6][3];
 	int8_t mode = LED_PARAMETRIC_MODE;
