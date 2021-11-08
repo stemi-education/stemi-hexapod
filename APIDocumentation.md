@@ -208,7 +208,7 @@ void stretch(int8_t translationXNew, int8_t treanslationYNew);
 ```
 * Examples:
 ```c++
-robot.tilt(30, 0);
+robot.stretch(30, 0);
 ```
 * Arguments:
     * [-100,100] %,
