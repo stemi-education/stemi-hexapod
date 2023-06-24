@@ -47,8 +47,8 @@ public:
 	
 	void setColorParametric();
 	void setColorManual();
-	float applyDirectionSpeed();
-	float applyBlinkingSpeed();
+	void applyDirectionSpeed();
+	void applyBlinkingSpeed();
 	void writeToLED();
 
 	NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
