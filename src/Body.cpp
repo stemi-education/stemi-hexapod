@@ -146,7 +146,7 @@ void Body::setGaitUpDown(double gaitArray[12])
 	for (int i = 0; i < nWalkingLegs; i++)
 	{
 		legs[walkingLegsMap[i]].setGaitUpDown(gaitArray[walkingLegsMap[i] * 2] * PI / 3.0, gaitArray[walkingLegsMap[i] * 2 + 1] * PI / 3.0);
-		//TODO zasto se upisuju krivi FIjevi? ispiši i quadWaveBase pa provjeri
+		//TODO zasto se upisuju krivi FIjevi? ispiï¿½i i quadWaveBase pa provjeri
 	}
 }
 

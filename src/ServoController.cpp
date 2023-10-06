@@ -1,8 +1,8 @@
 #include "ServoController.h"
+#include "Semaphore.h"
 
 ServoController::ServoController() : servo(115, 302, 519)
 {
-  Wire.begin(23,22);
   
 	pwmPCA9685.resetDevices();
 	pwmPCA9685.init(B000000);
@@ -53,10 +53,12 @@ void ServoController::moveAllServos(float radianPositions[18], float extraServoP
 	pwmESP32[1] = mapSaturate(radianPositions[17] * (180 / PI), -180, 0, 7630, 1700, 2029, 7300);//L33
 	pwmESP32[2] = mapSaturate(extraServoPosition, 90, -90, 7630, 1700, 2029, 7300);//EXTRA SERVO
 
+	takeSemaphore();
 	pwmPCA9685.setChannelsPWM(0, 16, millisPCA9685);
 	ledcWrite(1, pwmESP32[0]);
 	ledcWrite(2, pwmESP32[1]);
 	ledcWrite(3, pwmESP32[2]);
+	giveSemaphore();
 }
 
 

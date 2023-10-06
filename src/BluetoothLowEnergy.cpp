@@ -38,8 +38,10 @@ For additional information please check http://www.stemi.education.
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #include <BLE2904.h>
+#include <BLE2902.h>
 #include "BluetoothLowEnergy.h"
 #include "SharedData.h"
+#include "esp_ota_ops.h"
 
 class int8Callback : public BLECharacteristicCallbacks {
 private:
@@ -103,7 +105,20 @@ public:
 	robotNameCallback() {
 	}
 	void onWrite(BLECharacteristic* pCharacteristic) {
-			robot.storeName(pCharacteristic->getValue());
+		robot.storeName(pCharacteristic->getValue());
+		char nameDummy[20];
+		strcpy(nameDummy, pCharacteristic->getValue().c_str());
+		pCharacteristic->setValue((uint8_t*)nameDummy, 20);
+	}
+};
+
+class robotActionNameCallback : public BLECharacteristicCallbacks {
+private:
+public:
+	robotActionNameCallback() {
+	}
+	void onWrite(BLECharacteristic* pCharacteristic) {
+			robot.startAction(pCharacteristic->getValue());
 	}
 };
 
@@ -119,8 +134,74 @@ public:
 	}
 };
 
+class otaCallback : public BLECharacteristicCallbacks {
+private:
+	esp_ota_handle_t otaHandler = 0;
+	bool updateFlag = false;
+	bool readyFlag = false;
+	int bytesReceived = 0;
+	int timesWritten = 0;
+public:
+	otaCallback() {
+	}
+	void onWrite(BLECharacteristic* pCharacteristic) {
+		std::string rxData = pCharacteristic->getValue();
+		if (!updateFlag) { //If it's the first packet of OTA since bootup, begin OTA
+			Serial.println("BeginOTA");
+			esp_ota_begin(esp_ota_get_next_update_partition(NULL), OTA_SIZE_UNKNOWN, &otaHandler);
+			updateFlag = true;
+			bytesReceived = 0;
+		}
+		if (rxData.length() > 0)
+		{
+			esp_ota_write(otaHandler, rxData.c_str(), rxData.length());
+			bytesReceived += rxData.length();
+			if (rxData.length() != FULL_PACKET)
+			{
+				esp_ota_end(otaHandler);
+				Serial.println("EndOTA");
+				if (ESP_OK == esp_ota_set_boot_partition(esp_ota_get_next_update_partition(NULL))) {
+				delay(2000);
+				esp_restart();
+				}
+				else {
+				Serial.println("Upload Error");
+				}
+			}
+		}
+		Serial.println(bytesReceived);
+
+		uint8_t txData[5] = {1, 2, 3, 4, 5};
+		pCharacteristic->setValue((uint8_t*)txData, 5);
+		pCharacteristic->notify();
+	}
+};
+
+class nameCallback : public BLECharacteristicCallbacks {
+public:
+	nameCallback() {
+	}
+	void onWrite(BLECharacteristic* pCharacteristic) {
+		char nameDummy[20];
+		strcpy(nameDummy, robot.name.c_str());
+		char robotName[50] = "";
+		int robotNameLength = 0;
+		for (int i = 0; true; i++) {
+			robotName[i] = nameDummy[i];
+			robotNameLength += 1;
+			if (nameDummy[i] == '\0') {
+			break;
+			}
+		}
+		pCharacteristic->setValue((uint8_t*)robotName, robotNameLength);
+		pCharacteristic->notify();
+	}
+};
+
+
 
 BluetoothLowEnergy::BluetoothLowEnergy(std::string deviceName) {
+	deviceName = deviceName.substr(0, 29);
 	createBLEDevice(deviceName);
 	createBLEServer();
 	createMovementServiceWithCharacteristics();
@@ -255,8 +336,6 @@ void BluetoothLowEnergy::createPoseServiceWithCharacteristics() {
 
 void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 	uint8_t init_data[2] = { 0, 0 };
-	char nameDummy[20];
-	strcpy(nameDummy, robot.name.c_str());
 	
 	parameterService = server->createService(PARAMETER_SERVICE);
 
@@ -297,12 +376,6 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 		BLECharacteristic::PROPERTY_READ
 	);
 
-	BLECharacteristic* nameCharacteristic = parameterService->createCharacteristic(
-		NAME_CHARACTERISTIC_UUID,
-		BLECharacteristic::PROPERTY_READ |
-		BLECharacteristic::PROPERTY_WRITE);
-
-	nameCharacteristic->setValue((uint8_t*)nameDummy, 20);
 	modeCharacteristic->setValue(&init_data[0], 1);
 	gaitIDCharacteristic->setValue(&init_data[0], 1);
 	universalDataCharacteristic->setValue(init_data, 1);
@@ -310,7 +383,6 @@ void BluetoothLowEnergy::createParameterServiceWithCharacteristics() {
 	softwareVersionCharacteristic->setValue(robot.hexSwVersion, 3);
 	hardwareVersionCharacteristic->setValue(robot.hexHwVersion, 3);
 
-	nameCharacteristic->setCallbacks(new robotNameCallback());
 	modeCharacteristic->setCallbacks(new int8Callback(&robot.mode));
 	gaitIDCharacteristic->setCallbacks(new int8Callback(&robot.btInputData.gaitID));
 	universalDataCharacteristic->setCallbacks(new int8Callback(&robot.universalData[0]));
@@ -432,15 +504,53 @@ public:
 };
 
 void BluetoothLowEnergy::createBatchMovementServiceWithCharacteristic() {
+	char nameDummy[20];
+	strcpy(nameDummy, robot.name.c_str());
+    char robotName[50] = "";
+	int robotNameLength = 0;
+    for (int i = 0; true; i++) {
+        robotName[i] = nameDummy[i];
+		robotNameLength += 1;
+        if (nameDummy[i] == '\0') {
+          break;
+        }
+    }
+
 	batchService = server->createService(BATCH_SERVICE_UUID);
 	BLECharacteristic* batchCharacteristic = batchService->createCharacteristic(
 		BATCH_CHARACTERISTIC_UUID,
 		BLECharacteristic::PROPERTY_READ |
 		BLECharacteristic::PROPERTY_WRITE |
 		BLECharacteristic::PROPERTY_WRITE_NR);
+	
+	BLECharacteristic* actionNameCharacteristic = batchService->createCharacteristic(
+		ACTION_NAME_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_WRITE |
+        BLECharacteristic::PROPERTY_INDICATE);
+
+	BLECharacteristic* pOtaCharacteristic = batchService->createCharacteristic(
+        OTA_CHARACTERISTIC_UUID,
+        BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE
+    );
+
+	BLECharacteristic* nameCharacteristic = batchService->createCharacteristic(
+		NAME_CHARACTERISTIC_UUID,
+		BLECharacteristic::PROPERTY_READ |
+		BLECharacteristic::PROPERTY_WRITE |
+		BLECharacteristic::PROPERTY_NOTIFY |
+        BLECharacteristic::PROPERTY_INDICATE);
+
+	nameCharacteristic->setValue((uint8_t*)robotName, robotNameLength);
+  	nameCharacteristic->setCallbacks(new nameCallback());
+
+	pOtaCharacteristic->addDescriptor(new BLEDescriptor((uint16_t)0x2902));
+  	pOtaCharacteristic->setCallbacks(new otaCallback());
 
 	uint8_t batchCommands[22];
 	batchCharacteristic->setValue(&batchCommands[0], 22);
+	actionNameCharacteristic->setValue("");
+
 	batchCharacteristic->setCallbacks(new batchCallback(&robot));
+	actionNameCharacteristic->setCallbacks(new robotActionNameCallback());
 	batchService->start();
 }

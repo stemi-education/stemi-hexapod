@@ -41,13 +41,15 @@ For additional information please check http://www.stemi.education.
 #include "Preferences.h"
 
 #define NUMBER_OF_NAMES 110
+#define NUMBER_OF_ADJECTIVES 24
 
 class Names
 {
 public:
 	Names();
-	std::string generateName(uint16_t number);
-	uint16_t sumStringMemberValues(uint8_t str[6]);
+	std::string generateName(uint16_t number1, uint16_t number2);
+	uint16_t sumStringMemberValues1(uint8_t str[6]);
+	uint16_t sumStringMemberValues2(uint8_t str[6]);
 	void storeInit();
 	void store(std::string name);
 	void load(std::string *name);
@@ -55,6 +57,32 @@ private:
 
 	std::string name;
 	Preferences preferences;
+	std::string adjectives[NUMBER_OF_ADJECTIVES] = {
+		"Cute",
+		"Good",
+		"Fast",
+		"Mysterious",
+		"Pretty",
+		"Instinctive",
+		"Adorable",
+		"Tiny",
+		"Clever",
+		"Tall",
+		"Secret",
+		"Large",
+		"Small",
+		"Futuristict",
+		"Wicked",
+		"Swift",
+		"Quick",
+		"Sweet",
+		"Lazy",
+		"Scary",
+		"Brave",
+		"Dark",
+		"Furry",
+		"Cold"
+	};
 	std::string names[NUMBER_OF_NAMES] =
 	{
 		//developer names

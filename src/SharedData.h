@@ -56,7 +56,7 @@ For additional information please check http://www.stemi.education.
 //#define DEBUG 
 //#define DEBUG_VOLTAGES
 
-#define LED_COUNT 6
+#define LED_COUNT 7
 #define LED_PIN 19 //Neopixel RGB LED strip pin
 #define SERVO_POWER_PIN 33
 #define EXTRA_SERVO_PIN 25
@@ -68,7 +68,9 @@ For additional information please check http://www.stemi.education.
 #define TASK_PERIOD_TOUCH 20
 #define TASK_PERIOD_SERVO 20
 #define TASK_PERIOD_ROBOT 20
-#define TASK_PERIOD_BATT 200
+#define TASK_PERIOD_SERIAL 200
+#define TASK_PERIOD_BATT 1000
+#define TASK_PERIOD_EXPANSION 50
 #define TASK_PERIOD_DANCE 275 //half of a songs beat
 
 //movement duration
@@ -124,6 +126,11 @@ For additional information please check http://www.stemi.education.
 #define STRETCH_AMMOUNT 70 //%
 #define STRETCH_MAX 3 //radians
 #define TILT_MAX 0.3 //radians
+
+#define PIN_A 4
+#define PIN_B 5
+#define PIN_C 12
+#define PIN_AD 35
 
 //touch parameters
 #define TOUCH_000 0
@@ -198,7 +205,7 @@ struct LedData
 	uint8_t ledSpreadRatio; // [0,100]%
 	int8_t ledRotationSpeed; // [-100,100]%
 	uint8_t ledBlinkingSpeed; // [0,100]%
-	uint8_t ledManualClr[6][3]; // 6x [255]r, [255]g, [255]b
+	uint8_t ledManualClr[LED_COUNT][3]; // 6x [255]r, [255]g, [255]b
 	int8_t ledMode; // [manual, parametric]mode
 };
 
@@ -352,6 +359,9 @@ public:
 	void useMoveInputData(InputData * data);
 	void useLedInputData(InputData * data);
 
+	// Custom actions
+	void startAction(std::string actionName);
+
 	//UniversalData to be written from bluetooth or other sources
 	int8_t universalData[4] = { 0, 0, 0, 0, };
 
@@ -368,6 +378,7 @@ public:
 
 	int8_t mode = ROBOT_STANDBY_MODE;
 	uint8_t BTConnectedCount = 0;
+	bool isSerialConnectionOn = false;
 	int8_t userSlider = 0;
 	uint8_t hexSwVersion[3] = { HEXAPOD_SW_VERSION_MAJOR, HEXAPOD_SW_VERSION_MINOR, HEXAPOD_SW_VERSION_PATCH };
 	uint8_t hexHwVersion[3] = { HEXAPOD_HW_VERSION_MAJOR, HEXAPOD_HW_VERSION_MINOR, HEXAPOD_HW_VERSION_PATCH };

@@ -19,7 +19,7 @@ class Touch {
 		static Touch* instance;
 		
 		void writeInterruptTime(int touch);
-		static void touchInterruptCallbackT5();
+		static void touchInterruptCallbackT4();
 		static void touchInterruptCallbackT6();
 		static void touchInterruptCallbackT7();
 

@@ -47,8 +47,8 @@ public:
 	
 	void setColorParametric();
 	void setColorManual();
-	float applyDirectionSpeed();
-	float applyBlinkingSpeed();
+	void applyDirectionSpeed();
+	void applyBlinkingSpeed();
 	void writeToLED();
 
 	NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip;
@@ -67,8 +67,8 @@ public:
 	RgbColor white = RgbColor(255);
 	RgbColor black = RgbColor(0);
 
-	uint8_t ledMap[6] = { 3, 4, 5, 0, 1, 2};
-	uint8_t ledMapInverse[6] = { 5, 4, 3, 2, 1, 0 };
+	uint8_t ledMap[7] = { 3, 4, 5, 0, 1, 2, 6};
+	uint8_t ledMapInverse[7] = { 5, 4, 3, 2, 1, 0, 6};
 
 
 };
